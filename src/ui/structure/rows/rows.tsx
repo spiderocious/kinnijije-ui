@@ -2,9 +2,9 @@ import type { ReactNode } from 'react';
 
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Figure } from '@ui/display/figure/figure';
-import { Status } from '@ui/status/status/status';
-import { Provenance, isApproximate, type RecipeSource } from '@ui/domain/provenance/provenance';
+import { Figure } from '@ui/display';
+import { Status } from '@ui/status';
+import { Provenance, isApproximate, type RecipeSource } from '@ui/domain';
 
 /**
  * The purpose-built row shapes.

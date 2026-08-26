@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { Blob } from '@icons';
-import { IconButton } from '@ui/primitives/icon-button/icon-button';
-import { EmptyFiltered, EmptyState } from '@ui/feedback/empty-state/empty-state';
-import { Card, CardSkeleton } from '@ui/structure/card/card';
-import { Panel } from '@ui/structure/panel/panel';
-import { Row } from '@ui/structure/rows/rows';
+import { IconButton } from '@ui/primitives';
+import { EmptyFiltered, EmptyState } from '@ui/feedback';
+import { Card, CardSkeleton, Panel, Row } from '@ui/structure';
 
 import { Api, Demo, Grid, Note, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

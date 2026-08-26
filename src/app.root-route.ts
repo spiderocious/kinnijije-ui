@@ -2,8 +2,7 @@ import { createRootRouteWithContext } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 
 import { AppEntrypoint } from './app.entrypoint';
-import { RouteErrorBoundary } from '@ui/components/route-error-boundary/route-error-boundary';
-import { NotFoundScreen } from '@ui/components/not-found-screen/not-found-screen';
+import { NotFoundScreen, RouteErrorBoundary } from '@ui/components';
 
 export interface AppRouterContext {
   queryClient: QueryClient;

@@ -1,12 +1,6 @@
-import { Button } from '@ui/primitives/button/button';
-import { Figure } from '@ui/display/figure/figure';
-import { Stat, StatSkeleton } from '@ui/display/stat/stat';
-import {
-  MealCard,
-  MealCardError,
-  MealCardSkeleton,
-} from '@ui/domain/meal-card/meal-card';
-import { Provenance, ProvenanceSkeleton } from '@ui/domain/provenance/provenance';
+import { Button } from '@ui/primitives';
+import { Figure, Stat, StatSkeleton } from '@ui/display';
+import { MealCard, MealCardError, MealCardSkeleton, Provenance, ProvenanceSkeleton } from '@ui/domain';
 
 import { Api, Demo, Grid, Note, Row, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

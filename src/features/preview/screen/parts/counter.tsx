@@ -1,16 +1,12 @@
 import { useState } from 'react';
 
 import { Blob } from '@icons';
-import { Button } from '@ui/primitives/button/button';
-import { IconButton } from '@ui/primitives/icon-button/icon-button';
-import { Figure } from '@ui/display/figure/figure';
-import { DiffView, JsonInspector } from '@ui/display/json-inspector/json-inspector';
-import { CursorPager, Table, TableSkeleton, type TableColumn } from '@ui/display/table/table';
-import { EmptyFiltered } from '@ui/feedback/empty-state/empty-state';
-import { Panel } from '@ui/structure/panel/panel';
-import { Row } from '@ui/structure/rows/rows';
-import { Status } from '@ui/status/status/status';
-import { Provenance, isApproximate, type RecipeSource } from '@ui/domain/provenance/provenance';
+import { Button, IconButton } from '@ui/primitives';
+import { CursorPager, DiffView, Figure, JsonInspector, Table, TableSkeleton, type TableColumn } from '@ui/display';
+import { EmptyFiltered } from '@ui/feedback';
+import { Panel, Row } from '@ui/structure';
+import { Status } from '@ui/status';
+import { Provenance, isApproximate, type RecipeSource } from '@ui/domain';
 
 import { Api, Demo, Note, Rule, Section, Specimen } from './preview-canvas';
 

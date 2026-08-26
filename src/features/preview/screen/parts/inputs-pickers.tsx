@@ -1,10 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { ChipInput, type ChipItem } from '@ui/inputs/chip-input/chip-input';
-import { Combobox, type ComboboxOption } from '@ui/inputs/combobox/combobox';
-import { Select } from '@ui/inputs/select/select';
-import { Slider } from '@ui/inputs/slider/slider';
-import { Stepper } from '@ui/inputs/stepper/stepper';
+import { ChipInput, Combobox, Select, Slider, Stepper, type ChipItem, type ComboboxOption } from '@ui/inputs';
 
 import { Api, Demo, Note, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

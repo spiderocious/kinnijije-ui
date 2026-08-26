@@ -1,6 +1,6 @@
 import { Repeat } from 'meemaw';
 
-import { Button, type ButtonSize, type ButtonVariant } from '@ui/primitives/button/button';
+import { Button, type ButtonSize, type ButtonVariant } from '@ui/primitives';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

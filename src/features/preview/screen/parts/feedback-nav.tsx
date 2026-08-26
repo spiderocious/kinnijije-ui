@@ -1,13 +1,8 @@
 import { useState } from 'react';
 
-import { Button } from '@ui/primitives/button/button';
-import { IconButton } from '@ui/primitives/icon-button/icon-button';
-import { Callout } from '@ui/feedback/callout/callout';
-import { CircularProgress, Progress, StepProgress } from '@ui/feedback/progress/progress';
-import { Tooltip } from '@ui/feedback/tooltip/tooltip';
-import { AppBar } from '@ui/navigation/app-bar/app-bar';
-import { TabBar, type TabBarItem } from '@ui/navigation/tab-bar/tab-bar';
-import { Tabs } from '@ui/navigation/tabs/tabs';
+import { Button, IconButton } from '@ui/primitives';
+import { Callout, CircularProgress, Progress, StepProgress, Tooltip } from '@ui/feedback';
+import { AppBar, TabBar, Tabs, type TabBarItem } from '@ui/navigation';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen, Stack, StateCard, StateGrid } from './preview-canvas';
 

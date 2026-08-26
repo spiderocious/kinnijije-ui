@@ -2,7 +2,7 @@ import { Repeat } from 'meemaw';
 
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Badge } from '@ui/status/badge/badge';
+import { Badge } from '@ui/status';
 
 /**
  * The phone's primary navigation.

@@ -1,7 +1,7 @@
 import { Repeat } from 'meemaw';
 
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * The stepped-flow footer.

@@ -1,6 +1,6 @@
 import { Blob, KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * The zero-result surface, and the rule that it must not dead-end.

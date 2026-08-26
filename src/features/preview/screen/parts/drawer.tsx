@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Repeat } from 'meemaw';
 
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 import { DrawerService, type FeedbackTone, type ToastPosition } from '@ui/drawer';
-import { Input } from '@ui/inputs/input/input';
+import { Input } from '@ui/inputs';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen } from './preview-canvas';
 

@@ -1,5 +1,5 @@
 import { ArrowRight, Sparkles } from '@icons';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 export function EntryHero() {
   return (

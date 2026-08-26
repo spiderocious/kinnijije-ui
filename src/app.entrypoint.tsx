@@ -4,7 +4,7 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 
 import { Loader2 } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
-import { AppHeader } from '@ui/components/app-header/app-header';
+import { AppHeader } from '@ui/components';
 
 function RouteFallback() {
   return (

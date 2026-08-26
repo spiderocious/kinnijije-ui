@@ -3,8 +3,8 @@ import { Repeat } from 'meemaw';
 
 import { Blob, KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
-import { MealCard } from '@ui/domain/meal-card/meal-card';
+import { Button } from '@ui/primitives';
+import { MealCard } from '@ui/domain';
 
 /**
  * The marketing site's section families.

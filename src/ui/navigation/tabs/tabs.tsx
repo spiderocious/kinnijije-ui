@@ -1,7 +1,7 @@
 import { createContext, useContext, useRef, type KeyboardEvent, type ReactNode } from 'react';
 
 import { cn } from '@shared/utils/cn';
-import { Badge } from '@ui/status/badge/badge';
+import { Badge } from '@ui/status';
 
 /**
  * The content switch.

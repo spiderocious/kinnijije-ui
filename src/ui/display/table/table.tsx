@@ -3,7 +3,7 @@ import { Repeat, Show } from 'meemaw';
 
 import { ChevronDown, ChevronUp } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * The table the curator never had.

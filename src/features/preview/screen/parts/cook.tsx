@@ -1,8 +1,5 @@
-import { CookStep, CookStepError, CookStepSkeleton } from '@ui/domain/cook-step/cook-step';
-import { HaveNeed, HaveNeedSkeleton } from '@ui/domain/have-need/have-need';
-import { AiDisclosure, HonestyBar, WhyThisMeal } from '@ui/domain/honesty/honesty';
-import { NoTimer, StepTimer } from '@ui/domain/step-timer/step-timer';
-import { Card } from '@ui/structure/card/card';
+import { AiDisclosure, CookStep, CookStepError, CookStepSkeleton, HaveNeed, HaveNeedSkeleton, HonestyBar, NoTimer, StepTimer, WhyThisMeal } from '@ui/domain';
+import { Card } from '@ui/structure';
 
 import { Api, Demo, Grid, Note, Row, Rule, Section, Specimen } from './preview-canvas';
 

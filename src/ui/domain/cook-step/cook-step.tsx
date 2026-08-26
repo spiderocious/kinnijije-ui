@@ -1,6 +1,6 @@
 import { KoboyoIcon } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * The cook-mode step, sized for the real reading distance.

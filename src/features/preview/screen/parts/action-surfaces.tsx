@@ -1,12 +1,7 @@
 import { useState } from 'react';
 
-import { Button } from '@ui/primitives/button/button';
-import { ButtonGroup } from '@ui/primitives/button-group/button-group';
-import { ContinueBar } from '@ui/primitives/continue-bar/continue-bar';
-import { Dock } from '@ui/primitives/dock/dock';
-import { Fab } from '@ui/primitives/fab/fab';
-import { HoldButton } from '@ui/primitives/hold-button/hold-button';
-import { SuggestCTA } from '@ui/domain/suggest-cta/suggest-cta';
+import { Button, ButtonGroup, ContinueBar, Dock, Fab, HoldButton } from '@ui/primitives';
+import { SuggestCTA } from '@ui/domain';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

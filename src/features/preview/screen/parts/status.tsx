@@ -1,14 +1,12 @@
 import { Repeat } from 'meemaw';
 
-import { Badge } from '@ui/status/badge/badge';
-import { Status, StatusSkeleton } from '@ui/status/status/status';
+import { Badge, Status, StatusSkeleton, Tag, TagSkeleton } from '@ui/status';
 import {
   STATUS_KINDS,
   STATUS_REGISTRY,
   type StatusKind,
   type StatusValue,
 } from '@ui/status/status-registry';
-import { Tag, TagSkeleton } from '@ui/status/tag/tag';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

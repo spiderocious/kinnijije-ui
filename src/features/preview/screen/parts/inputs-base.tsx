@@ -1,12 +1,7 @@
 import { useState } from 'react';
 
 import { KoboyoIcon } from '@icons';
-import { Checkbox, type CheckedState } from '@ui/inputs/checkbox/checkbox';
-import { Field } from '@ui/inputs/field/field';
-import { Input } from '@ui/inputs/input/input';
-import { Radio, RadioGroup } from '@ui/inputs/radio/radio';
-import { Switch } from '@ui/inputs/switch/switch';
-import { Textarea } from '@ui/inputs/textarea/textarea';
+import { Checkbox, Field, Input, Radio, RadioGroup, Switch, Textarea, type CheckedState } from '@ui/inputs';
 
 import { Api, Demo, Note, Rule, Section, Specimen, Stack, StateCard, StateGrid } from './preview-canvas';
 

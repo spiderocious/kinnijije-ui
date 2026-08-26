@@ -2,8 +2,8 @@ import { Repeat, Show } from 'meemaw';
 
 import { KoboyoIcon } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
-import { Status } from '@ui/status/status/status';
+import { Button } from '@ui/primitives';
+import { Status } from '@ui/status';
 import { Provenance, isApproximate, type RecipeSource } from '../provenance/provenance';
 import type { HeroImageKind } from '../meal-card/meal-card';
 

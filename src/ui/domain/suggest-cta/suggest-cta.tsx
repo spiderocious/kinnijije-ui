@@ -1,6 +1,6 @@
 import { BlobThinking, KoboyoIcon } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * The funnel's single commit.

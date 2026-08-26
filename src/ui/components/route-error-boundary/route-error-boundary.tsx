@@ -1,7 +1,7 @@
 import type { ErrorComponentProps } from '@tanstack/react-router';
 
 import { AlertCircle } from '@icons';
-import { Button } from '@ui/primitives/button/button';
+import { Button } from '@ui/primitives';
 
 /**
  * Route-level boundary so a broken feature cannot crash the whole application.

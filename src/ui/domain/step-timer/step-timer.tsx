@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@shared/utils/cn';
-import { IconButton } from '@ui/primitives/icon-button/icon-button';
+import { IconButton } from '@ui/primitives';
 
 /**
  * The per-step countdown, and what it does when it ends.

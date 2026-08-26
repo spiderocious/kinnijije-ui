@@ -4,8 +4,8 @@ import { Show } from 'meemaw';
 
 import { X } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
-import { Input } from '@ui/inputs/input/input';
+import { Button } from '@ui/primitives';
+import { Input } from '@ui/inputs';
 
 import { drawerStore, type ModalEntry, type ModalPosition } from './drawer-store';
 

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Repeat, Show } from 'meemaw';
 
 import { cn } from '@shared/utils/cn';
-import { Logo } from '@ui/components/logo/logo';
+import { Logo } from '@ui/components';
 import { Search, X } from '@icons';
 
 import { PREVIEW_ENTRIES } from '../preview.entries';

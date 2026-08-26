@@ -1,7 +1,7 @@
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives/button/button';
-import { Figure } from '@ui/display/figure/figure';
+import { Button } from '@ui/primitives';
+import { Figure } from '@ui/display';
 import { Provenance, isApproximate, type RecipeSource } from '../provenance/provenance';
 
 /**

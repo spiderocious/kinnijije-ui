@@ -1,9 +1,6 @@
 import { useState } from 'react';
 
-import { FilterChip } from '@ui/primitives/filter-chip/filter-chip';
-import { IconButton } from '@ui/primitives/icon-button/icon-button';
-import { PillButton } from '@ui/primitives/pill-button/pill-button';
-import { Segmented } from '@ui/primitives/segmented/segmented';
+import { FilterChip, IconButton, PillButton, Segmented } from '@ui/primitives';
 
 import { Api, Demo, Note, Row, Rule, Section, Specimen, StateCard, StateGrid } from './preview-canvas';
 

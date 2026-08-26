@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 
 import { ROUTES } from '@shared/constants/routes';
-import { Logo } from '@ui/components/logo/logo';
+import { Logo } from '@ui/components';
 
 export function AppHeader() {
   return (
