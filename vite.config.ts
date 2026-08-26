@@ -14,6 +14,17 @@ export default defineConfig({
       '@icons': path.resolve(__dirname, 'src/ui/icons/index.ts'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // 184 hand-drawn glyphs as raw path data. Split out so a screen using
+          // three of them does not put all 345kB in the entry bundle.
+          'koboyo-icons': ['./src/ui/icons/koboyo-data.ts'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
   },

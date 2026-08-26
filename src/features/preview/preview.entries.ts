@@ -1,0 +1,119 @@
+import type { PreviewEntry } from './preview.registry';
+
+import { PalettePart } from './screen/parts/palette';
+import { TypePart } from './screen/parts/type';
+import { GeometryPart } from './screen/parts/geometry';
+import { BladePart } from './screen/parts/blade';
+import { MotionPart } from './screen/parts/motion';
+import { ElevationPart } from './screen/parts/elevation';
+import { IconsPart } from './screen/parts/icons';
+import { BlobatarPart } from './screen/parts/blobatar';
+import { DensityPart } from './screen/parts/density';
+import { ButtonsPart } from './screen/parts/buttons';
+import {
+  FilterChipPart,
+  IconButtonPart,
+  PillButtonPart,
+  SegmentedPart,
+} from './screen/parts/button-variants';
+import {
+  ButtonGroupPart,
+  ContinueBarPart,
+  DockPart,
+  FabPart,
+  HoldButtonPart,
+  SuggestCtaPart,
+} from './screen/parts/action-surfaces';
+import {
+  FieldPart,
+  InputPart,
+  SelectionPart,
+  TextareaPart,
+} from './screen/parts/inputs-base';
+import {
+  ChipInputPart,
+  ComboboxPart,
+  SelectPart,
+  SliderPart,
+  StepperPart,
+} from './screen/parts/inputs-pickers';
+import { BadgeTagPart, StatusPart } from './screen/parts/status';
+import { DrawerPart } from './screen/parts/drawer';
+import { FigurePart, MealCardPart, ProvenancePart, StatPart } from './screen/parts/meal';
+import { CardPart, EmptyStatePart, RowsPart } from './screen/parts/structure';
+import {
+  CalloutPart,
+  NavigationPart,
+  ProgressPart,
+  TooltipPart,
+} from './screen/parts/feedback-nav';
+
+/**
+ * Every specimen, in sidebar order.
+ *
+ * Add an entry here the moment a component is built — never batch. Each entry's
+ * `Part` is a preview component with a descriptive filename (`buttons.tsx`,
+ * never `21-buttons.tsx`).
+ */
+export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
+  /* ---------- Foundation ---------- */
+  { id: 'palette', label: 'Palette', group: 'Foundation', Part: PalettePart },
+  { id: 'type', label: 'Type', group: 'Foundation', Part: TypePart },
+  { id: 'geometry', label: 'Geometry', group: 'Foundation', Part: GeometryPart },
+  { id: 'blade', label: 'The blade', group: 'Foundation', Part: BladePart },
+  { id: 'motion', label: 'Motion', group: 'Foundation', Part: MotionPart },
+  { id: 'elevation', label: 'Elevation', group: 'Foundation', Part: ElevationPart },
+  { id: 'icons', label: 'Icons', group: 'Foundation', Part: IconsPart },
+  { id: 'blobatar', label: 'Blobatar', group: 'Foundation', Part: BlobatarPart },
+  { id: 'density', label: 'Density', group: 'Foundation', Part: DensityPart },
+
+  /* ---------- Actions ---------- */
+  { id: 'button', label: 'Button', group: 'Actions', Part: ButtonsPart },
+  { id: 'icon-button', label: 'Button — icon', group: 'Actions', Part: IconButtonPart },
+  { id: 'pill-button', label: 'Button — pill', group: 'Actions', Part: PillButtonPart },
+  { id: 'filter-chip', label: 'Filter chip', group: 'Actions', Part: FilterChipPart },
+  { id: 'segmented', label: 'Segmented', group: 'Actions', Part: SegmentedPart },
+  { id: 'button-group', label: 'Button group', group: 'Actions', Part: ButtonGroupPart },
+  { id: 'dock', label: 'Button dock', group: 'Actions', Part: DockPart },
+  { id: 'fab', label: 'FAB', group: 'Actions', Part: FabPart },
+  { id: 'hold-button', label: 'Hold-to-confirm', group: 'Actions', Part: HoldButtonPart },
+  { id: 'continue-bar', label: 'Continue bar', group: 'Actions', Part: ContinueBarPart },
+  { id: 'suggest-cta', label: 'Suggest CTA', group: 'Actions', Part: SuggestCtaPart },
+
+  /* ---------- Inputs ---------- */
+  { id: 'input', label: 'Text input', group: 'Inputs', Part: InputPart },
+  { id: 'textarea', label: 'Textarea', group: 'Inputs', Part: TextareaPart },
+  { id: 'field', label: 'Form field', group: 'Inputs', Part: FieldPart },
+  { id: 'selection', label: 'Checkbox · Radio · Switch', group: 'Inputs', Part: SelectionPart },
+  { id: 'stepper', label: 'Stepper', group: 'Inputs', Part: StepperPart },
+  { id: 'select', label: 'Select', group: 'Inputs', Part: SelectPart },
+  { id: 'combobox', label: 'Combobox', group: 'Inputs', Part: ComboboxPart },
+  { id: 'chip-input', label: 'Chip input', group: 'Inputs', Part: ChipInputPart },
+  { id: 'slider', label: 'Slider', group: 'Inputs', Part: SliderPart },
+
+  /* ---------- Status ---------- */
+  { id: 'status', label: 'Status contract', group: 'Status', Part: StatusPart },
+  { id: 'badge-tag', label: 'Badge · Tag', group: 'Status', Part: BadgeTagPart },
+
+  /* ---------- Feedback ---------- */
+  { id: 'drawer', label: 'DrawerService', group: 'Feedback', Part: DrawerPart },
+  { id: 'empty-state', label: 'Empty state', group: 'Feedback', Part: EmptyStatePart },
+  { id: 'callout', label: 'Callout', group: 'Feedback', Part: CalloutPart },
+  { id: 'progress', label: 'Progress', group: 'Feedback', Part: ProgressPart },
+  { id: 'tooltip', label: 'Tooltip', group: 'Feedback', Part: TooltipPart },
+
+  /* ---------- Data display ---------- */
+  { id: 'figure', label: 'Figure', group: 'Data display', Part: FigurePart },
+  { id: 'stat', label: 'Stat', group: 'Data display', Part: StatPart },
+
+  /* ---------- Trust & AI ---------- */
+  { id: 'provenance', label: 'Provenance pair', group: 'Trust & AI', Part: ProvenancePart },
+  { id: 'meal-card', label: 'Meal card', group: 'Trust & AI', Part: MealCardPart },
+
+  /* ---------- Structure ---------- */
+  { id: 'card', label: 'Card · Panel', group: 'Structure', Part: CardPart },
+  { id: 'rows', label: 'Rows', group: 'Structure', Part: RowsPart },
+
+  /* ---------- Navigation ---------- */
+  { id: 'navigation', label: 'App bar · Tabs · Tab bar', group: 'Navigation', Part: NavigationPart },
+];

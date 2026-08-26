@@ -1,24 +1,236 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-secondary: #6b7280;
-  --color-accent: #fbbf24;
-  --color-background: #ffffff;
-  --color-surface: #f9fafb;
-  --color-text: #111827;
-  --color-text-muted: #6b7280;
-  --color-error: #dc2626;
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-border: #e5e7eb;
+/* ==========================================================================
+   KINNIJIJE v2 — SKY KITCHEN foundation
+   Ported from design-system/projects/kinnijije-v2/preview/_foundation.css
 
-  --font-sans: 'Quicksand', sans-serif;
+   THE LAW — THE BLADE
+   Every surface has exactly ONE sharp corner and THREE round, clockwise from
+   top-left: round · sharp · round · sharp. It reads as a knife edge, a
+   chopping-board corner, a torn recipe card. Four round corners, or two sharp,
+   is not in this system. Two exceptions only: pills and circles.
+
+   Palette: whitish ground, sky #38B6F0 as the ONE action colour (always with
+   white text), grape reserved for AI provenance, green for verified/have,
+   amber for notices, coral for irreversible. No yellow anywhere.
+   Type: Baloo 2 (display) · Nunito (chrome) · JetBrains Mono (record).
+   ========================================================================== */
+
+:root {
+  /* ---------- Ground: whitish ---------- */
+  --white: #ffffff;
+  --paper: #f7fafc; /* the canvas */
+  --paper-2: #eef4f8; /* recessed */
+  --paper-3: #e7eef4; /* sunken */
+  --line: #e3ecf2; /* quiet divider */
+  --line-2: #cfdde7; /* firmer edge */
+  --scrim: rgba(19, 36, 48, 0.46);
+
+  /* ---------- Ink ladder: cool, soft-black ---------- */
+  --ink: #132430; /* strong */
+  --ink-2: #3a5567; /* default body */
+  --ink-3: #6e8798; /* muted */
+  --ink-4: #9cb0bd; /* disabled / placeholder */
+  --ink-inv: #ffffff; /* on dark */
+
+  /* ---------- SKY — the ONE action colour ----------
+     Always carries WHITE text. Never used for a status, a metric or a
+     lifecycle state — sky acts, it never reports. */
+  --sky-50: #f2fafe;
+  --sky-100: #e4f4fe;
+  --sky-200: #c6e9fc;
+  --sky-300: #a8dcf7;
+  --sky-400: #6bc8f4;
+  --sky-500: #38b6f0; /* base */
+  --sky-600: #1798d6; /* hover */
+  --sky-700: #127bae; /* pressed */
+  --sky-800: #0e5f87;
+  --sky-900: #0b4e71;
+
+  --sky: var(--sky-500);
+  --sky-deep: var(--sky-600);
+  --sky-press: var(--sky-700);
+  --sky-soft: var(--sky-100);
+  --sky-edge: var(--sky-300);
+  --sky-on: var(--sky-900); /* text ON sky-soft */
+  --sky-onbase: #ffffff; /* text ON sky */
+  --sky-glow: rgba(56, 182, 240, 0.32);
+
+  /* ---------- The semantic enum — 5 values x 5 slots ----------
+     base / soft / onSoft / border / on. Reused verbatim by every badge, tag,
+     status, callout, banner, toast, validation and progress in the system. */
+  --neutral: #6e8798;
+  --neutral-soft: #eef4f8;
+  --neutral-onsoft: #3a5567;
+  --neutral-border: #cfdde7;
+  --neutral-on: #ffffff;
+
+  --info: #2f5d6e;
+  --info-soft: #e4eef2;
+  --info-onsoft: #1d3d49;
+  --info-border: #b4cfd9;
+  --info-on: #ffffff;
+
+  --success: #2fbf8f;
+  --success-soft: #e2f7f0;
+  --success-onsoft: #10604a;
+  --success-border: #a9e5d2;
+  --success-on: #ffffff;
+
+  --caution: #f2a93b;
+  --caution-soft: #fef3e0;
+  --caution-onsoft: #7a4e08;
+  --caution-border: #f6d9a6;
+  --caution-on: #132430;
+
+  --critical: #f0605d;
+  --critical-soft: #fdebeb;
+  --critical-onsoft: #8c1f1d;
+  --critical-border: #f8c2c1;
+  --critical-on: #ffffff;
+
+  /* aliases used by domain components */
+  --ok: var(--success);
+  --ok-soft: var(--success-soft);
+  --ok-edge: var(--success-border);
+  --ok-on: var(--success-onsoft);
+  --warn: var(--caution);
+  --warn-soft: var(--caution-soft);
+  --warn-edge: var(--caution-border);
+  --warn-on: var(--caution-onsoft);
+  --crit: var(--critical);
+  --crit-soft: var(--critical-soft);
+  --crit-edge: var(--critical-border);
+  --crit-on: var(--critical-onsoft);
+
+  /* ---------- OUTSIDE the enum: AI provenance ----------
+     Grape exists so "made by a machine" can never be confused with
+     "verified by a human". It is NOT a severity and never a button. */
+  --grape: #8b7cf6;
+  --grape-soft: #efecfe;
+  --grape-onsoft: #3f2e9e;
+  --grape-border: #cfc6fb;
+  --grape-on: #ffffff;
+
+  /* ---------- Food tints — dish marks only, never chrome ---------- */
+  --dish-fill: #ffe0b0;
+  --dish-line: #8a4b1e;
+  --greens-fill: #cbefd2;
+  --greens-line: #2c6b45;
+  --berry-fill: #f9d2e4;
+  --berry-line: #8e3560;
+
+  /* ---------- THE BLADE — the radius system ----------
+     One sharp corner, three round. Four sizes; the sharp corner stays small
+     and constant so the cut reads at every scale. */
+  --blade-xs: 10px 3px 10px 3px;
+  --blade-sm: 16px 5px 16px 5px;
+  --blade-md: 20px 6px 20px 6px;
+  --blade-lg: 24px 6px 24px 6px;
+  --blade-xl: 28px 8px 28px 8px;
+  --r-pill: 999px;
+  --r-round: 50%;
+
+  /* ---------- Borders ---------- */
+  --bw-hair: 1.5px;
+  --bw: 2px;
+  --bw-bold: 2.5px;
+
+  /* ---------- Elevation — a SOLID drop-edge, not a blur ----------
+     The object presses down onto its own edge. Blur is reserved for the
+     overlay layer only. */
+  --drop-sm: 2px 3px 0 var(--ink);
+  --drop: 3px 4px 0 var(--ink);
+  --drop-lg: 4px 5px 0 var(--ink);
+  --drop-sky: 3px 4px 0 var(--sky-press);
+  --drop-crit: 3px 4px 0 #c43f3c;
+  --shadow-pop: 0 8px 24px rgba(19, 36, 48, 0.14);
+  --shadow-modal: 0 18px 50px rgba(19, 36, 48, 0.22);
+
+  /* ---------- Named z-index scale ---------- */
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-nav: 200;
+  --z-dropdown: 300;
+  --z-scrim: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+
+  /* ---------- Type ---------- */
+  --display: 'Baloo 2 Variable', 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  --sans: 'Nunito Variable', 'Nunito', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-base: 14.5px;
+  --fs-md: 16px;
+  --fs-lg: 19px;
+  --fs-xl: 23px;
+  --fs-2xl: 28px;
+  --fs-3xl: 36px;
+  --fs-4xl: 46px;
+  --fs-5xl: 60px;
+  --fs-6xl: 78px;
+
+  --track-display: -0.015em;
+  --track-h: -0.008em;
+  --track-body: 0;
+  --track-label: 0.01em;
+  --track-overline: 0.14em;
+
+  /* ---------- Spacing ruler — 4px ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 48px;
+  --s-10: 64px;
+  --s-11: 80px;
+
+  /* ---------- Motion ---------- */
+  --ease: cubic-bezier(0.34, 1.4, 0.5, 1); /* the playful overshoot */
+  --ease-out: cubic-bezier(0.22, 0.8, 0.3, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+  --t-press: 130ms; /* button meets its edge */
+  --t-fast: 180ms;
+  --t-base: 260ms; /* a plate set down */
+  --t-slow: 380ms; /* overlays */
+  --stagger: 45ms;
+
+  /* ---------- KITCHEN register (consumer) — the default ---------- */
+  --h-sm: 38px;
+  --h-md: 46px;
+  --h-lg: 56px;
+  --pad: 18px;
+  --row-y: 12px;
+  --gap: 14px;
+  --fs-ctrl: 14.5px;
+}
+
+/* ---------- COUNTER register (curator console) ----------
+   Same colours, same blade, same type. Denser box, hairline structure,
+   and the drop-edge reserved for the ONE control that acts.
+   One wrapper class resolves the whole register — no component takes a
+   density prop. */
+.counter {
+  --h-sm: 28px;
+  --h-md: 34px;
+  --h-lg: 40px;
+  --pad: 12px;
+  --row-y: 7px;
+  --gap: 10px;
+  --fs-ctrl: 13px;
+  --blade-md: 14px 4px 14px 4px;
+  --blade-lg: 16px 5px 16px 5px;
+  --blade-xl: 18px 5px 18px 5px;
 }
 
 @layer base {
@@ -27,10 +239,175 @@
   }
 
   body {
-    @apply bg-background text-content font-sans antialiased;
+    margin: 0;
+    font-family: var(--sans);
+    font-size: var(--fs-base);
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+    letter-spacing: var(--track-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern', 'calt';
+  }
+
+  svg {
+    display: inline-block;
+    vertical-align: middle;
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--sky);
+  }
+}
+
+@layer utilities {
+  /* Tabular numerals — every count, time, price and quantity in the system. */
+  .tnum {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+}
+
+/* ==========================================================================
+   MOTION — the named animations from the spec
+   Nothing loops except a live timer and the AI blob.
+   ========================================================================== */
+
+@keyframes kj-shimmer {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes kj-serve {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kj-pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes kj-steam {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(3px) scaleY(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-4px) scaleY(1.1);
+  }
+}
+
+@keyframes kj-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes kj-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes kj-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kj-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kj-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes kj-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* The indeterminate progress band. Marches rather than promising a percentage. */
+@keyframes kj-march {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+@keyframes kj-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -37,7 +37,7 @@ export function EntryStack() {
     <section aria-labelledby="entry-stack-heading" className="flex flex-col gap-4">
       <h2
         id="entry-stack-heading"
-        className="text-sm font-semibold uppercase tracking-wide text-content-muted"
+        className="text-xs font-extrabold uppercase tracking-overline text-ink-3"
       >
         What is wired up
       </h2>
@@ -45,12 +45,12 @@ export function EntryStack() {
       <ul className="grid gap-3 sm:grid-cols-2">
         <Repeat each={STACK_ITEMS}>
           {(item: StackItem) => (
-            <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
-              <p className="flex items-center gap-2 font-semibold">
+            <li key={item.id} className="rounded-blade-sm border border-line-2 bg-white p-4">
+              <p className="flex items-center gap-2 font-extrabold">
                 <Check size={16} className="text-success" aria-hidden="true" />
                 {item.title}
               </p>
-              <p className="mt-1 text-sm text-content-muted">{item.description}</p>
+              <p className="mt-1 text-sm text-ink-2">{item.description}</p>
             </li>
           )}
         </Repeat>

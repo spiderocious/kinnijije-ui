@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import '@fontsource-variable/baloo-2';
+import '@fontsource-variable/nunito';
+import '@fontsource-variable/jetbrains-mono';
+
 import { App } from './app';
 import './index.css';
 
