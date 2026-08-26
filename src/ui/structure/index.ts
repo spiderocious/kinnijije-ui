@@ -8,3 +8,4 @@
 export * from './card/card';
 export * from './panel/panel';
 export * from './rows/rows';
+export * from './section-header/section-header';

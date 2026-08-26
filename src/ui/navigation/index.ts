@@ -6,5 +6,6 @@
  */
 
 export * from './app-bar/app-bar';
+export * from './sidebar/sidebar';
 export * from './tab-bar/tab-bar';
 export * from './tabs/tabs';

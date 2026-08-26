@@ -50,6 +50,14 @@ import {
 import { CookStepPart, HaveNeedPart, HonestyPart } from './screen/parts/cook';
 import { AuditPart, ConsolePart, TablePart } from './screen/parts/counter';
 import { EmailPart, SitePart } from './screen/parts/site-email';
+import {
+  CapturePart,
+  ChatPart,
+  InsightsPart,
+  PlanningPart,
+  ShellPart,
+  StockPart,
+} from './screen/parts/families';
 
 /**
  * Every specimen, in sidebar order.
@@ -114,6 +122,19 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'meal-card', label: 'Meal card', group: 'Trust & AI', Part: MealCardPart },
   { id: 'honesty', label: 'Honesty bar · AI disclosure', group: 'Trust & AI', Part: HonestyPart },
 
+  /* ---------- Chat ---------- */
+  { id: 'chat', label: 'Chat', group: 'Chat', Part: ChatPart },
+
+  /* ---------- Kitchen ---------- */
+  { id: 'stock', label: 'Standing kitchen', group: 'Kitchen', Part: StockPart },
+  { id: 'capture', label: 'Capture', group: 'Kitchen', Part: CapturePart },
+
+  /* ---------- Insights ---------- */
+  { id: 'insights', label: 'Insights', group: 'Insights', Part: InsightsPart },
+
+  /* ---------- Planning ---------- */
+  { id: 'planning', label: 'Planning', group: 'Planning', Part: PlanningPart },
+
   /* ---------- Recipe & cook ---------- */
   { id: 'have-need', label: 'Have / need', group: 'Recipe & cook', Part: HaveNeedPart },
   { id: 'cook-step', label: 'Cook step · Timer', group: 'Recipe & cook', Part: CookStepPart },
@@ -124,6 +145,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
 
   /* ---------- Navigation ---------- */
   { id: 'navigation', label: 'App bar · Tabs · Tab bar', group: 'Navigation', Part: NavigationPart },
+  { id: 'shell', label: 'Sidebar · Shell pieces', group: 'Navigation', Part: ShellPart },
 
   /* ---------- Counter (curator console) ---------- */
   { id: 'console', label: 'The COUNTER register', group: 'Counter', Part: ConsolePart },

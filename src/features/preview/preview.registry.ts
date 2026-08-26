@@ -20,6 +20,7 @@ export type PreviewGroup =
   | 'Feedback'
   | 'Navigation'
   | 'Structure'
+  | 'Chat'
   | 'Kitchen'
   | 'Recipe & cook'
   | 'Trust & AI'
@@ -54,6 +55,7 @@ export const PREVIEW_GROUP_ORDER: readonly PreviewGroup[] = [
   'Feedback',
   'Navigation',
   'Structure',
+  'Chat',
   'Kitchen',
   'Recipe & cook',
   'Trust & AI',
