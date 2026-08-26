@@ -14,6 +14,46 @@ import {
   SuggestionsLoadingScene,
   SuggestionsScene,
 } from './screens/core-scenes';
+import {
+  AddStockScene,
+  CaptureRecoveryScene,
+  EmptyKitchenScene,
+  ExtractionReviewScene,
+  KitchenDashboardScene,
+  LabelCaptureScene,
+  LowStockScene,
+  MarketEmptyScene,
+  MarketListScene,
+  MarketModeScene,
+  ShelfScanScene,
+  StockDetailScene,
+  StockHistoryScene,
+  StockLocationScene,
+  UploadReceiptScene,
+  UseItUpScene,
+} from './screens/kitchen-scenes';
+import {
+  ChatAboutMealScene,
+  ChatErrorScene,
+  ChatHistoryScene,
+  ChatMealScene,
+  ChatStockScene,
+  ChatSubstitutionScene,
+} from './screens/chat-scenes';
+import {
+  ConstraintsScene,
+  MilestoneScene,
+  MoodScene,
+  NutritionScene,
+  PlanToMarketScene,
+  PortionsScene,
+  RepeatsScene,
+  ShouldEatScene,
+  SpendScene,
+  WeekEmptyScene,
+  WeekPlanScene,
+  WeekSummaryScene,
+} from './screens/insight-scenes';
 
 /**
  * Every scene, in sidebar order.
@@ -130,4 +170,48 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
     frames: ['phone', 'desktop'],
     Scene: AuthScene,
   },
+
+  /* ---------- Standing kitchen ---------- */
+  { id: 'kitchen-dashboard', label: 'Kitchen dashboard', group: 'Standing kitchen', spec: '330-scene-kitchen-dashboard.html', summary: 'What is in, what is low, and what was noticed.', frames: ['phone', 'desktop'], Scene: KitchenDashboardScene },
+  { id: 'stock-location', label: 'Stock by location', group: 'Standing kitchen', spec: '331-scene-stock-location.html', summary: 'Fridge, shelf, freezer — grouped where things actually live.', frames: ['phone', 'desktop'], Scene: StockLocationScene },
+  { id: 'low-stock', label: 'Running low', group: 'Standing kitchen', spec: '332-scene-low-stock.html', summary: 'Only what blocks a meal you cook often.', frames: ['phone', 'desktop'], Scene: LowStockScene },
+  { id: 'add-stock', label: 'Add stock', group: 'Standing kitchen', spec: '333-scene-add-stock.html', summary: 'For correcting something — never for stock-taking.', frames: ['phone', 'desktop'], Scene: AddStockScene },
+  { id: 'stock-detail', label: 'One thing', group: 'Standing kitchen', spec: '334-scene-stock-detail.html', summary: 'Everything that changed a count, and none of it typed in.', frames: ['phone', 'desktop'], Scene: StockDetailScene },
+  { id: 'market-list', label: 'Market list', group: 'Standing kitchen', spec: '335-scene-market-list.html', summary: 'What to buy, and what each thing unblocks.', frames: ['phone', 'desktop'], Scene: MarketListScene },
+  { id: 'market-mode', label: 'In the market', group: 'Standing kitchen', spec: '336-scene-market-mode.html', summary: 'Big targets, one hand, a bag in the other.', frames: ['phone'], Scene: MarketModeScene },
+  { id: 'market-empty', label: 'Market list — empty', group: 'Standing kitchen', spec: '335-scene-market-list.html', summary: 'Nothing to buy — the good outcome, so no CTA.', frames: ['phone', 'desktop'], Scene: MarketEmptyScene },
+  { id: 'use-it-up', label: 'Use these first', group: 'Standing kitchen', spec: '337-scene-use-it-up.html', summary: 'What is turning, and what would use it tonight.', frames: ['phone', 'desktop'], Scene: UseItUpScene },
+  { id: 'stock-history', label: 'Kitchen history', group: 'Standing kitchen', spec: '338-scene-stock-history.html', summary: 'Every change, and where it came from.', frames: ['phone', 'desktop'], Scene: StockHistoryScene },
+  { id: 'empty-kitchen', label: 'Empty kitchen', group: 'Standing kitchen', spec: '339-scene-empty-kitchen.html', summary: 'Camera first, and the skip always visible.', frames: ['phone', 'desktop'], Scene: EmptyKitchenScene },
+
+  /* ---------- Capture ---------- */
+  { id: 'shelf-scan', label: 'Photograph a shelf', group: 'Capture', spec: '341-scene-shelf-scan.html', summary: 'The multi-shot tray — more angles read better.', frames: ['phone', 'desktop'], Scene: ShelfScanScene },
+  { id: 'upload-receipt', label: 'Upload a receipt', group: 'Capture', spec: '340-scene-upload-receipt.html', summary: 'The fastest way to fill a kitchen.', frames: ['phone', 'desktop'], Scene: UploadReceiptScene },
+  { id: 'extraction-review', label: 'What we read', group: 'Capture', spec: '342-scene-extraction-review.html', summary: 'Reviewed, never auto-committed. Desktop shows the source photo.', frames: ['phone', 'desktop'], Scene: ExtractionReviewScene },
+  { id: 'capture-recovery', label: 'Capture failed', group: 'Capture', spec: '343-scene-capture-recovery.html', summary: 'Typing offered as an equal, not a fallback.', frames: ['phone', 'desktop'], Scene: CaptureRecoveryScene },
+  { id: 'permission', label: 'Camera permission', group: 'Capture', spec: '344-scene-label-capture.html', summary: 'Asked in context, with the reason, always skippable.', frames: ['phone', 'desktop'], Scene: LabelCaptureScene },
+
+  /* ---------- Chat ---------- */
+  { id: 'chat-meal', label: 'Ask about a meal', group: 'Chat', spec: '350-scene-chat-meal.html', summary: 'Answered from the kitchen, cited.', frames: ['phone', 'desktop'], Scene: ChatMealScene },
+  { id: 'chat-stock', label: 'Ask about stock', group: 'Chat', spec: '351-scene-chat-stock.html', summary: 'The count, and what took it down.', frames: ['phone', 'desktop'], Scene: ChatStockScene },
+  { id: 'chat-substitution', label: 'Ask for a swap', group: 'Chat', spec: '352-scene-chat-substitution.html', summary: 'General knowledge, labelled as the weakest source.', frames: ['phone', 'desktop'], Scene: ChatSubstitutionScene },
+  { id: 'chat-error', label: 'Chat — failed', group: 'Chat', spec: '353-scene-chat-error.html', summary: 'A failure, and an honest "I do not know".', frames: ['phone', 'desktop'], Scene: ChatErrorScene },
+  { id: 'chat-history', label: 'Chat history', group: 'Chat', spec: '354-scene-chat-history.html', summary: 'What you have asked before.', frames: ['phone', 'desktop'], Scene: ChatHistoryScene },
+  { id: 'chat-about-meal', label: 'About one recipe', group: 'Chat', spec: '355-scene-chat-about-meal.html', summary: 'The recipe beside the conversation — desktop only.', frames: ['phone', 'desktop'], Scene: ChatAboutMealScene },
+
+  /* ---------- Insights ---------- */
+  { id: 'week-summary', label: 'Your week', group: 'Insights', spec: '360-scene-week-summary.html', summary: 'Seven days, and what was noticed — with the working shown.', frames: ['phone', 'desktop'], Scene: WeekSummaryScene },
+  { id: 'week-empty', label: 'Your week — too early', group: 'Insights', spec: '360-scene-week-summary.html', summary: 'Under four meals, anything said would be a guess.', frames: ['phone', 'desktop'], Scene: WeekEmptyScene },
+  { id: 'should-eat', label: 'What should I eat?', group: 'Insights', spec: '361-scene-should-eat.html', summary: 'An observation, then what would answer it.', frames: ['phone', 'desktop'], Scene: ShouldEatScene },
+  { id: 'nutrition', label: 'Roughly, this week', group: 'Insights', spec: '362-scene-nutrition.html', summary: 'Estimates, labelled as estimates.', frames: ['phone', 'desktop'], Scene: NutritionScene },
+  { id: 'repeats', label: 'Your repeats', group: 'Insights', spec: '363-scene-repeats.html', summary: 'What you cook most — worth knowing, not worth fixing.', frames: ['phone', 'desktop'], Scene: RepeatsScene },
+  { id: 'spend', label: 'What you spent', group: 'Insights', spec: '364-scene-spend.html', summary: 'Roughly, and it says so twice.', frames: ['phone', 'desktop'], Scene: SpendScene },
+  { id: 'milestone', label: 'A milestone', group: 'Insights', spec: '365-scene-milestone.html', summary: 'States a fact and stops. No points, no levels.', frames: ['phone', 'desktop'], Scene: MilestoneScene },
+
+  /* ---------- Planning ---------- */
+  { id: 'mood', label: 'What do you feel like?', group: 'Planning', spec: '370-scene-mood.html', summary: 'The taste-led door. Picking nothing is valid.', frames: ['phone', 'desktop'], Scene: MoodScene },
+  { id: 'constraints', label: 'What to leave out', group: 'Planning', spec: '371-scene-constraints.html', summary: 'Hard filters — these remove results.', frames: ['phone', 'desktop'], Scene: ConstraintsScene },
+  { id: 'week-plan', label: 'This week', group: 'Planning', spec: '372-scene-week-plan.html', summary: 'Seven slots, designed empty-first.', frames: ['phone', 'desktop'], Scene: WeekPlanScene },
+  { id: 'plan-to-market', label: 'Plan to market list', group: 'Planning', spec: '373-scene-plan-to-market.html', summary: 'What the plan needs, minus what you have.', frames: ['phone', 'desktop'], Scene: PlanToMarketScene },
+  { id: 'portions', label: 'Cooking for how many?', group: 'Planning', spec: '374-scene-portions.html', summary: 'Scaled, and it states what it scaled from.', frames: ['phone', 'desktop'], Scene: PortionsScene },
 ];
