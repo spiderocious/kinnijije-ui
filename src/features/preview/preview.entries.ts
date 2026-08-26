@@ -47,6 +47,8 @@ import {
   ProgressPart,
   TooltipPart,
 } from './screen/parts/feedback-nav';
+import { CookStepPart, HaveNeedPart, HonestyPart } from './screen/parts/cook';
+import { AuditPart, ConsolePart, TablePart } from './screen/parts/counter';
 
 /**
  * Every specimen, in sidebar order.
@@ -109,6 +111,11 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   /* ---------- Trust & AI ---------- */
   { id: 'provenance', label: 'Provenance pair', group: 'Trust & AI', Part: ProvenancePart },
   { id: 'meal-card', label: 'Meal card', group: 'Trust & AI', Part: MealCardPart },
+  { id: 'honesty', label: 'Honesty bar · AI disclosure', group: 'Trust & AI', Part: HonestyPart },
+
+  /* ---------- Recipe & cook ---------- */
+  { id: 'have-need', label: 'Have / need', group: 'Recipe & cook', Part: HaveNeedPart },
+  { id: 'cook-step', label: 'Cook step · Timer', group: 'Recipe & cook', Part: CookStepPart },
 
   /* ---------- Structure ---------- */
   { id: 'card', label: 'Card · Panel', group: 'Structure', Part: CardPart },
@@ -116,4 +123,9 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
 
   /* ---------- Navigation ---------- */
   { id: 'navigation', label: 'App bar · Tabs · Tab bar', group: 'Navigation', Part: NavigationPart },
+
+  /* ---------- Counter (curator console) ---------- */
+  { id: 'console', label: 'The COUNTER register', group: 'Counter', Part: ConsolePart },
+  { id: 'table', label: 'Table · Cursor pager', group: 'Counter', Part: TablePart },
+  { id: 'audit', label: 'JSON · Diff', group: 'Counter', Part: AuditPart },
 ];
