@@ -49,6 +49,7 @@ import {
 } from './screen/parts/feedback-nav';
 import { CookStepPart, HaveNeedPart, HonestyPart } from './screen/parts/cook';
 import { AuditPart, ConsolePart, TablePart } from './screen/parts/counter';
+import { EmailPart, SitePart } from './screen/parts/site-email';
 
 /**
  * Every specimen, in sidebar order.
@@ -128,4 +129,10 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'console', label: 'The COUNTER register', group: 'Counter', Part: ConsolePart },
   { id: 'table', label: 'Table · Cursor pager', group: 'Counter', Part: TablePart },
   { id: 'audit', label: 'JSON · Diff', group: 'Counter', Part: AuditPart },
+
+  /* ---------- Marketing ---------- */
+  { id: 'site', label: 'Marketing site', group: 'Marketing', Part: SitePart },
+
+  /* ---------- Email ---------- */
+  { id: 'email', label: 'Email templates', group: 'Email', Part: EmailPart },
 ];
