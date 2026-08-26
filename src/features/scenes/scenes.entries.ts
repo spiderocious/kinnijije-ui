@@ -54,6 +54,19 @@ import {
   WeekPlanScene,
   WeekSummaryScene,
 } from './screens/insight-scenes';
+import {
+  ConsoleAuditScene,
+  ConsoleDashboardScene,
+  ConsoleFeedbackEmptyScene,
+  ConsoleFeedbackScene,
+  ConsoleFlagsScene,
+  ConsolePromptsScene,
+  ConsoleRecipeEditorScene,
+  ConsoleRecipesScene,
+  ConsoleShellScene,
+  ConsoleUsersScene,
+} from './screens/console-scenes';
+import { LandingScene } from './screens/site-scenes';
 
 /**
  * Every scene, in sidebar order.
@@ -214,4 +227,19 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   { id: 'week-plan', label: 'This week', group: 'Planning', spec: '372-scene-week-plan.html', summary: 'Seven slots, designed empty-first.', frames: ['phone', 'desktop'], Scene: WeekPlanScene },
   { id: 'plan-to-market', label: 'Plan to market list', group: 'Planning', spec: '373-scene-plan-to-market.html', summary: 'What the plan needs, minus what you have.', frames: ['phone', 'desktop'], Scene: PlanToMarketScene },
   { id: 'portions', label: 'Cooking for how many?', group: 'Planning', spec: '374-scene-portions.html', summary: 'Scaled, and it states what it scaled from.', frames: ['phone', 'desktop'], Scene: PortionsScene },
+
+  /* ---------- Console ---------- */
+  { id: 'console-shell', label: 'The console shell', group: 'Console', spec: 'a01-shell.html', summary: 'One wrapper class resolves the whole COUNTER register.', frames: ['desktop'], Scene: ConsoleShellScene },
+  { id: 'console-dashboard', label: 'Dashboard', group: 'Console', spec: 'a02-dashboard.html', summary: 'Five numbers, and the one that costs money.', frames: ['desktop'], Scene: ConsoleDashboardScene },
+  { id: 'console-recipes', label: 'Recipes', group: 'Console', spec: 'a03-recipes.html', summary: 'The table the curator never had — the shipped app has zero table markup.', frames: ['desktop'], Scene: ConsoleRecipesScene },
+  { id: 'console-recipe-editor', label: 'Recipe editor', group: 'Console', spec: 'a04-recipe-editor.html', summary: 'Publishing is platform-wide, so it asks first.', frames: ['desktop'], Scene: ConsoleRecipeEditorScene },
+  { id: 'console-audit', label: 'AI audit', group: 'Console', spec: 'a05-ai-audit.html', summary: 'Went in, came out, what it cost. Accountable rather than magic.', frames: ['desktop'], Scene: ConsoleAuditScene },
+  { id: 'console-prompts', label: 'Prompt editor', group: 'Console', spec: 'a06-prompts.html', summary: 'The highest-gravity surface, with the diff and guard it never had.', frames: ['desktop'], Scene: ConsolePromptsScene },
+  { id: 'console-users', label: 'Users', group: 'Console', spec: 'a07-users.html', summary: 'Suspending is an act on a person — typed confirmation.', frames: ['desktop'], Scene: ConsoleUsersScene },
+  { id: 'console-feedback', label: 'Feedback queue', group: 'Console', spec: 'a08-feedback.html', summary: 'The flag beside the step it is about.', frames: ['desktop'], Scene: ConsoleFeedbackScene },
+  { id: 'console-feedback-empty', label: 'Feedback — clear', group: 'Console', spec: 'a08-feedback.html', summary: 'An empty queue is the good outcome, so no CTA.', frames: ['desktop'], Scene: ConsoleFeedbackEmptyScene },
+  { id: 'console-flags', label: 'Feature flags', group: 'Console', spec: 'a09-flags.html', summary: 'Each switch states what turning it off actually does.', frames: ['desktop'], Scene: ConsoleFlagsScene },
+
+  /* ---------- Site ---------- */
+  { id: 'landing', label: 'The landing page', group: 'Site', spec: 's90-scene-landing.html', summary: 'Every section composed, with the trust proof rendered by the real meal card.', frames: ['phone', 'desktop'], Scene: LandingScene },
 ];
