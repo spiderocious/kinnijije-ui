@@ -1,0 +1,133 @@
+import type { SceneEntry } from './scenes.registry';
+
+import {
+  AuthScene,
+  CookScene,
+  FavouritesScene,
+  KitchenEmptyScene,
+  KitchenScene,
+  OfflineScene,
+  OnboardingScene,
+  RecipeScene,
+  SettingsScene,
+  SuggestionsEmptyScene,
+  SuggestionsLoadingScene,
+  SuggestionsScene,
+} from './screens/core-scenes';
+
+/**
+ * Every scene, in sidebar order.
+ *
+ * Add an entry the moment a scene is built. Each is reachable at
+ * `/scenes/<id>` and inside `/preview` under the Scenes group.
+ */
+export const SCENE_ENTRIES: readonly SceneEntry[] = [
+  {
+    id: 'kitchen',
+    label: 'The kitchen',
+    group: 'Core',
+    spec: '310-scene-kitchen.html',
+    summary: "The product's front door. Three ways in, one basket, one commit.",
+    frames: ['phone', 'desktop'],
+    Scene: KitchenScene,
+  },
+  {
+    id: 'kitchen-empty',
+    label: 'The kitchen — empty',
+    group: 'Core',
+    spec: '310-scene-kitchen.html',
+    summary: 'Nothing added yet — the CTA is off and says why.',
+    frames: ['phone', 'desktop'],
+    Scene: KitchenEmptyScene,
+  },
+  {
+    id: 'suggestions',
+    label: 'Suggestions',
+    group: 'Core',
+    spec: '311-scene-suggestions.html',
+    summary: 'Three meals, one decision. The weak match demotes its own CTA.',
+    frames: ['phone', 'desktop'],
+    Scene: SuggestionsScene,
+  },
+  {
+    id: 'suggestions-loading',
+    label: 'Suggestions — loading',
+    group: 'Core',
+    spec: '311-scene-suggestions.html',
+    summary: 'The engine is running; skeletons mirror the cards they become.',
+    frames: ['phone', 'desktop'],
+    Scene: SuggestionsLoadingScene,
+  },
+  {
+    id: 'suggestions-empty',
+    label: 'Suggestions — empty',
+    group: 'Core',
+    spec: '311-scene-suggestions.html',
+    summary: 'Nothing came back — and the way forward is offered.',
+    frames: ['phone', 'desktop'],
+    Scene: SuggestionsEmptyScene,
+  },
+  {
+    id: 'recipe',
+    label: 'The recipe',
+    group: 'Core',
+    spec: '312-scene-recipe.html',
+    summary: 'What you have, what you need, one commit. Provenance sits on the photo.',
+    frames: ['phone', 'desktop'],
+    Scene: RecipeScene,
+  },
+  {
+    id: 'cook',
+    label: 'Cook mode',
+    group: 'Core',
+    spec: '313-scene-cook.html',
+    summary: 'Hands busy, phone propped. No nav — leaving is a decision.',
+    frames: ['phone', 'desktop'],
+    Scene: CookScene,
+  },
+  {
+    id: 'favourites',
+    label: 'Favourites',
+    group: 'Core',
+    spec: '314-scene-favourites.html',
+    summary: 'What was saved, with provenance intact.',
+    frames: ['phone', 'desktop'],
+    Scene: FavouritesScene,
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    group: 'Core',
+    spec: '315-scene-settings.html',
+    summary: 'Measures, what we send, and how AI is used — stated plainly.',
+    frames: ['phone', 'desktop'],
+    Scene: SettingsScene,
+  },
+  {
+    id: 'onboarding',
+    label: 'Onboarding',
+    group: 'Core',
+    spec: '316-scene-onboarding.html',
+    summary: 'One screen. The trust claim is made before anything is asked.',
+    frames: ['phone', 'desktop'],
+    Scene: OnboardingScene,
+  },
+  {
+    id: 'offline',
+    label: 'Offline',
+    group: 'Core',
+    spec: '317-scene-offline.html',
+    summary: 'Saved recipes still work, and each says how old it is.',
+    frames: ['phone', 'desktop'],
+    Scene: OfflineScene,
+  },
+  {
+    id: 'auth',
+    label: 'Sign in',
+    group: 'Core',
+    spec: '318-scene-auth.html',
+    summary: 'Optional by design — you can cook without an account.',
+    frames: ['phone', 'desktop'],
+    Scene: AuthScene,
+  },
+];

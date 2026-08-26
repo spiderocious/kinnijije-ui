@@ -19,10 +19,13 @@ function RouteFallback() {
  * Layout shared by every route. Rendered by the root route.
  */
 export function AppEntrypoint() {
-  // The design-system viewer owns its whole chrome — a product header above it
-  // would compete with the specimen it is framing.
+  // The viewer and the scenes own their whole chrome — a product header above
+  // either would compete with the thing being reviewed, and a scene has to
+  // render at the real viewport to be worth looking at.
   const isViewer = useRouterState({
-    select: (state) => state.location.pathname.startsWith(ROUTES.PREVIEW),
+    select: (state) =>
+      state.location.pathname.startsWith(ROUTES.PREVIEW) ||
+      state.location.pathname.startsWith(ROUTES.SCENES),
   });
 
   if (isViewer) {

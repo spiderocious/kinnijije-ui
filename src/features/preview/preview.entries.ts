@@ -58,6 +58,8 @@ import {
   ShellPart,
   StockPart,
 } from './screen/parts/families';
+import { SCENE_PREVIEW_PARTS } from './screen/parts/scenes';
+import { SCENE_ENTRIES } from '@features/scenes/scenes.entries';
 
 /**
  * Every specimen, in sidebar order.
@@ -66,6 +68,16 @@ import {
  * `Part` is a preview component with a descriptive filename (`buttons.tsx`,
  * never `21-buttons.tsx`).
  */
+/** One entry per scene group that actually has scenes. */
+const SCENE_ENTRIES_FOR_PREVIEW: PreviewEntry[] = SCENE_PREVIEW_PARTS.filter(({ group }) =>
+  SCENE_ENTRIES.some((scene) => scene.group === group),
+).map(({ group, Part }) => ({
+  id: `scenes-${group.toLowerCase().replace(/\s+/g, '-')}`,
+  label: group,
+  group: 'Scenes' as const,
+  Part,
+}));
+
 export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   /* ---------- Foundation ---------- */
   { id: 'palette', label: 'Palette', group: 'Foundation', Part: PalettePart },
@@ -157,4 +169,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
 
   /* ---------- Email ---------- */
   { id: 'email', label: 'Email templates', group: 'Email', Part: EmailPart },
+
+  /* ---------- Scenes — one part per group ---------- */
+  ...SCENE_ENTRIES_FOR_PREVIEW,
 ];

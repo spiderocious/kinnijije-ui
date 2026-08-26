@@ -6,6 +6,7 @@ export const ROUTES = {
   ROOT: '/',
   ENTRY: '/',
   PREVIEW: '/preview',
+  SCENES: '/scenes',
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

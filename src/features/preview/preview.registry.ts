@@ -28,7 +28,8 @@ export type PreviewGroup =
   | 'Planning'
   | 'Counter'
   | 'Marketing'
-  | 'Email';
+  | 'Email'
+  | 'Scenes';
 
 export interface PreviewEntry {
   /** URL-safe id — becomes the `?p=` search param. */
@@ -64,4 +65,5 @@ export const PREVIEW_GROUP_ORDER: readonly PreviewGroup[] = [
   'Counter',
   'Marketing',
   'Email',
+  'Scenes',
 ];
