@@ -3,7 +3,8 @@
 **Shipped:** 2026-08-26
 **From:** `dockito/design-system/projects/kinnijije-v2/` (the canonical visual spec — 281 HTML specimens)
 **To:** `cookiepot/web/src/ui/`
-**Viewer:** `/preview` — 51 specimens, every component in every state
+**Viewer:** `/preview` — 57 specimens, every component in every state
+**Scenes:** `/scenes` — 57 screens, each also at `/scenes/<id>`
 
 ---
 
@@ -31,8 +32,23 @@ Three subordinate rules: **sky acts, it never reports** · **provenance travels 
 
 ## What was generated
 
-**114 components** (95 top-level exports + 19 compound slots) across 64 module files,
-each visible in the `/preview` viewer.
+**~160 components** across 76 module files, plus **57 scenes** — every component
+visible in the `/preview` viewer, every scene reachable at its own route.
+
+### Importing
+
+One barrel per group. Never reach into a file:
+
+```tsx
+import { Button, IconButton, Dock } from '@ui/primitives';
+import { MealCard, Provenance, HonestyBar } from '@ui/domain';
+import { Chat } from '@ui/chat';
+```
+
+Groups: `primitives` · `inputs` · `status` · `display` · `feedback` ·
+`navigation` · `structure` · `domain` · `chat` · `stock` · `insights` ·
+`planning` · `capture` · `site` · `email` · `drawer` · `components`, plus
+`@icons`.
 
 | Group | Components | Notes |
 |---|---|---|
@@ -46,6 +62,11 @@ each visible in the `/preview` viewer.
 | Structure | Card, Panel, 6 named Row shapes | |
 | Domain — trust | Provenance, MealCard, HonestyBar, AiDisclosure, WhyThisMeal | |
 | Domain — cook | HaveNeed, CookStep, StepTimer, SuggestCTA | |
+| Chat | Chat.Thread/User/AI/Thinking/Unknown/Error/Citation/Composer/Disclaimer | `source` required on every answer |
+| Standing kitchen | StockItem, StockLevelBar, FreshnessDot, StorageTag, StockUntracked, RestockSuggestion | maintained only by side-effects |
+| Insights | InsightCard, InsightEvidence, WeekStrip, Streak, VarietyMeter | `evidence` required |
+| Planning | MoodPicker, ConstraintChip, MealSlot, PortionScaler | |
+| Capture | CaptureMethods, VoiceCapture, PhotoCapture, ExtractionResult, PermissionPrompt, CaptureRecovery | typing always works |
 | Marketing | SiteHeader, SiteHero (5 variants), SiteHowItWorks, SiteTrust, SitePricing, SiteFaq, SiteFinalCta, SiteFooter | |
 | Email | EmailShell + 6 primitives, 5 templates | tables only, no CSS vars |
 
@@ -99,7 +120,14 @@ review queue) or `kind="terminal"`.
 <EmptyState title="Nothing here" />          // ✗ does not compile
 ```
 
-### 4 · The input triad
+### 4 · Two more required slots
+
+`Chat.AI` takes `source` as a required prop and `InsightCard` takes `evidence` —
+the same shape as the meal card's provenance. An uncited answer and an
+unevidenced observation both fail to compile, which is what makes the product's
+"we show our working" posture structural rather than aspirational.
+
+### 5 · The input triad
 
 `disabled` / `readOnly` / `invalid` are **three independent booleans that combine**, never
 one collapsed enum. `readOnly + invalid` is normal in a review flow and a state enum cannot
@@ -113,7 +141,7 @@ data to be faked with `disabled` — muting information the curator needs to rea
 Read off the four components that existed before this ship:
 
 - **Named exports only.** No `forwardRef`, no default exports (except route-screen files, which add one for lazy loading).
-- **No `index.ts` barrels.** Imports hit the full file path: `@ui/primitives/button/button`.
+- **One barrel per group.** `import { Button } from '@ui/primitives'` — never the full file path. The repo already had `@ui/drawer` and `@icons` as barrels; the first pass of this ship mis-read four barrel-less scaffold components as a convention and produced `@ui/primitives/button/button`, which was corrected across all 90 import sites.
 - **Folder-per-component**, kebab-case, descriptive filenames — the Studio's `NN-*.html` numbering does **not** carry into shipped code.
 - `cn` from `@shared/utils/cn` (twMerge + clsx).
 - **Icons only through the `@icons` proxy**, never `lucide-react` directly — the proxy comment says the point is a one-place swap, and that now covers three sources.
@@ -144,37 +172,48 @@ names because they are app shell, not library.
 
 ---
 
-## Skipped, and why
+## Scenes
 
-### Scenes — build these in application code
+**57 screens**, each reachable two ways — and the difference matters:
 
-The Studio's `310-*` through `384-*` files and `preview-admin/a01–a09` are **scenes**:
-full-screen compositions that prove the system, not library building blocks. They are the
-visual spec for application code. Roughly 50 files, including:
-
-| Scene | Spec file |
+| | |
 |---|---|
-| Kitchen, suggestions, recipe, cook mode | `preview/310-scene-kitchen.html` … `313-scene-cook.html` |
-| Favourites, settings, onboarding, offline, auth | `preview/314` … `318` |
-| The standing kitchen (dashboard, stock, market) | `preview/330` … `344` |
-| Chat surfaces | `preview/350` … `355` |
-| Insights, planning | `preview/360` … `374` |
-| The curator's console screens | `preview-admin/a01-shell.html` … `a09-flags.html` |
-| The full landing page | `preview-site/s90-scene-landing.html` |
+| `/scenes/<id>` | The real screen at the real viewport. No device frame, no viewer chrome. The only way to see whether it works on a phone. |
+| `/preview` → Scenes | The same screen inside a 392 or 920 device frame, for side-by-side review. |
 
-Each composes components that now exist. Build them in `src/features/<name>/screen/`.
+`/scenes` lists every one with its spec path and frames. Add
+`?frame=desktop` to force the desktop composition on a laptop.
 
-### Not yet built
+**The frames exist only in the viewer.** A frame present in the shipped app is a
+frame that lied during design.
 
-These are named in the Studio manifest and have no component here yet. None are blocking —
-each has a close neighbour that ships:
+| Group | Screens | Spec |
+|---|---|---|
+| Core | 12 | `310-scene-kitchen` … `318-scene-auth` |
+| Standing kitchen | 11 | `330` … `339` |
+| Capture | 5 | `340` … `344` |
+| Chat | 6 | `350` … `355` |
+| Insights | 7 | `360` … `365` |
+| Planning | 5 | `370` … `374` |
+| Console | 10 | `preview-admin/a01-shell` … `a09-flags` |
+| Site | 1 | `preview-site/s90-scene-landing` |
 
-- **Chat surfaces** (`420-429`) — `Chat.AI.Source` is the third required-slot contract. The pattern is identical to `Provenance` on `MealCard`; build it when the chat feature starts.
-- **Insight/planning families** (`440-465`) — `Insight.Evidence` is the same shape again.
-- **Stock families** (`400-413`) — the standing kitchen. `Row.Market` and `Row.IngredientNeed` cover the row shapes; the stock-level and freshness marks are not built.
-- **Capture surfaces** (`54-57`, `237-240`) — voice capture, photo capture, multi-shot tray. `ChipInput` already models their output, including the dashed AI-guess treatment.
+**Nothing on any scene is hand-authored** — every block is a component from the
+library, per each spec's composition audit. That is the thing the shipped app
+failed at 25 times.
+
+Every desktop variant earns its width with something a phone cannot hold: the
+makeable count, the suggestion explainer, the insight column, what a market item
+unblocks, the source photo beside the extraction reads, the seven-day grid, the
+recipe beside the conversation. **Market mode is honestly phone-only** — a
+desktop has nothing extra to show someone standing in a market with a bag in one
+hand.
+
+## Not built
+
 - **Date/time inputs** (`59-62`) — no surface in the app currently needs them.
-- **Charts** (`94-96`) — deferred with the insights work.
+- **Charts** (`94-96`) — the insight scenes use stats and the week strip instead; a
+  real chart library decision is worth making against real data.
 
 ---
 
@@ -184,6 +223,7 @@ each has a close neighbour that ships:
 2. **No tests.** Matches the repo (an empty `__tests__/` folder, no framework installed) and the standing preference.
 3. **Dish photography** is the one real asset gap. Every hero falls through to a type-led degrade with the dish family's mark, which is specimen'd and honest — but real photographs would carry the product.
 4. **`index.html`** had an uncommitted `Cookiepot` → `Kinnijije` title change before this ship. Left as found.
+5. **Scenes use fixture data.** Every screen renders from a local constant, not from TanStack Query. Wiring one to real data means replacing that constant and adding the loading/error states the components already ship.
 
 ---
 
