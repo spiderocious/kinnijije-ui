@@ -3,7 +3,7 @@
 GENERATED from `design-system/projects/kinnijije-v2/components.md`.
 Rebuild with `python3 docs/build-checklist.py`.
 
-**126 of 437 ticked — 311 to build.**
+**145 of 437 ticked — 292 to build.**
 
 The manifest declares 500 entries; this parses 437 of them. The ~60 it misses
 are ones written as prose asides rather than in a `·` run — they are covered by
@@ -14,7 +14,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 
 ---
 
-## Consumer — 94/256
+## Consumer — 107/256
 
 ### Phase 2 — Pantry & stock — 6/14
 
@@ -74,7 +74,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Email card
 - [x] Email footer
 
-### Actions — 6/18
+### Actions — 9/18
 
 - [x] Button
 - [ ] Button icon-only
@@ -83,9 +83,9 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Button dock
 - [x] Filter chip
 - [ ] Segmented control
-- [ ] Link nav
-- [ ] Link action
-- [ ] Link menu
+- [x] Link nav
+- [x] Link action
+- [x] Link menu
 - [ ] Suggest-meals CTA
 - [ ] Quick-reply chip
 - [x] FAB
@@ -130,13 +130,13 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Portion stepper
 - [ ] Ingredient quantity editor
 
-### Data display — 5/46
+### Data display — 14/46
 
 - [ ] Stat standard
 - [ ] Stat compact
 - [ ] Stat icon-led
 - [ ] Key-value inline
-- [ ] Data split
+- [x] Data split
 - [ ] Title+value
 - [x] Meal card
 - [ ] Meal card compact
@@ -149,10 +149,10 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Honesty bar
 - [x] Avatar
 - [ ] Avatar group
-- [ ] Chart bar
-- [ ] Chart line
-- [ ] Sparkline
-- [ ] Progress-with-content
+- [x] Chart bar
+- [x] Chart line
+- [x] Sparkline
+- [x] Progress-with-content
 - [x] Table
 - [ ] Title+description
 - [ ] Title+metadata
@@ -162,14 +162,14 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Byline
 - [ ] Content caption
 - [ ] Sentiment icon+text
-- [ ] Metadata group
+- [x] Metadata group
 - [ ] Collection summary
 - [ ] Summary tags
-- [ ] Accordion
-- [ ] Media container
+- [x] Accordion
+- [x] Media container
 - [ ] Media item
 - [x] Banner
-- [ ] Timeline
+- [x] Timeline
 - [ ] Step list
 - [ ] Nutrition strip
 - [ ] Cook-time breakdown
@@ -233,7 +233,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Offline banner
 - [ ] Feature-disabled state
 
-### Navigation — 4/14
+### Navigation — 5/14
 
 - [x] App bar
 - [ ] App bar scroll-aware
@@ -241,7 +241,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Sidebar nav
 - [ ] Breadcrumb
 - [x] Tabs
-- [ ] Menu
+- [x] Menu
 - [x] Cursor pager
 - [ ] Page control
 - [ ] Back link
@@ -311,7 +311,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Empty kitchen → first suggestion
 - [ ] Extraction failure → typed fallback
 
-## Admin — 31/114
+## Admin — 35/114
 
 ### Actions — 4/9
 
@@ -345,7 +345,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Step row editor
 - [ ] JSON editor
 
-### Data display — 2/24
+### Data display — 6/24
 
 - [ ] KPI cell
 - [ ] KPI strip
@@ -360,14 +360,14 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Detail drawer
 - [ ] Detail row
 - [ ] Info card
-- [ ] Line chart
-- [ ] Bar chart
-- [ ] Sparkline
+- [x] Line chart
+- [x] Bar chart
+- [x] Sparkline
 - [ ] Stat delta
 - [x] JSON inspector
 - [x] Diff view
 - [ ] Audit entry
-- [ ] Timeline
+- [x] Timeline
 - [ ] Metric tile
 - [ ] Cost ledger line
 - [ ] Empty-or-error
@@ -451,7 +451,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Empty states across all four boards
 - [ ] Extraction viewer — the photo the cook uploaded and what the AI read
 
-## Site — 1/67
+## Site — 3/67
 
 ### Scenes — 0/3
 
@@ -531,19 +531,19 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] toggle monthly/yearly
 - [ ] FAQ-adjacent
 
-### FAQ — 0/5
+### FAQ — 1/5
 
-- [ ] accordion
+- [x] accordion
 - [ ] two-column
 - [ ] categorised
 - [ ] search-first
 - [ ] inline-with-CTA
 
-### Final CTA — 0/6
+### Final CTA — 1/6
 
 - [ ] full-bleed sky
 - [ ] centred card
-- [ ] split
+- [x] split
 - [ ] with app-store badges
 - [ ] newsletter
 - [ ] blobatar-led

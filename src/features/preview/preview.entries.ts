@@ -66,6 +66,12 @@ import {
   InputsSecurityPart,
   InputsUploadPart,
 } from './screen/parts/inputs-more';
+import {
+  ChartsPart,
+  ContentPart,
+  LinksPart,
+  ValuePairsPart,
+} from './screen/parts/display-more';
 import { SCENE_PREVIEW_PARTS } from './screen/parts/scenes';
 import { SCENE_ENTRIES } from '@features/scenes/scenes.entries';
 
@@ -110,6 +116,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'hold-button', label: 'Hold-to-confirm', group: 'Actions', Part: HoldButtonPart },
   { id: 'continue-bar', label: 'Continue bar', group: 'Actions', Part: ContinueBarPart },
   { id: 'suggest-cta', label: 'Suggest CTA', group: 'Actions', Part: SuggestCtaPart },
+  { id: 'links', label: 'Links · Action menu', group: 'Actions', Part: LinksPart },
 
   /* ---------- Inputs ---------- */
   { id: 'input', label: 'Text input', group: 'Inputs', Part: InputPart },
@@ -142,6 +149,9 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   /* ---------- Data display ---------- */
   { id: 'figure', label: 'Figure', group: 'Data display', Part: FigurePart },
   { id: 'stat', label: 'Stat', group: 'Data display', Part: StatPart },
+  { id: 'value-pairs', label: 'Value pairs', group: 'Data display', Part: ValuePairsPart },
+  { id: 'charts', label: 'Charts', group: 'Data display', Part: ChartsPart },
+  { id: 'content', label: 'Accordion · Media · Timeline', group: 'Data display', Part: ContentPart },
 
   /* ---------- Trust & AI ---------- */
   { id: 'provenance', label: 'Provenance pair', group: 'Trust & AI', Part: ProvenancePart },
