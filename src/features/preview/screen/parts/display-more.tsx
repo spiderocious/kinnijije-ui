@@ -1,22 +1,5 @@
 import { ActionMenu, ActionLink, MenuLink, NavLink, QuickReply } from '@ui/primitives';
-import {
-  Accordion,
-  BarChart,
-  DataBanner,
-  DataSplit,
-  DataValue,
-  KeyValue,
-  LastRefreshed,
-  LineChart,
-  Media,
-  MediaContainer,
-  MetadataGroup,
-  PriceDisplay,
-  ProgressContent,
-  Sparkline,
-  Timeline,
-} from '@ui/display';
-import { Figure } from '@ui/display';
+import { Accordion, BarChart, DataBanner, DataSplit, DataValue, Figure, KeyValue, LastRefreshed, LineChart, Media, MediaContainer, MetadataGroup, PriceDisplay, ProgressContent, Sparkline, Timeline } from '@ui/display';
 import { Provenance } from '@ui/domain';
 import { Status } from '@ui/status';
 

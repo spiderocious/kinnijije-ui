@@ -72,6 +72,11 @@ import {
   LinksPart,
   ValuePairsPart,
 } from './screen/parts/display-more';
+import {
+  CelebrationPart,
+  ErrorStatesPart,
+  PopoverPart,
+} from './screen/parts/feedback-more';
 import { SCENE_PREVIEW_PARTS } from './screen/parts/scenes';
 import { SCENE_ENTRIES } from '@features/scenes/scenes.entries';
 
@@ -145,6 +150,9 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'callout', label: 'Callout', group: 'Feedback', Part: CalloutPart },
   { id: 'progress', label: 'Progress', group: 'Feedback', Part: ProgressPart },
   { id: 'tooltip', label: 'Tooltip', group: 'Feedback', Part: TooltipPart },
+  { id: 'popover', label: 'Popover', group: 'Feedback', Part: PopoverPart },
+  { id: 'error-states', label: 'Errors · Loader', group: 'Feedback', Part: ErrorStatesPart },
+  { id: 'celebration', label: 'Celebration ladder', group: 'Feedback', Part: CelebrationPart },
 
   /* ---------- Data display ---------- */
   { id: 'figure', label: 'Figure', group: 'Data display', Part: FigurePart },

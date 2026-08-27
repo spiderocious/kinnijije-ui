@@ -3,7 +3,7 @@
 GENERATED from `design-system/projects/kinnijije-v2/components.md`.
 Rebuild with `python3 docs/build-checklist.py`.
 
-**145 of 437 ticked — 292 to build.**
+**151 of 437 ticked — 286 to build.**
 
 The manifest declares 500 entries; this parses 437 of them. The ~60 it misses
 are ones written as prose asides rather than in a `·` run — they are covered by
@@ -14,7 +14,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 
 ---
 
-## Consumer — 107/256
+## Consumer — 111/256
 
 ### Phase 2 — Pantry & stock — 6/14
 
@@ -200,7 +200,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Measurement system
 - [ ] Verified badge
 
-### Feedback & overlays — 11/30
+### Feedback & overlays — 15/30
 
 - [x] Badge
 - [x] Tag
@@ -214,13 +214,13 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Cooking-pot loader
 - [x] Empty state
 - [x] Empty state
-- [ ] Error state
-- [ ] Error state
+- [x] Error state
+- [x] Error state
 - [ ] Inline field error
 - [ ] Status message
 - [ ] Countdown timer
 - [x] Tooltip
-- [ ] Popover
+- [x] Popover
 - [x] Modal
 - [x] Modal
 - [x] Modal
@@ -228,7 +228,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Bottom sheet
 - [ ] Side sheet
 - [ ] Full-screen takeover
-- [ ] Success moment
+- [x] Success moment
 - [ ] Congratulatory takeover
 - [ ] Offline banner
 - [ ] Feature-disabled state
@@ -311,7 +311,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Empty kitchen → first suggestion
 - [ ] Extraction failure → typed fallback
 
-## Admin — 35/114
+## Admin — 37/114
 
 ### Actions — 4/9
 
@@ -385,7 +385,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Status mapping — ai-result
 - [ ] Status mapping — flag
 
-### Feedback & overlays — 10/14
+### Feedback & overlays — 12/14
 
 - [x] Toast
 - [x] Banner
@@ -396,11 +396,11 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Confirm modal
 - [ ] Form modal
 - [x] Drawer
-- [ ] Popover
+- [x] Popover
 - [x] Tooltip
 - [x] Progress
 - [x] Skeleton
-- [ ] Error state
+- [x] Error state
 
 ### Navigation — 2/11
 
