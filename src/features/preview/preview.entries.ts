@@ -58,6 +58,14 @@ import {
   ShellPart,
   StockPart,
 } from './screen/parts/families';
+import {
+  InputsDatePart,
+  InputsDomainPart,
+  InputsEditorsPart,
+  InputsNumericPart,
+  InputsSecurityPart,
+  InputsUploadPart,
+} from './screen/parts/inputs-more';
 import { SCENE_PREVIEW_PARTS } from './screen/parts/scenes';
 import { SCENE_ENTRIES } from '@features/scenes/scenes.entries';
 
@@ -113,6 +121,12 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'combobox', label: 'Combobox', group: 'Inputs', Part: ComboboxPart },
   { id: 'chip-input', label: 'Chip input', group: 'Inputs', Part: ChipInputPart },
   { id: 'slider', label: 'Slider', group: 'Inputs', Part: SliderPart },
+  { id: 'inputs-numeric', label: 'Number · Multi-select · Rating', group: 'Inputs', Part: InputsNumericPart },
+  { id: 'inputs-security', label: 'OTP · Password', group: 'Inputs', Part: InputsSecurityPart },
+  { id: 'inputs-date', label: 'Date · Time · Range', group: 'Inputs', Part: InputsDatePart },
+  { id: 'inputs-upload', label: 'File upload', group: 'Inputs', Part: InputsUploadPart },
+  { id: 'inputs-domain', label: 'Domain pickers', group: 'Inputs', Part: InputsDomainPart },
+  { id: 'inputs-editors', label: 'Row editors', group: 'Inputs', Part: InputsEditorsPart },
 
   /* ---------- Status ---------- */
   { id: 'status', label: 'Status contract', group: 'Status', Part: StatusPart },

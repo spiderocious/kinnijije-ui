@@ -3,7 +3,7 @@
 GENERATED from `design-system/projects/kinnijije-v2/components.md`.
 Rebuild with `python3 docs/build-checklist.py`.
 
-**110 of 437 ticked — 327 to build.**
+**126 of 437 ticked — 311 to build.**
 
 The manifest declares 500 entries; this parses 437 of them. The ~60 it misses
 are ones written as prose asides rather than in a `·` run — they are covered by
@@ -14,7 +14,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 
 ---
 
-## Consumer — 81/256
+## Consumer — 94/256
 
 ### Phase 2 — Pantry & stock — 6/14
 
@@ -95,16 +95,16 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Hold-to-confirm button
 - [ ] Icon-button with badge
 
-### Inputs — 13/32
+### Inputs — 24/32
 
 - [x] Text
 - [ ] Search
 - [x] Textarea
 - [x] Stepper
-- [ ] Number
+- [x] Number
 - [ ] Select/dropdown
 - [x] Combobox
-- [ ] Multi-select
+- [x] Multi-select
 - [x] Checkbox
 - [ ] Checkbox group
 - [x] Radio
@@ -114,19 +114,19 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Voice capture
 - [x] Photo capture
 - [ ] Multi-shot tray
-- [ ] File upload
-- [ ] Rating
-- [ ] Date
+- [x] File upload
+- [x] Rating
+- [x] Date
 - [x] Time
-- [ ] Date-range
-- [ ] OTP
-- [ ] Password
+- [x] Date-range
+- [x] OTP
+- [x] Password
 - [ ] Password-strength bar
 - [ ] Form+Field wrapper
 - [x] Slider
-- [ ] Cuisine picker
-- [ ] Difficulty picker
-- [ ] Measurement toggle
+- [x] Cuisine picker
+- [x] Difficulty picker
+- [x] Measurement toggle
 - [ ] Portion stepper
 - [ ] Ingredient quantity editor
 
@@ -179,12 +179,12 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Empty-list inline
 - [ ] Rating summary
 
-### Status & lifecycle — 1/18
+### Status & lifecycle — 2/18
 
 - [ ] Recipe source
 - [ ] Recipe status
 - [ ] Hero image kind
-- [ ] Difficulty
+- [x] Difficulty
 - [ ] Difficulty floor
 - [ ] Match strength
 - [ ] Approximate marker
@@ -250,7 +250,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Tab-switch transition
 - [ ] Skip link
 
-### Structure & rows — 14/44
+### Structure & rows — 15/44
 
 - [x] Card
 - [x] Card
@@ -272,7 +272,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] substep
 - [x] person
 - [ ] notification
-- [ ] cuisine
+- [x] cuisine
 - [ ] recent-search
 - [ ] market-item
 - [ ] feedback
@@ -311,7 +311,7 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Empty kitchen → first suggestion
 - [ ] Extraction failure → typed fallback
 
-## Admin — 28/114
+## Admin — 31/114
 
 ### Actions — 4/9
 
@@ -325,14 +325,14 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [ ] Danger action
 - [ ] Row action menu
 
-### Inputs — 6/17
+### Inputs — 9/17
 
 - [x] Text
 - [ ] Search
 - [x] Select
-- [ ] Multi-select
-- [ ] Date-range
-- [ ] Number
+- [x] Multi-select
+- [x] Date-range
+- [x] Number
 - [x] Textarea
 - [x] Checkbox
 - [x] Radio
