@@ -88,6 +88,7 @@ export interface EmptyFilteredProps {
  * the filter is hiding it. Offering "create one" here would be wrong; the way
  * out is always to clear the filter.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/157-empty-filtered.html */
 export function EmptyFiltered({ filterCount, onClear, className }: EmptyFilteredProps) {
   return (
     <div
@@ -108,6 +109,29 @@ export function EmptyFiltered({ filterCount, onClear, className }: EmptyFiltered
       <Button variant="secondary" className="mt-1" onClick={onClear}>
         Clear {filterCount === 1 ? 'the filter' : 'all filters'}
       </Button>
+    </div>
+  );
+}
+
+/**
+ * Still checking whether it is really empty.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/156-empty-state.html
+ *
+ * **This exists so an empty state is never a guess.** Rendering "Nothing here"
+ * while the query is still running tells the user something false, and they act
+ * on it — they add a thing they already had, or they leave. This holds the same
+ * box until the answer is real.
+ */
+export function EmptyStateChecking({ className }: { readonly className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('flex flex-col items-center gap-3 px-6 py-10 text-center', className)}
+    >
+      <span className="block h-[56px] w-[56px] animate-shimmer rounded-round bg-paper-2" />
+      <span className="block h-[16px] w-44 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-64 animate-shimmer rounded-[3px] bg-paper-2" />
     </div>
   );
 }

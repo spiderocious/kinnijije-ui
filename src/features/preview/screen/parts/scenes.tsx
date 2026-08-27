@@ -5,7 +5,12 @@ import { ROUTES } from '@shared/constants/routes';
 import { ExternalLink } from '@icons';
 import { DeviceFrame } from '@features/scenes/parts/scene-frame';
 import { SCENE_ENTRIES } from '@features/scenes/scenes.entries';
-import { SCENE_GROUP_ORDER, type SceneEntry, type SceneGroup } from '@features/scenes/scenes.registry';
+import {
+  SCENE_GROUP_BLURB,
+  SCENE_GROUP_ORDER,
+  type SceneEntry,
+  type SceneGroup,
+} from '@features/scenes/scenes.registry';
 
 import { Demo, Note, Rule, Section, Specimen } from './preview-canvas';
 
@@ -93,19 +98,10 @@ function groupPart(group: SceneGroup, intro: string) {
   };
 }
 
+// The blurbs live in the registry beside the group order, so the index and this
+// viewer cannot drift apart — a second copy here is how one gets a group the
+// other does not have.
 export const SCENE_PREVIEW_PARTS = SCENE_GROUP_ORDER.map((group) => ({
   group,
-  Part: groupPart(
-    group,
-    {
-      Core: 'The nine screens every session passes through.',
-      'Standing kitchen': 'The pantry, its stock, and the market list that tops it up.',
-      Capture: 'Getting what is in the kitchen into the app — and what happens when that fails.',
-      Chat: 'Asking the chef, with every answer cited.',
-      Insights: 'What the product noticed, with its working shown.',
-      Planning: 'Mood, the week, and what it means for the market list.',
-      Console: "The curator's console, at COUNTER density.",
-      Site: 'The marketing site, composed end to end.',
-    }[group],
-  ),
+  Part: groupPart(group, SCENE_GROUP_BLURB[group]),
 }));

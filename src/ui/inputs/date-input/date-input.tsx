@@ -131,6 +131,7 @@ export interface DateRangeProps extends BaseProps {
  * is unpickable rather than merely invalid — the control refuses the mistake
  * instead of reporting it afterwards.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/60-date-range.html */
 export function DateRange({
   from,
   to,

@@ -208,3 +208,27 @@ export const Popover = {
   Trigger: PopoverTrigger,
   Content: PopoverContent,
 };
+
+/**
+ * A popover whose content is being fetched.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/162-popover.html
+ *
+ * **The panel opens immediately and fills in.** Deferring the open until the
+ * content lands makes the trigger feel dead on a slow connection — the user
+ * presses again, and the second press closes what the first one opened.
+ */
+export function PopoverLoading({ lines = 3 }: { readonly lines?: number }) {
+  const widths = ['84%', '96%', '68%'];
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-2 p-1">
+      {Array.from({ length: lines }, (_, i) => (
+        <span
+          key={i}
+          className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+          style={{ width: widths[i % widths.length] }}
+        />
+      ))}
+    </div>
+  );
+}

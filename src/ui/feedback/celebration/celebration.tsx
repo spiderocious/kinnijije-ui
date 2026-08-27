@@ -182,6 +182,7 @@ export interface TakeoverProps {
  * rendered — cook mode is the reason this exists, and a cook with wet hands who
  * cannot find the way out is stuck with the phone they propped up.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/169-takeover.html */
 export function Takeover({
   open,
   onExit,
@@ -239,5 +240,62 @@ export function Takeover({
       <div className="flex-1 overflow-y-auto">{children}</div>
     </div>,
     document.body,
+  );
+}
+
+/**
+ * Inside the takeover, while the recipe loads.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/169-takeover.html
+ *
+ * **The takeover opens first, then fills.** Cook mode is entered with a
+ * deliberate press in a kitchen, often with wet hands — making that press feel
+ * unregistered while a fetch runs is how someone presses it three times.
+ *
+ * The exit control is rendered by `Takeover` itself and stays live throughout:
+ * exiting is always possible, including from a failure.
+ */
+export function TakeoverLoading({ onDark = true }: { readonly onDark?: boolean }) {
+  const bg = onDark ? 'bg-white/10' : 'bg-paper-2';
+  return (
+    <div aria-hidden="true" className="flex flex-col items-center gap-4 px-6 py-16">
+      <span className={cn('block h-[22px] w-40 animate-shimmer rounded-[3px]', bg)} />
+      <span className={cn('block h-[54px] w-full max-w-[520px] animate-shimmer rounded-blade', bg)} />
+      <span className={cn('block h-[54px] w-full max-w-[440px] animate-shimmer rounded-blade', bg)} />
+    </div>
+  );
+}
+
+/**
+ * It failed inside the mode.
+ *
+ * Offers a retry and nothing else — `Takeover`'s own exit is always there, so
+ * duplicating it here would give the user two different ways out of one screen.
+ */
+export function TakeoverError({
+  message = 'This recipe could not load',
+  onRetry,
+  onDark = true,
+}: {
+  readonly message?: string;
+  readonly onRetry?: () => void;
+  readonly onDark?: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 px-6 py-16 text-center">
+      <p
+        className={cn(
+          'font-display text-xl font-extrabold tracking-display',
+          onDark ? 'text-ink-inv' : 'text-ink',
+        )}
+      >
+        {message}
+      </p>
+      {onRetry !== undefined && (
+        <Button onDark={onDark} onClick={onRetry}>
+          Try again
+        </Button>
+      )}
+    </div>
   );
 }

@@ -117,20 +117,26 @@ function StandardBody({ entry }: { readonly entry: Extract<ModalEntry, { kind: '
         <p className="mt-2 text-base text-ink-2">{entry.description}</p>
       </Show>
       <div className="mt-6 flex flex-wrap justify-end gap-3">
-        <Button
-          variant="secondary"
-          onClick={() => {
-            entry.onCancel?.();
-            drawerStore.closeModal();
-          }}
-        >
-          {entry.cancelLabel ?? 'Cancel'}
-        </Button>
+        {/* `null` means there is nowhere to cancel to — see sessionTimeout. */}
+        <Show when={entry.cancelLabel !== null}>
+          <Button
+            variant="secondary"
+            disabled={entry.committing === true}
+            onClick={() => {
+              entry.onCancel?.();
+              drawerStore.closeModal();
+            }}
+          >
+            {entry.cancelLabel ?? 'Cancel'}
+          </Button>
+        </Show>
         <Button
           destructive={entry.kind === 'danger'}
+          loading={entry.committing === true}
           onClick={() => {
             entry.onConfirm();
-            drawerStore.closeModal();
+            // A committing modal closes itself when the work lands, not here.
+            if (entry.committing !== true) drawerStore.closeModal();
           }}
         >
           {entry.confirmLabel}
@@ -166,15 +172,19 @@ function CriticalBody({ entry }: { readonly entry: Extract<ModalEntry, { kind: '
       </div>
 
       <div className="mt-6 flex flex-wrap justify-end gap-3">
-        <Button
-          variant="secondary"
-          onClick={() => {
-            entry.onCancel?.();
-            drawerStore.closeModal();
-          }}
-        >
-          {entry.cancelLabel ?? 'Cancel'}
-        </Button>
+        {/* `null` means there is nowhere to cancel to — see sessionTimeout. */}
+        <Show when={entry.cancelLabel !== null}>
+          <Button
+            variant="secondary"
+            disabled={entry.committing === true}
+            onClick={() => {
+              entry.onCancel?.();
+              drawerStore.closeModal();
+            }}
+          >
+            {entry.cancelLabel ?? 'Cancel'}
+          </Button>
+        </Show>
         <Button
           destructive
           disabled={!unlocked}
@@ -190,6 +200,8 @@ function CriticalBody({ entry }: { readonly entry: Extract<ModalEntry, { kind: '
   );
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/165-modal-platform.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/173-scrim.html */
 export function ModalHost() {
   const state = useSyncExternalStore(drawerStore.subscribe, drawerStore.getState, drawerStore.getState);
   const entry = state.modal;

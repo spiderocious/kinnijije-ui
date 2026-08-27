@@ -186,3 +186,38 @@ export function DiffView({
     </div>
   );
 }
+
+/**
+ * A code surface loading its content.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/103-json-inspector.html
+ *                                                          104-diff-view.html
+ *
+ * **Monospace rows at the true line height**, so a 40-line payload does not
+ * resize the drawer when it lands. Shared by the JSON inspector and the diff
+ * view — both are a run of code lines in a bordered box, and giving them
+ * separate skeletons would be two ways to draw the same grey.
+ */
+export function CodeSurfaceSkeleton({
+  lines = 8,
+  className,
+}: {
+  readonly lines?: number;
+  readonly className?: string;
+}) {
+  const widths = ['64%', '88%', '46%', '76%', '92%', '58%'];
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('rounded-blade-sm border border-line-2 bg-paper-2 p-3', className)}
+    >
+      {Array.from({ length: lines }, (_, i) => (
+        <span
+          key={i}
+          className="mb-[6px] block h-[12px] animate-shimmer rounded-[2px] bg-line last:mb-0"
+          style={{ width: widths[i % widths.length] }}
+        />
+      ))}
+    </div>
+  );
+}

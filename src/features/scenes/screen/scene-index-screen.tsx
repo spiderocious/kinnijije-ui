@@ -6,7 +6,12 @@ import { KoboyoIcon } from '@icons';
 import { SectionHeader } from '@ui/structure';
 
 import { SCENE_ENTRIES } from '../scenes.entries';
-import { SCENE_GROUP_ORDER, type SceneEntry, type SceneGroup } from '../scenes.registry';
+import {
+  SCENE_GROUP_BLURB,
+  SCENE_GROUP_ORDER,
+  type SceneEntry,
+  type SceneGroup,
+} from '../scenes.registry';
 
 /**
  * Every scene, listed. The way in when you know the name but not the id.
@@ -27,15 +32,17 @@ export function SceneIndexScreen() {
       </header>
 
       <p className="mb-9 max-w-[70ch] text-md text-ink-2">
-        Each of these is a real screen at a real viewport — no viewer chrome, no device frame.
-        Open one on a phone to see whether it actually works there. Add{' '}
-        <code className="font-mono text-sm">?frame=desktop</code> to force the desktop composition.
+        Ordered the way a new cook meets the product — landing, first run, then the loop, then
+        everything that only means something once they have cooked. Each is a real screen at a real
+        viewport, no viewer chrome. Add <code className="font-mono text-sm">?frame=desktop</code> to
+        force the desktop composition.
       </p>
 
       <Repeat each={buckets}>
         {(bucket: { group: SceneGroup; entries: SceneEntry[] }) => (
           <section key={bucket.group} className="mb-9">
-            <SectionHeader title={bucket.group} count={bucket.entries.length} className="mb-3" />
+            <SectionHeader title={bucket.group} count={bucket.entries.length} />
+            <p className="mb-3 mt-1 text-sm text-ink-3">{SCENE_GROUP_BLURB[bucket.group]}</p>
 
             <ul className="flex flex-col gap-2">
               <Repeat each={bucket.entries}>

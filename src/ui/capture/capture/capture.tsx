@@ -44,6 +44,7 @@ export interface CaptureMethodsProps {
 }
 
 /** The three doors. Typing is never disableable. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/237-capture-methods.html */
 export function CaptureMethods({
   value,
   onValueChange,
@@ -183,6 +184,7 @@ export interface PhotoCaptureProps {
 }
 
 /** The multi-shot tray. One photo rarely covers a whole kitchen. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/55-photo-capture.html */
 export function PhotoCapture({
   shots,
   onCapture,
@@ -276,6 +278,7 @@ export interface ExtractionResultProps {
  * what is theirs — which is also what makes a bad reading diagnosable rather
  * than mysterious.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/238-extraction-result.html */
 export function ExtractionResult({
   items,
   onConfirm,
@@ -353,6 +356,7 @@ export interface PermissionPromptProps {
  * **Never asked on first launch** — a permission prompt before a user knows what
  * the product does is the fastest way to a permanent denial.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/240-permission-prompt.html */
 export function PermissionPrompt({ kind, onAllow, onSkip }: PermissionPromptProps) {
   const copy =
     kind === 'camera'

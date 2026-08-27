@@ -24,6 +24,14 @@ export interface AccordionItem {
   readonly body: ReactNode;
   /** A count or status beside the title. */
   readonly meta?: ReactNode;
+  /**
+   * Section unavailable — gated, or nothing to show inside it.
+   *
+   * The row STAYS in the list, dimmed and unopenable. Dropping it would change
+   * the list's shape between users and make the section impossible to describe
+   * to someone who cannot see it.
+   */
+  readonly disabled?: boolean;
 }
 
 export interface AccordionProps {
@@ -31,16 +39,26 @@ export interface AccordionProps {
   /** One at a time, or many. Defaults to many — closing to open is friction. */
   readonly exclusive?: boolean;
   readonly defaultOpen?: readonly string[];
+  /** Shown instead of an empty bordered box when there are no items. */
+  readonly emptyMessage?: string;
   readonly className?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/98-accordion.html */
 export function Accordion({
   items,
   exclusive = false,
   defaultOpen = [],
+  emptyMessage = 'No entries',
   className,
 }: AccordionProps) {
   const [open, setOpen] = useState<readonly string[]>(defaultOpen);
+
+  // No entries. Says so rather than rendering an empty bordered box, which
+  // reads as a section that failed to load rather than one with nothing in it.
+  if (items.length === 0) {
+    return <p className={cn('text-sm text-ink-4', className)}>{emptyMessage}</p>;
+  }
 
   function toggle(id: string) {
     setOpen((current) => {
@@ -62,8 +80,14 @@ export function Accordion({
               <button
                 type="button"
                 aria-expanded={isOpen}
+                disabled={item.disabled === true}
                 onClick={() => toggle(item.id)}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-paper-2 focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_3px_var(--sky-glow)]"
+                className={cn(
+                  'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_3px_var(--sky-glow)]',
+                  item.disabled === true
+                    ? 'cursor-not-allowed opacity-[0.42]'
+                    : 'hover:bg-paper-2',
+                )}
               >
                 <span className="min-w-0 flex-1 font-display text-md font-extrabold tracking-display">
                   {item.title}
@@ -114,6 +138,7 @@ export interface MediaProps {
  * The oldest layout on the web and still the one most often re-hand-written.
  * Having it once is what stops the eleventh site inventing a twelfth spacing.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/99-media.html */
 export function Media({
   media,
   title,
@@ -162,6 +187,7 @@ export interface MediaContainerProps {
  * as photography arrives — which is what makes the type-led degrade usable
  * rather than a layout bug.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/100-media-container.html */
 export function MediaContainer({
   ratio = '4/3',
   fallbackIcon = 'plateJollofRice',
@@ -271,6 +297,7 @@ export interface TimelineProps {
  * as one thread — a gap between segments makes each entry look unrelated to
  * the next.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/102-timeline.html */
 export function Timeline({ entries, className }: TimelineProps) {
   const dot = {
     neutral: 'border-line-2 bg-white text-ink-3',
@@ -350,6 +377,22 @@ export function ProgressContent({
       <Show when={action !== undefined}>
         <div className="mt-3">{action}</div>
       </Show>
+    </div>
+  );
+}
+
+/** A progress card whose value has not arrived. Same box, same rhythm. */
+export function ProgressContentSkeleton({ className }: { readonly className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('rounded-blade border border-line-2 bg-white p-4', className)}
+    >
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <span className="block h-[14px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span className="block h-[13px] w-9 animate-shimmer rounded-[3px] bg-paper-2" />
+      </div>
+      <span className="block h-2 w-full animate-shimmer rounded-pill bg-paper-2" />
     </div>
   );
 }

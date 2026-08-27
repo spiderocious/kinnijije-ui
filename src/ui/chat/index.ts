@@ -5,4 +5,5 @@
  *   import { … } from '@ui/chat';
  */
 
+export * from './attachments/attachments';
 export * from './chat/chat';

@@ -56,6 +56,7 @@ export interface ChipInputProps {
   readonly className?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/236-kitchen-basket.html */
 export function ChipInput({
   items,
   onAdd,

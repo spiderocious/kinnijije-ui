@@ -245,3 +245,60 @@ export function CursorPager({
     </div>
   );
 }
+
+/**
+ * Query failed.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/91-table.html
+ *
+ * **The header row survives.** A table that collapses to a bare message on
+ * failure throws away the column names, which are the one part of the answer
+ * that did not depend on the query — and it makes the panel jump to a different
+ * height than every successful sibling on the board.
+ */
+export function TableError({
+  columns,
+  message = 'This table could not load',
+  onRetry,
+}: {
+  readonly columns: readonly { readonly key: string; readonly header: string }[];
+  readonly message?: string;
+  readonly onRetry?: () => void;
+}) {
+  return (
+    <table className="w-full border-collapse text-left">
+      <thead>
+        <tr>
+          <Repeat each={[...columns]}>
+            {(column: { key: string; header: string }) => (
+              <th
+                key={column.key}
+                className="border-b-bold border-ink pb-2 pr-3 text-xs font-extrabold uppercase tracking-overline text-ink-3"
+              >
+                {column.header}
+              </th>
+            )}
+          </Repeat>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colSpan={columns.length} className="py-12 text-center">
+            <span className="flex flex-col items-center gap-2">
+              <span className="text-sm font-extrabold text-ink-2">{message}</span>
+              <Show when={onRetry !== undefined}>
+                <button
+                  type="button"
+                  onClick={onRetry}
+                  className="text-xs font-extrabold text-sky hover:underline"
+                >
+                  Try again
+                </button>
+              </Show>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}

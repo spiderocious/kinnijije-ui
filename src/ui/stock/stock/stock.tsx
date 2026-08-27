@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Show } from 'meemaw';
 
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
@@ -107,6 +108,7 @@ export function FreshnessDot({ freshness }: { readonly freshness: Freshness }) {
 }
 
 /** Where it lives. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/405-storage-tag.html */
 export function StorageTag({ storage }: { readonly storage: StorageKind }) {
   return (
     <span className="inline-flex items-center gap-1 text-xs text-ink-3">
@@ -132,6 +134,14 @@ export interface StockItemProps {
   readonly archived?: boolean;
   /** The count failed to load; the item still renders. */
   readonly countFailed?: boolean;
+  /**
+   * The row's trailing control — an "add to list" button on the low-stock board.
+   *
+   * Its own `loading` (adding) and `disabled` (already on the list) live on the
+   * `Button` the caller passes, so the row does not grow two props that only
+   * one of its two boards would ever use.
+   */
+  readonly trailing?: ReactNode;
   readonly onPress?: () => void;
 }
 
@@ -139,6 +149,12 @@ export interface StockItemProps {
  * The atom of the pantry. Four facts — what, how much, how fresh, where it
  * lives — because a pantry entry with only a name is a shopping list, not a
  * kitchen.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/406-row-stock.html
+ *                                                          407-row-low-stock.html
+ *
+ * The low-stock board renders the same anatomy — the row does not change shape
+ * when an item runs down, only its level does.
  */
 export function StockItem({
   name,
@@ -151,6 +167,7 @@ export function StockItem({
   staleLabel,
   archived = false,
   countFailed = false,
+  trailing,
   onPress,
 }: StockItemProps) {
   const content = (
@@ -193,19 +210,34 @@ export function StockItem({
 
   if (onPress !== undefined && !archived) {
     return (
-      <li>
+      <li className="flex items-center">
         <button
           type="button"
           onClick={onPress}
-          className={cn(classes, 'focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_3px_var(--sky-glow)]')}
+          className={cn(
+            classes,
+            'flex-1 focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_3px_var(--sky-glow)]',
+          )}
         >
           {content}
         </button>
+        {/* Outside the row's button — a button inside a button is invalid and
+            steals the press from whichever the browser decides wins. */}
+        <Show when={trailing !== undefined}>
+          <span className="shrink-0 pr-pad">{trailing}</span>
+        </Show>
       </li>
     );
   }
 
-  return <li className={classes}>{content}</li>;
+  return (
+    <li className={cn(classes, 'items-center')}>
+      <span className="flex flex-1 items-center gap-3">{content}</span>
+      <Show when={trailing !== undefined}>
+        <span className="shrink-0">{trailing}</span>
+      </Show>
+    </li>
+  );
 }
 
 /** Never bought — a suggestion, not a zero. */
@@ -240,6 +272,7 @@ export interface RestockSuggestionProps {
 }
 
 /** A nudge, with its reason attached — a suggestion with no why is a nag. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/411-restock-suggestion.html */
 export function RestockSuggestion({ name, reason, onAdd }: RestockSuggestionProps) {
   return (
     <div className="flex items-center gap-3 rounded-blade border border-caution-border bg-caution-soft px-4 py-3">
@@ -266,5 +299,36 @@ export function StockItemSkeleton() {
       </span>
       <span className="h-[26px] w-[64px] shrink-0 animate-shimmer rounded-[4px] bg-paper-2" />
     </li>
+  );
+}
+
+/**
+ * Unassigned storage — a neutral, not a guess.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/405-storage-tag.html
+ *
+ * **The app does not infer where something is kept.** Guessing "fridge" for a
+ * yam is how shelf-life estimates go wrong, and shelf life is what this tag
+ * feeds. Unknown stays unknown until someone says otherwise.
+ */
+export function StorageTagUnassigned({ className }: { readonly className?: string }) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-blade-xs border border-dashed border-line-2 px-2 py-[2px] text-xs font-semibold text-ink-4',
+        className,
+      )}
+    >
+      Not set
+    </span>
+  );
+}
+
+/** Not enough history to suggest anything. The strip is simply absent. */
+export function RestockNoHistory({ className }: { readonly className?: string }) {
+  return (
+    <p className={cn('text-sm text-ink-4', className)}>
+      Once you have shopped a few times, suggestions show up here.
+    </p>
   );
 }

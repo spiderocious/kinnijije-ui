@@ -55,6 +55,19 @@ interface StatusUnmapped<K extends StatusKind> extends StatusBase {
 
 export type StatusProps<K extends StatusKind> = StatusMapped<K> | StatusUnmapped<K>;
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/128-status-recipe.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/129-status-hero-image.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/130-status-difficulty.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/131-status-difficulty-floor.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/132-status-match.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/135-status-user.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/136-status-role.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/137-status-feedback.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/138-status-feedback-target.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/139-status-ai-kind.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/140-status-ai-result.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/141-status-extraction.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/142-status-flag.html */
 export function Status<K extends StatusKind>({
   kind,
   value,

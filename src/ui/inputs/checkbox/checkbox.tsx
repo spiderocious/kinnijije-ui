@@ -27,6 +27,7 @@ export interface CheckboxProps extends FieldTriad {
   readonly children?: ReactNode;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/46-checkbox-group.html */
 export function Checkbox({
   checked,
   onCheckedChange,
@@ -93,4 +94,47 @@ export function Checkbox({
       {children !== undefined && <span className="font-semibold">{children}</span>}
     </label>
   );
+}
+
+/**
+ * A group of checkboxes and its states.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/46-checkbox-group.html
+ *
+ * **"No options came back" is not "nothing is selected".** The first is a
+ * failure of the source and needs saying; the second is a valid starting point.
+ * A group that renders both as an empty box makes them indistinguishable.
+ */
+export function CheckboxGroupSkeleton({
+  options = 4,
+  className,
+}: {
+  readonly options?: number;
+  readonly className?: string;
+}) {
+  const widths = [96, 132, 78, 116];
+  return (
+    <div aria-hidden="true" className={cn('flex flex-col gap-2.5', className)}>
+      {Array.from({ length: options }, (_, i) => (
+        <span key={i} className="flex items-center gap-2.5">
+          <span className="block h-[18px] w-[18px] shrink-0 animate-shimmer rounded-[3px] bg-paper-2" />
+          <span
+            className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+            style={{ width: widths[i % widths.length] }}
+          />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** No options came back — a failure of the source, said plainly. */
+export function CheckboxGroupEmpty({
+  message = 'No options are available right now',
+  className,
+}: {
+  readonly message?: string;
+  readonly className?: string;
+}) {
+  return <p className={cn('text-sm text-ink-4', className)}>{message}</p>;
 }

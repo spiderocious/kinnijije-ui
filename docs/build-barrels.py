@@ -32,6 +32,7 @@ GROUPS = [
     'insights',
     'planning',
     'capture',
+    'admin',
     'site',
     'email',
 ]
@@ -51,6 +52,7 @@ HEADER = {
     'insights': 'Insights — observations that must show their working.',
     'planning': 'Planning — mood, constraints, the week and portions.',
     'capture': 'Capture — the three ways in. Typing always works.',
+    'admin': "The curator's console — components with no consumer equivalent.",
     'site': 'The marketing site — the same stance at a louder register.',
     'email': 'Email — tables only, no CSS variables. A different register with its own laws.',
 }

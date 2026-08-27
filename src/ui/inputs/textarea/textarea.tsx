@@ -1,4 +1,4 @@
-import type { TextareaHTMLAttributes } from 'react';
+import type { Ref, TextareaHTMLAttributes } from 'react';
 
 import { cn } from '@shared/utils/cn';
 import { FIELD_BASE_CLASS, fieldStateClass, type FieldTriad } from '../field-contract';
@@ -20,9 +20,15 @@ export interface TextareaProps
   readonly maxLength?: number;
   /** Current value length, for the counter. */
   readonly showCount?: boolean;
+  /**
+   * The underlying element. Needed by anything that manipulates the selection
+   * — the markdown toolbar wraps what is selected, which requires the node.
+   */
+  readonly ref?: Ref<HTMLTextAreaElement>;
 }
 
 export function Textarea({
+  ref,
   disabled,
   readOnly,
   invalid,
@@ -38,6 +44,7 @@ export function Textarea({
   return (
     <div>
       <textarea
+        ref={ref}
         value={value}
         disabled={disabled}
         readOnly={readOnly}

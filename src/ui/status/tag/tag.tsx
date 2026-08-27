@@ -69,3 +69,23 @@ export function TagSkeleton({ width = 72 }: { readonly width?: number }) {
     />
   );
 }
+
+/**
+ * A recipe with no tags.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/147-tag.html
+ *
+ * **Says nothing rather than showing an empty rail.** A row of zero tags with a
+ * heading above it reads as a fetch that failed; absence of tags is not a
+ * failure, so the group collapses and the caller renders this only where the
+ * absence is itself worth stating.
+ */
+export function TagGroupEmpty({
+  message = 'No tags',
+  className,
+}: {
+  readonly message?: string;
+  readonly className?: string;
+}) {
+  return <span className={cn('text-sm text-ink-4', className)}>{message}</span>;
+}

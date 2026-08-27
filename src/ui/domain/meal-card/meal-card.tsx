@@ -89,6 +89,7 @@ function Hero({
   );
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/14-photo-fallback.html */
 export function MealCard({
   name,
   source,

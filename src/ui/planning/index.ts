@@ -5,4 +5,5 @@
  *   import { … } from '@ui/planning';
  */
 
+export * from './day-column/day-column';
 export * from './planning/planning';

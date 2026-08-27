@@ -31,14 +31,22 @@ export interface ActionMenuProps {
   readonly label: string;
   readonly orientation?: 'horizontal' | 'vertical';
   readonly align?: 'start' | 'end';
+  /**
+   * Items resolving. The panel opens and shimmers rather than staying shut —
+   * a menu that ignores the first press teaches the user to press twice, and
+   * the second press closes it.
+   */
+  readonly loading?: boolean;
   readonly className?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/184-menu.html */
 export function ActionMenu({
   items,
   label,
   orientation = 'vertical',
   align = 'end',
+  loading = false,
   className,
 }: ActionMenuProps) {
   const [open, setOpen] = useState(false);
@@ -122,6 +130,22 @@ export function ActionMenu({
             align === 'end' ? 'right-0' : 'left-0',
           )}
         >
+          {/* Menu open, nothing permitted. An empty panel reads as a broken
+              menu, so it says why it is empty rather than showing a blank box.
+              The menu still OPENS — silently doing nothing on press is worse. */}
+          <Show when={loading}>
+            <li role="none" aria-hidden="true" className="flex flex-col gap-2 px-3 py-2">
+              <span className="block h-[13px] w-28 animate-shimmer rounded-[3px] bg-paper-2" />
+              <span className="block h-[13px] w-20 animate-shimmer rounded-[3px] bg-paper-2" />
+            </li>
+          </Show>
+
+          <Show when={!loading && items.length === 0}>
+            <li role="none" className="px-3 py-2 text-sm text-ink-4">
+              No actions available here
+            </li>
+          </Show>
+
           <Repeat each={safe}>{renderItem}</Repeat>
 
           <Show when={dangerous.length > 0 && safe.length > 0}>

@@ -80,3 +80,33 @@ export const Panel = Object.assign(PanelRoot, {
   List: PanelList,
   Empty: PanelEmpty,
 });
+
+/**
+ * Same box, same padding — the panel's frame is real before its content is.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/197-panel.html
+ */
+export function PanelSkeleton({
+  lines = 3,
+  className,
+}: {
+  readonly lines?: number;
+  readonly className?: string;
+}) {
+  const widths = ['88%', '96%', '72%', '84%'];
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('rounded-blade-lg border-hair border-line-2 p-pad', className)}
+    >
+      <span className="mb-3 block h-[15px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
+      {Array.from({ length: lines }, (_, i) => (
+        <span
+          key={i}
+          className="mt-2 block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+          style={{ width: widths[i % widths.length] }}
+        />
+      ))}
+    </div>
+  );
+}

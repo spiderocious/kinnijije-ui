@@ -322,3 +322,93 @@ In dependency order, because scenes and admin surfaces compose the primitives:
 **I am ready to start on this.** Say go and I will begin with step 1 — the full
 checklist from `components.md` — so there is a countable artefact before any
 more code is written.
+
+---
+
+# Resolution — 2026-08-27
+
+All eight steps are done. Every number below is derived by a checked-in script,
+so it can be re-run rather than believed.
+
+## Final numbers
+
+| | Spec | Built | Gap |
+|---|---:|---:|---:|
+| **Manifest checklist rows** | **418** | **418** | **0** ✅ |
+| — Consumer (KITCHEN) | 241 | 241 | 0 |
+| — Admin (COUNTER) | 110 | 110 | 0 |
+| — Marketing site + email | 67 | 67 | 0 |
+| **Component states** | 223 specimens | 223 | **0** ✅ |
+| Scenes | 51 | 57 | 0 ✅ |
+
+`355 exported components across 107 source files.`
+
+Regenerate: `python3 docs/build-checklist.py` · `python3 docs/state-audit.py`
+
+## Why the denominator moved from 500 to 418
+
+**It was never 500 components.** The original figure came from a parser that
+double-counted: the manifest lists "plus 16 named row shapes — recipe ·
+saved-recipe · …", and the parser emitted each name once as prose AND again as an
+expanded `Row — recipe` entry. Nineteen rows were counted twice. It also split
+`Card — promotional` into a duplicate `Card`, hiding a genuine missing component
+behind a row that was already ticked.
+
+418 is the manifest's own content, de-duplicated. The gap it describes was real;
+the size of it was overstated by the tool measuring it, which is its own lesson.
+
+## What the finishing work actually found
+
+Fixing the measurement surfaced components that no count had flagged:
+
+- **`Card — promotional`** — hidden by the em-dash bug. Its law: `onDismiss` is
+  REQUIRED, because an undismissable promo is an advert. Empty collapses; it
+  never renders a placeholder box.
+- **`DurationInput`** — a duration is not a clock time. `TimeInput` already
+  existed for `HH:MM`; nothing rendered "20 minutes". `null` means no timer,
+  which is not zero.
+- **`Heading` / `Text` / `Caption`** — three specimens with no component at all.
+  Their law: size, semantic level, weight and truncation are independent axes.
+- **`DrawerService.sessionTimeout`** — the one modal with no way out but forward.
+- **`FieldSkeleton`** — twenty input components, zero skeletons between them.
+
+## The three audit rewrites
+
+The component checklist was wrong twice and the state audit three times, always
+in the same direction: **the tool reported code as missing that was present, and
+I nearly wrote duplicates to satisfy it.**
+
+- `audit.py` expanded range hints and counted whole ranges as covered → 8 missing.
+- Name-matching resolved `216-row-recipe` to `board-rows.tsx`, because a long
+  export name swallows a short slug. It reported 154 components missing states
+  that existed.
+- The fix was to resolve on the component's own `Visual spec:` JSDoc citation —
+  an authored link, not an inferred one — and to report uncited specimens as
+  uncited rather than passing them silently. That moved coverage from 89
+  specimens to 223 and surfaced ~40 real gaps in the process.
+
+**A green audit is only worth what its resolver is worth.** Both scripts now
+print what they could NOT resolve, so the number cannot quietly mean less than it
+appears to.
+
+## Preview specimens
+
+**88 specimens** in the viewer (was 71). Nine were added to close the debt from
+the admin, site and states batches, where components had shipped without one:
+
+- `Heading · Text · Caption` — the three type primitives and their states
+- `Duration input` — all four states side by side
+- `Promotional card` — including the empty case, which renders nothing
+- `Skeletons · Empties · Failures` — every shared loading, absent and failed state
+- `Bulk · Filters · Danger` · `Board rows` · `Shell · Editors · Ledger` — the COUNTER controls
+- `Header · Hero` · `Problem · Features · Proof · Gallery` · `How · Pricing · FAQ · CTA · Footer` —
+  every site family as a live variant switcher
+
+Verified by screenshot, not just by compile. Two things the screenshots caught
+that the type checker could not:
+
+- **Board rows misaligned** when a row was not selectable — the checkbox `<td>`
+  was conditionally rendered, so unselected rows sat half a column left of their
+  neighbours. The cell is now always present.
+- **The promo card's empty case** genuinely collapses to zero height, which is
+  the law it exists to enforce and is invisible in a type signature.

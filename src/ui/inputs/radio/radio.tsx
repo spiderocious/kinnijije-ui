@@ -37,6 +37,7 @@ export interface RadioGroupProps extends FieldTriad {
   readonly children: ReactNode;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/48-radio-group.html */
 export function RadioGroup({
   value,
   onValueChange,

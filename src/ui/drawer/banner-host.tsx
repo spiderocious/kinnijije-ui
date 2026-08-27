@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { Repeat, Show } from 'meemaw';
 
-import { KoboyoIcon, X, type KoboyoIconName } from '@icons';
+import { KoboyoIcon, Loader2, X, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
 
 import { drawerStore, type BannerEntry, type FeedbackTone } from './drawer-store';
@@ -58,9 +58,16 @@ function BannerStrip({ banner }: { readonly banner: BannerEntry }) {
       <Show when={banner.cta !== undefined}>
         <button
           type="button"
+          disabled={banner.cta?.loading === true}
+          aria-busy={banner.cta?.loading === true || undefined}
           onClick={banner.cta?.onClick}
-          className="shrink-0 rounded-blade-xs border border-current px-3 py-1 text-sm font-extrabold transition-opacity hover:opacity-70"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-blade-xs border border-current px-3 py-1 text-sm font-extrabold transition-opacity hover:opacity-70 disabled:cursor-progress"
         >
+          {/* The label never changes to "Retrying…" — a strip that rewrites
+              itself mid-retry moves the button out from under the thumb. */}
+          <Show when={banner.cta?.loading === true}>
+            <Loader2 size={13} className="animate-spin" aria-hidden="true" />
+          </Show>
           {banner.cta?.label}
         </button>
       </Show>

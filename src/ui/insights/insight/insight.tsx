@@ -110,6 +110,7 @@ export function InsightCard({
 }
 
 /** The receipts behind an observation. One tap from every insight. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/441-insight-evidence.html */
 export function InsightEvidence({
   evidence,
 }: {
@@ -172,6 +173,7 @@ export interface WeekDay {
  * A blank day is **not** a failure — it is a day the product knows nothing
  * about, and it is drawn as an empty square rather than a red one.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/443-week-strip.html */
 export function WeekStrip({
   days,
   className,
@@ -210,6 +212,7 @@ export function WeekStrip({
  * the chain" pressure. It states a fact and stops. A streak that punishes a
  * missed day is how a cooking app becomes a chore.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/444-streak.html */
 export function Streak({
   days,
   className,
@@ -234,6 +237,7 @@ export function Streak({
 }
 
 /** How varied the week has been. States a fact; makes no judgement. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/447-variety-meter.html */
 export function VarietyMeter({
   distinct,
   total,

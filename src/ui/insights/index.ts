@@ -6,3 +6,4 @@
  */
 
 export * from './insight/insight';
+export * from './insights-more/insights-more';

@@ -18,14 +18,17 @@ import type { ComponentType } from 'react';
 export type SceneFrame = 'phone' | 'desktop';
 
 export type SceneGroup =
-  | 'Core'
+  | 'Site'
+  | 'First run'
+  | 'Cooking tonight'
   | 'Standing kitchen'
   | 'Capture'
+  | 'Market'
   | 'Chat'
   | 'Insights'
   | 'Planning'
-  | 'Console'
-  | 'Site';
+  | 'Account'
+  | 'Console';
 
 export interface SceneEntry {
   /** URL segment — `/scenes/<id>`. */
@@ -42,13 +45,39 @@ export interface SceneEntry {
   readonly Scene: ComponentType<{ frame: SceneFrame }>;
 }
 
+/**
+ * Ordered the way a new cook meets the product, not the way the design system
+ * was built. Someone reading top to bottom walks the actual journey: they land,
+ * they are let in, they cook something, and only then do the standing kitchen,
+ * the market and the long-tail surfaces mean anything.
+ *
+ * The console sits last because nobody using the app ever sees it.
+ */
 export const SCENE_GROUP_ORDER: readonly SceneGroup[] = [
-  'Core',
+  'Site',
+  'First run',
+  'Cooking tonight',
   'Standing kitchen',
   'Capture',
+  'Market',
   'Chat',
   'Insights',
   'Planning',
+  'Account',
   'Console',
-  'Site',
 ];
+
+/** One line on why each group sits where it does, shown on the index. */
+export const SCENE_GROUP_BLURB: Readonly<Record<SceneGroup, string>> = {
+  Site: 'Before the app — what a visitor sees.',
+  'First run': 'Opening it for the very first time.',
+  'Cooking tonight': 'The loop: what you have, three meals, cook it, keep it.',
+  'Standing kitchen': 'What the app remembers — never stock-taken.',
+  Capture: 'Filling the kitchen without typing.',
+  Market: 'What to buy, and shopping it back in.',
+  Chat: 'Asking questions, answered from your kitchen.',
+  Insights: 'What was noticed, with the working shown.',
+  Planning: 'Deciding before you are stood in the kitchen.',
+  Account: 'Settings, and the app without a connection.',
+  Console: 'Running the product. No cook ever sees this.',
+};

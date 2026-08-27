@@ -5,6 +5,18 @@
 export const ROUTES = {
   ROOT: '/',
   ENTRY: '/',
+
+  // Auth
+  LOGIN: '/login',
+  REGISTER: '/register',
+
+  // First run
+  ONBOARDING: '/onboarding',
+
+  // The app proper
+  KITCHEN: '/kitchen',
+
+  // Design-system surfaces, not product screens
   PREVIEW: '/preview',
   SCENES: '/scenes',
 } as const;

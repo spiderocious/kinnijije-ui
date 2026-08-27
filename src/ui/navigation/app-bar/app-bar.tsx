@@ -74,3 +74,25 @@ export function AppBar({
     </header>
   );
 }
+
+/**
+ * The bar while the session resolves.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/180-app-bar.html
+ *
+ * **The trailing slot shimmers; the title does not.** Which screen you are on
+ * is known from the route before the session resolves, so blanking the title
+ * throws away information the app already has — and makes every navigation look
+ * like a cold start.
+ *
+ * Signed out is NOT this state: the slot then carries a sign-in control, which
+ * the caller passes as `action`.
+ */
+export function AppBarSessionSkeleton({ className }: { readonly className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn('block h-8 w-8 animate-shimmer rounded-round bg-paper-2', className)}
+    />
+  );
+}

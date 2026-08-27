@@ -10,6 +10,7 @@ export * from './chip-input/chip-input';
 export * from './combobox/combobox';
 export * from './date-input/date-input';
 export * from './domain-pickers/domain-pickers';
+export * from './duration-input/duration-input';
 export * from './field/field';
 export * from './field-contract';
 export * from './file-upload/file-upload';

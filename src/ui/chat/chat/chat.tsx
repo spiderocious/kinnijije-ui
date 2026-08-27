@@ -113,6 +113,33 @@ function ChatUser({ text, status = 'sent', onRetry }: ChatUserProps) {
 
 /* ---------- The chef's turn ---------- */
 
+/**
+ * Waiting on the first token.
+ *
+ * **Distinct from `Chat.Thinking`.** Thinking is a short wait before anything
+ * has been decided; this is the answer's own bubble, already placed, filling
+ * in. Reusing one for the other makes a long answer look like a stall.
+ */
+function ChatAiSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-2 py-2">
+      <span className="block h-[13px] w-[88%] animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-[76%] animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-[54%] animate-shimmer rounded-[3px] bg-paper-2" />
+    </div>
+  );
+}
+
+/** The source line, before the citation resolves. Holds the answer's footer. */
+function ChatCitationSkeleton() {
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-2 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-paper-2"
+    />
+  );
+}
+
 export interface ChatAiProps {
   readonly body: ReactNode;
   /** REQUIRED — an uncited answer cannot render. */
@@ -121,23 +148,43 @@ export interface ChatAiProps {
   readonly attachment?: ReactNode;
   /** Follow-up chips. */
   readonly actions?: readonly { readonly label: string; readonly onClick: () => void }[];
+  /**
+   * Mid-answer — tokens are still arriving.
+   *
+   * The citation and the follow-up chips are HELD BACK until the answer
+   * finishes: a source rendered beside half an answer claims to support a
+   * sentence that has not been written yet.
+   */
+  readonly streaming?: boolean;
 }
 
-function ChatAi({ body, source, attachment, actions }: ChatAiProps) {
+function ChatAi({ body, source, attachment, actions, streaming = false }: ChatAiProps) {
   return (
     <li className="flex flex-col items-start">
       <div className="max-w-[85%] rounded-[20px_6px_20px_6px] border border-line-2 bg-white px-4 py-3">
-        <div className="text-ctrl text-ink">{body}</div>
+        <div className="text-ctrl text-ink">
+          {body}
+          {/* The caret marks an answer still arriving, so a paused stream does
+              not read as a finished, oddly short answer. */}
+          <Show when={streaming}>
+            <span
+              aria-hidden="true"
+              className="ml-[2px] inline-block h-[1em] w-[2px] translate-y-[2px] animate-pulse bg-ink"
+            />
+          </Show>
+        </div>
 
-        <Show when={attachment !== undefined}>
+        <Show when={attachment !== undefined && !streaming}>
           <div className="mt-3">{attachment}</div>
         </Show>
 
-        {/* The required slot. */}
-        <ChatCitation {...source} />
+        {/* The required slot — held back until the answer is whole. */}
+        <Show when={!streaming}>
+          <ChatCitation {...source} />
+        </Show>
       </div>
 
-      <Show when={actions !== undefined && actions.length > 0}>
+      <Show when={!streaming && actions !== undefined && actions.length > 0}>
         <ul className="mt-2 flex flex-wrap gap-2">
           <Repeat each={[...(actions ?? [])]}>
             {(action: { label: string; onClick: () => void }) => (
@@ -214,7 +261,16 @@ function ChatError({ onRetry }: { readonly onRetry?: () => void }) {
 
 export interface ChatComposerProps {
   readonly onSend: (text: string) => void;
+  /** AI is flagged off. The composer stays visible and says why. */
   readonly disabled?: boolean;
+  /**
+   * Sending.
+   *
+   * **The field locks and the text stays.** Clearing the draft on send and
+   * restoring it on failure loses whatever the user typed the moment the
+   * network hiccups — and this is a composer people type paragraphs into.
+   */
+  readonly sending?: boolean;
   readonly placeholder?: string;
   /** Starter prompts, shown only on an empty thread. */
   readonly suggestions?: readonly string[];
@@ -223,16 +279,20 @@ export interface ChatComposerProps {
 function ChatComposer({
   onSend,
   disabled = false,
+  sending = false,
   placeholder = 'Ask about a meal, or what you have',
   suggestions,
 }: ChatComposerProps) {
   const [draft, setDraft] = useState('');
+  const locked = disabled || sending;
 
   function send() {
     const text = draft.trim();
-    if (text === '') return;
+    if (text === '' || sending) return;
     onSend(text);
-    setDraft('');
+    // Cleared only once the send is handed off. A `sending` composer keeps its
+    // text until the caller flips the flag back.
+    if (!sending) setDraft('');
   }
 
   return (
@@ -259,7 +319,7 @@ function ChatComposer({
         <textarea
           rows={1}
           value={draft}
-          disabled={disabled}
+          disabled={locked}
           placeholder={placeholder}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
@@ -273,7 +333,8 @@ function ChatComposer({
         <Button
           size="md"
           icon="send"
-          disabled={disabled || draft.trim() === ''}
+          loading={sending}
+          disabled={locked || draft.trim() === ''}
           onClick={send}
           className="shrink-0"
         >
@@ -310,6 +371,8 @@ export const Chat = {
   Thread: ChatThread,
   User: ChatUser,
   AI: ChatAi,
+  AiSkeleton: ChatAiSkeleton,
+  CitationSkeleton: ChatCitationSkeleton,
   Thinking: ChatThinking,
   Unknown: ChatUnknown,
   Error: ChatError,

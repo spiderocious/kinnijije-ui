@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { Repeat, Show } from 'meemaw';
 
 import { cn } from '@shared/utils/cn';
@@ -186,6 +186,7 @@ export interface SparklineProps {
  * **The figure is not optional.** A sparkline alone says "it went up" without
  * saying from what to what, which is the whole reason a reader would look.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/96-sparkline.html */
 export function Sparkline({
   data,
   tone = 'sky',
@@ -235,5 +236,122 @@ export function Sparkline({
         <Figure value={value ?? 0} unit={unit} size="sm" />
       </Show>
     </span>
+  );
+}
+
+/* ---------- The chart's non-default states ---------- */
+
+/**
+ * Visual spec: design-system/projects/kinnijije-v2/preview/94-chart-bar.html
+ *
+ * **The frame is the invariant.** Skeleton, error and empty all keep the axis
+ * rule and the same height, so a dashboard does not reflow when one panel of
+ * four resolves differently from its neighbours. Only what sits ABOVE the axis
+ * changes.
+ */
+function ChartFrame({
+  height,
+  children,
+  className,
+}: {
+  readonly height: number;
+  readonly children: ReactNode;
+  readonly className?: string;
+}) {
+  return (
+    <figure className={cn('m-0', className)}>
+      <div className="flex items-end justify-center" style={{ height }}>
+        {children}
+      </div>
+      <div className="mt-2 border-t border-line pt-2">
+        <span className="block h-[13px]" />
+      </div>
+    </figure>
+  );
+}
+
+/** The axis survives; only the bars shimmer. */
+export function ChartSkeleton({
+  bars = 7,
+  height = 160,
+  className,
+}: {
+  readonly bars?: number;
+  readonly height?: number;
+  readonly className?: string;
+}) {
+  // Varied heights, fixed per index — a random walk would re-shuffle on every
+  // render and make the loading state twitch.
+  const steps = [0.45, 0.72, 0.38, 0.9, 0.6, 0.5, 0.8];
+  return (
+    <ChartFrame height={height} className={className}>
+      <div aria-hidden="true" className="flex h-full w-full items-end gap-2">
+        {Array.from({ length: bars }, (_, i) => (
+          <span
+            key={i}
+            className="flex-1 animate-shimmer rounded-t-blade-xs bg-paper-2"
+            style={{ height: `${(steps[i % steps.length] ?? 0.5) * 100}%` }}
+          />
+        ))}
+      </div>
+    </ChartFrame>
+  );
+}
+
+/** Query failed — the frame stays so the layout does not jump. */
+export function ChartError({
+  onRetry,
+  height = 160,
+  className,
+}: {
+  readonly onRetry?: () => void;
+  readonly height?: number;
+  readonly className?: string;
+}) {
+  return (
+    <ChartFrame height={height} className={className}>
+      <span className="flex flex-col items-center gap-2 self-center text-center">
+        <span className="text-sm font-extrabold text-ink-2">This chart could not load</span>
+        <Show when={onRetry !== undefined}>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="text-xs font-extrabold text-sky hover:underline"
+          >
+            Try again
+          </button>
+        </Show>
+      </span>
+    </ChartFrame>
+  );
+}
+
+/**
+ * No events in this window.
+ *
+ * **Not an error and not a zero-height chart.** A window with nothing in it is
+ * a real answer, and drawing flat bars at zero would imply measurements that
+ * were never taken.
+ */
+export function ChartEmpty({
+  message = 'No events in this window',
+  height = 160,
+  className,
+}: {
+  readonly message?: string;
+  readonly height?: number;
+  readonly className?: string;
+}) {
+  return (
+    <ChartFrame height={height} className={className}>
+      <span className="self-center text-sm text-ink-4">{message}</span>
+    </ChartFrame>
+  );
+}
+
+/** Cached. The chart is real; its age is stated rather than implied. */
+export function ChartStaleNote({ age, className }: { readonly age: string; readonly className?: string }) {
+  return (
+    <p className={cn('mt-1 font-mono text-xs text-ink-4', className)}>Cached · {age}</p>
   );
 }

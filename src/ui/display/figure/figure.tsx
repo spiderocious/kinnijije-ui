@@ -25,6 +25,9 @@ const sizeMap = {
   xl: 'text-2xl',
   '2xl': 'text-3xl',
   '3xl': 'text-4xl',
+  // The marketing register only. The app never goes this loud.
+  '4xl': 'text-5xl',
+  '6xl': 'text-6xl',
 } as const;
 
 export type FigureSize = keyof typeof sizeMap;
@@ -93,6 +96,8 @@ export function FigureSkeleton({
     xl: 'h-[34px]',
     '2xl': 'h-[42px]',
     '3xl': 'h-[54px]',
+    '4xl': 'h-[68px]',
+    '6xl': 'h-[88px]',
   };
   return (
     <span
@@ -100,5 +105,55 @@ export function FigureSkeleton({
       className={cn('inline-block animate-shimmer rounded-[4px] bg-paper-2', heights[size])}
       style={{ width }}
     />
+  );
+}
+
+/**
+ * No value on the record.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/20-figure.html
+ *
+ * **An em dash, never a zero.** "0 min" and "we do not know how long this takes"
+ * are different claims, and a figure that renders the first when it means the
+ * second is the same class of bug as an unlabelled AI recipe.
+ */
+export function FigureEmpty({
+  size = 'md',
+  className,
+}: {
+  readonly size?: FigureSize;
+  readonly className?: string;
+}) {
+  return (
+    <span
+      className={cn('font-mono font-bold tnum text-ink-4', sizeMap[size], className)}
+      aria-label="No value"
+    >
+      —
+    </span>
+  );
+}
+
+/**
+ * The value failed to load.
+ *
+ * Distinct from `FigureEmpty`: the record may well have a value, we just could
+ * not read it. Saying "—" here would assert an absence we have not established.
+ */
+export function FigureError({
+  size = 'md',
+  className,
+}: {
+  readonly size?: FigureSize;
+  readonly className?: string;
+}) {
+  return (
+    <span
+      className={cn('font-mono font-bold tnum text-critical', sizeMap[size], className)}
+      aria-label="Value could not load"
+      title="This value could not load"
+    >
+      ?
+    </span>
   );
 }

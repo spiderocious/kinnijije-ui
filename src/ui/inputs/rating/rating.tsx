@@ -23,6 +23,14 @@ export interface RatingProps {
   readonly onChange?: (value: number) => void;
   readonly max?: number;
   readonly readOnly?: boolean;
+  /**
+   * Rating closed — the window to rate has passed.
+   *
+   * **Not the same as `readOnly`.** `readOnly` shows a real rating someone else
+   * gave, at full ink; `disabled` means this rating is no longer possible, and
+   * it dims to say so.
+   */
+  readonly disabled?: boolean;
   /** How many people rated. Required for an average to mean anything. */
   readonly count?: number;
   readonly size?: 'sm' | 'md' | 'lg';
@@ -37,6 +45,7 @@ export function Rating({
   onChange,
   max = 5,
   readOnly = false,
+  disabled = false,
   count,
   size = 'md',
   label = 'Rating',
@@ -45,10 +54,16 @@ export function Rating({
   const [hover, setHover] = useState<number | null>(null);
   const stars = Array.from({ length: max }, (_, index) => index + 1);
   const shown = hover ?? value;
-  const interactive = !readOnly && onChange !== undefined;
+  const interactive = !readOnly && !disabled && onChange !== undefined;
 
   return (
-    <span className={cn('inline-flex items-center gap-2', className)}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-2',
+        disabled && 'pointer-events-none opacity-[0.42]',
+        className,
+      )}
+    >
       <span
         role={interactive ? 'radiogroup' : 'img'}
         aria-label={

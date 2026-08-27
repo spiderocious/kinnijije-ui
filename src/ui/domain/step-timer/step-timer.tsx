@@ -28,6 +28,11 @@ function format(totalSeconds: number): string {
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
+/**
+ * `idle` is the spec's "starting": armed, showing the full duration, not yet
+ * ticking. It is deliberately not a separate state — a timer that distinguishes
+ * "about to start" from "not started" gives the user two identical screens.
+ */
 export type TimerState = 'idle' | 'running' | 'paused' | 'done';
 
 export interface StepTimerProps {

@@ -66,6 +66,13 @@ export interface ConfirmOptions {
   readonly sticky?: boolean;
 }
 
+export interface SessionTimeoutOptions {
+  /** Where to send them. Required — there is no "stay here" from a dead session. */
+  readonly onSignIn: () => void;
+  readonly description?: ReactNode;
+  readonly confirmLabel?: string;
+}
+
 export interface CriticalOptions {
   readonly onConfirm: () => void;
   readonly description?: ReactNode;
@@ -86,6 +93,12 @@ export interface CustomModalOptions {
   readonly onClose?: () => void;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/167-bottom-sheet.html
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/168-side-sheet.html
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/204-drawer.html
+ */
 export const DrawerService = {
   /** A short confirmation. Auto-dismisses unless `sticky`. */
   toast(message: ReactNode, options: ToastOptions = {}): string {
@@ -143,6 +156,33 @@ export const DrawerService = {
    * click — a stray tap must not be able to dismiss the one thing that made
    * them read.
    */
+  /**
+   * The session has expired.
+   *
+   * **The one modal with no way out but forward.** Outside-click, Escape and a
+   * cancel button are all removed, because every one of them would return the
+   * user to a screen whose data they can no longer refetch — the shipped app
+   * let this be dismissed and people spent minutes tapping a UI that could not
+   * answer them. There is one control and it signs them back in.
+   */
+  sessionTimeout(options: SessionTimeoutOptions): void {
+    drawerStore.openModal({
+      kind: 'standard',
+      title: 'You have been signed out',
+      description:
+        options.description ??
+        'Your session expired. Sign in again to get back to your kitchen.',
+      confirmLabel: options.confirmLabel ?? 'Sign in',
+      // No cancel: there is nothing to go back to.
+      cancelLabel: null,
+      onConfirm: options.onSignIn,
+      position: 'center',
+      closeOnOutsideClick: false,
+      closeOnEscape: false,
+      sticky: true,
+    });
+  },
+
   critical(title: ReactNode, options: CriticalOptions): void {
     const phrase = options.confirmPhrase ?? 'CONFIRM';
     drawerStore.openModal({

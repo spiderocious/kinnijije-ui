@@ -1,7 +1,7 @@
 import { useState, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Repeat, Show } from 'meemaw';
 
-import { ChevronDown, ExternalLink, KoboyoIcon, type KoboyoIconName } from '@icons';
+import { ChevronDown, ExternalLink, KoboyoIcon, Loader2, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
 
 /**
@@ -63,6 +63,14 @@ export function NavLink({
 export interface ActionLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   readonly weight?: LinkWeight;
   readonly destructive?: boolean;
+  /**
+   * Working.
+   *
+   * **The label stays and a spinner joins it** — it never becomes "Loading…".
+   * A link that swaps its words reflows the sentence it sits in, and the user
+   * loses the thing they were about to press.
+   */
+  readonly loading?: boolean;
   readonly children: ReactNode;
 }
 
@@ -76,6 +84,8 @@ export interface ActionLinkProps extends ButtonHTMLAttributes<HTMLButtonElement>
 export function ActionLink({
   weight = 'loud',
   destructive = false,
+  loading = false,
+  disabled,
   className,
   children,
   ...rest
@@ -83,16 +93,23 @@ export function ActionLink({
   return (
     <button
       type="button"
+      disabled={disabled === true || loading}
+      aria-busy={loading || undefined}
       className={cn(
         SHARED,
         weightMap[weight],
         destructive && 'text-critical-onsoft decoration-critical',
         'disabled:opacity-[0.42] disabled:cursor-not-allowed',
+        // Working is not unavailable — it keeps full ink.
+        loading && 'cursor-progress opacity-100',
         className,
       )}
       {...rest}
     >
       {children}
+      <Show when={loading}>
+        <Loader2 size={13} className="animate-spin" aria-hidden="true" />
+      </Show>
     </button>
   );
 }
@@ -194,6 +211,7 @@ export interface QuickReplyProps {
  * **They disappear once one is chosen** — a stale suggestion is worse than
  * none, because it invites a second answer to a question already answered.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/32-quick-reply.html */
 export function QuickReply({ replies, onSelect, className }: QuickReplyProps) {
   if (replies.length === 0) return null;
 

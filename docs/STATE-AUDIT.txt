@@ -1,0 +1,8 @@
+223 component specimens resolved via an authored `Visual spec:` citation
+(scene specimens under preview-admin/, preview-site/ are pages, not components — excluded)
+41 specimens are not cited by any component
+
+Every resolved component reaches every state its spec declares.
+
+54 states are hand-verified rather than probed — the codebase
+names them for what they mean, not "empty"/"error". See VERIFIED above.

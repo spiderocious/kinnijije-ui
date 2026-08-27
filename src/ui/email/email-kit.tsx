@@ -107,6 +107,7 @@ export interface EmailHeaderProps {
   readonly title?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/481-email-header.html */
 export function EmailHeader({ title }: EmailHeaderProps) {
   return (
     <tr>
@@ -182,6 +183,17 @@ export interface EmailButtonProps {
  *
  * **One primary per email.** A second halves the response to both.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/482-email-button.html */
+/**
+ * **There is deliberately no `disabled`.** A disabled link in an email is just a
+ * link — no client will honour a pointer-events rule, and a greyed anchor that
+ * still navigates is worse than an obvious one. If an action is unavailable,
+ * the email omits the button and says why in prose.
+ */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/381-email-have-you-eaten.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/382-email-weekly.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/383-email-use-it-up.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/384-email-welcome.html */
 export function EmailButton({ href, label, variant = 'primary' }: EmailButtonProps) {
   const primary = variant === 'primary';
 
@@ -228,6 +240,7 @@ export interface EmailCardProps {
 }
 
 /** A meal, in the email register. The provenance contract still holds. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/483-email-card.html */
 export function EmailCard({ name, minutes, source, href }: EmailCardProps) {
   const ai = source === 'ai';
 
@@ -295,6 +308,7 @@ export interface EmailFooterProps {
   readonly pauseHref?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/484-email-footer.html */
 export function EmailFooter({ unsubscribeHref, pauseHref }: EmailFooterProps) {
   return (
     <tr>

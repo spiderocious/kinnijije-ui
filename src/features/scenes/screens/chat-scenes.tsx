@@ -4,9 +4,8 @@ import { cn } from '@shared/utils/cn';
 import { Button } from '@ui/primitives';
 import { AppBar, TabBar } from '@ui/navigation';
 import { Panel, SectionHeader } from '@ui/structure';
-import { Chat } from '@ui/chat';
+import { Chat, ChatMeal, ChatStock } from '@ui/chat';
 import { MealCard } from '@ui/domain';
-import { StockItem } from '@ui/stock';
 
 import { DesktopShell, PHONE_NAV } from './shell';
 import { SceneBody, SceneRoot } from '../parts/scene-frame';
@@ -84,10 +83,12 @@ export function ChatMealScene({ frame }: { readonly frame: SceneFrame }) {
         body="You have enough for two things. Jollof needs nothing extra; Efo Riro wants a bit more palm oil."
         source={{ kind: 'kitchen', age: 'today' }}
         attachment={
-          <div className="flex flex-col gap-2">
-            <MealCard name="Jollof Rice" source="seed" minutes={45} match="nothing_to_buy" compact />
-            <MealCard name="Efo Riro" source="seed" minutes={40} match="strong_match" compact />
-          </div>
+          <ChatMeal
+            meals={[
+              { name: 'Jollof Rice', source: 'seed', minutes: 45, match: 'nothing_to_buy' },
+              { name: 'Efo Riro', source: 'seed', minutes: 40, match: 'strong_match' },
+            ]}
+          />
         }
         actions={[
           { label: 'Open Jollof', onClick: () => {} },
@@ -108,11 +109,12 @@ export function ChatStockScene({ frame }: { readonly frame: SceneFrame }) {
         body="You are out of rice. It came off when you cooked Jollof on Thursday."
         source={{ kind: 'kitchen', age: 'today' }}
         attachment={
-          <Panel>
-            <Panel.List>
-              <StockItem name="Long-grain rice" icon="bagRice" level="out" quantity={0} unit="cups" storage="shelf" />
-            </Panel.List>
-          </Panel>
+          <ChatStock
+            countedAt="today"
+            items={[
+              { name: 'Long-grain rice', level: 'out', quantity: 0, unit: 'cups', storage: 'shelf' },
+            ]}
+          />
         }
         actions={[{ label: 'Add to market list', onClick: () => {} }]}
       />

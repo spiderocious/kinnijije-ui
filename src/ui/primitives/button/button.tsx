@@ -86,6 +86,8 @@ export type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 /** The icon size that reads correctly inside each control height. */
 const iconSizeMap = { sm: 15, md: 17, lg: 19 } as const;
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/36-press-spec.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/37-loading-button.html */
 export function Button(props: ButtonProps) {
   const {
     variant = 'primary',

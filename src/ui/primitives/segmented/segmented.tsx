@@ -40,6 +40,14 @@ export interface SegmentedProps {
   readonly onValueChange: (value: string) => void;
   /** Disables the whole control — an individual item disables itself. */
   readonly disabled?: boolean;
+  /**
+   * Switching — the new segment is committing.
+   *
+   * The thumb moves IMMEDIATELY and the control locks behind it. Waiting for the
+   * server before moving the thumb makes the control feel broken on a slow
+   * connection; moving it and then snapping back is worse still.
+   */
+  readonly switching?: boolean;
   /** Announced to screen readers as the group's purpose. */
   readonly label?: string;
   readonly className?: string;
@@ -50,10 +58,14 @@ function SegmentedRoot({
   value,
   onValueChange,
   disabled = false,
+  switching = false,
   label,
   className,
   children,
 }: SegmentedProps) {
+  // Locked while switching, but NOT dimmed: the control is real and the thumb
+  // has already moved, it simply cannot be moved again until this lands.
+  const locked = disabled || switching;
   const name = useId();
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -85,7 +97,7 @@ function SegmentedRoot({
   }
 
   return (
-    <SegmentedContext.Provider value={{ value, onValueChange, name, disabled }}>
+    <SegmentedContext.Provider value={{ value, onValueChange, name, disabled: locked }}>
       <div
         ref={listRef}
         role="radiogroup"
@@ -93,7 +105,9 @@ function SegmentedRoot({
         onKeyDown={handleKeyDown}
         className={cn(
           'inline-flex items-center gap-1 rounded-blade-sm border border-ink bg-paper-2 p-1',
+          // Only a true `disabled` dims. `switching` locks without dimming.
           disabled && 'opacity-[0.42] pointer-events-none',
+          switching && 'pointer-events-none',
           className,
         )}
       >

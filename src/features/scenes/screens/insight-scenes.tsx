@@ -14,7 +14,7 @@ import {
   VarietyMeter,
   WeekStrip,
 } from '@ui/insights';
-import { ConstraintChip, MealSlot, MoodPicker, PortionScaler } from '@ui/planning';
+import { ConstraintChip, DayColumn, MoodPicker, PlanSummary, PortionScaler } from '@ui/planning';
 import { MealCard } from '@ui/domain';
 
 import { DesktopShell, PHONE_NAV } from './shell';
@@ -463,20 +463,37 @@ const DAYS = [
 
 export function WeekPlanScene({ frame }: { readonly frame: SceneFrame }) {
   const grid = (
-    <div className={cn('grid gap-3', frame === 'phone' ? 'grid-cols-2' : 'grid-cols-7')}>
-      <Repeat each={DAYS}>
-        {(entry: (typeof DAYS)[number]) => (
-          <MealSlot
-            key={entry.day}
-            day={frame === 'desktop' ? entry.day.slice(0, 3) : entry.day}
-            meal={entry.meal}
-            cooked={entry.cooked ?? false}
-            onPick={() => {}}
-            onClear={() => {}}
-          />
-        )}
-      </Repeat>
-    </div>
+    <>
+      <div className={cn('grid gap-3', frame === 'phone' ? 'grid-cols-2' : 'grid-cols-7')}>
+        <Repeat each={DAYS}>
+          {(entry: (typeof DAYS)[number]) => (
+            <DayColumn
+              key={entry.day}
+              day={entry.day}
+              shortDay={frame === 'desktop' ? entry.day.slice(0, 3) : undefined}
+              today={entry.day === 'Wednesday'}
+              slots={[
+                {
+                  id: `${entry.day}-dinner`,
+                  meal: 'Dinner',
+                  planned: entry.meal,
+                  cooked: entry.cooked ?? false,
+                },
+              ]}
+              onPick={() => {}}
+              onClear={() => {}}
+            />
+          )}
+        </Repeat>
+      </div>
+      <PlanSummary
+        className="mt-4"
+        plannedCount={DAYS.filter((d) => d.meal !== undefined).length}
+        totalSlots={DAYS.length}
+        toBuy={9}
+        estimate="₦8,400"
+      />
+    </>
   );
 
   if (frame === 'desktop') {

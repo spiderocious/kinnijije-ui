@@ -63,6 +63,7 @@ export interface StrengthBarProps {
 }
 
 /** Four segments. **Score 0 renders EMPTY segments, never a red bar.** */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/64-strength-bar.html */
 export function StrengthBar({ score, labels = SCORE_LABEL, className }: StrengthBarProps) {
   const segments = [1, 2, 3, 4];
 

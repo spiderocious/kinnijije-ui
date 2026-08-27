@@ -7,7 +7,6 @@ import { Button, Dock, IconButton, PillButton } from '@ui/primitives';
 import { ChipInput, Combobox, Field, Input, Switch, type ChipItem } from '@ui/inputs';
 import { Callout, EmptyState } from '@ui/feedback';
 import { Figure } from '@ui/display';
-import { Status } from '@ui/status';
 import { AppBar, TabBar, Tabs } from '@ui/navigation';
 import { Card, Panel, RecentIngredients, SectionHeader, Avatar } from '@ui/structure';
 import { CaptureMethods, PhotoCapture, VoiceCapture, type CaptureMethod } from '@ui/capture';
@@ -18,6 +17,7 @@ import {
   MealCard,
   MealCardSkeleton,
   Provenance,
+  RecipeHero,
   StepTimer,
   SuggestCTA,
   WhyThisMeal,
@@ -260,38 +260,6 @@ const STEPS = [
   'Rest off the heat for five minutes before serving.',
 ];
 
-function RecipeHero({ frame }: { readonly frame: SceneFrame }) {
-  return (
-    <div className="overflow-hidden rounded-blade-lg border-bold border-ink shadow-drop">
-      <div
-        className={cn(
-          'relative grid place-items-center bg-dish-fill text-dish-line',
-          frame === 'phone' ? 'h-[200px]' : 'h-[280px]',
-        )}
-      >
-        <KoboyoIcon name="plateJollofRice" size={frame === 'phone' ? 64 : 88} alone />
-        {/* Provenance sits ON the photo, exactly as on the card — the shipped
-            app demoted it to a pale outlined pill here, which is how one recipe
-            grew two different Verified badges. */}
-        <span className="absolute bottom-3 left-3">
-          <Provenance source="seed" />
-        </span>
-      </div>
-
-      <div className="bg-white p-4">
-        <h1 className="font-display text-2xl font-extrabold leading-tight tracking-display">
-          Jollof Rice, Party Style
-        </h1>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <Figure value={45} unit="min" />
-          <Figure value={4} unit="serves" muted />
-          <Status kind="difficulty" value="medium" size="sm" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function RecipeScene({ frame }: { readonly frame: SceneFrame }) {
   const [tab, setTab] = useState('ingredients');
 
@@ -342,7 +310,15 @@ export function RecipeScene({ frame }: { readonly frame: SceneFrame }) {
               the header where a mouse already is. */}
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="flex flex-col gap-4">
-              <RecipeHero frame={frame} />
+              <RecipeHero
+                name="Jollof Rice, Party Style"
+                source="seed"
+                minutes={45}
+                serves={4}
+                difficulty="medium"
+                heroImage={{ kind: 'photo' }}
+                size="full"
+              />
               <HonestyBar source="seed" imageKind="photo" />
             </div>
             <div>
@@ -364,7 +340,7 @@ export function RecipeScene({ frame }: { readonly frame: SceneFrame }) {
     <SceneRoot frame={frame}>
       <AppBar onBack={() => {}} backLabel="Suggestions" action={<IconButton icon="share" label="Share" variant="tertiary" />} />
       <SceneBody className="flex flex-col gap-5">
-        <RecipeHero frame={frame} />
+        <RecipeHero name="Jollof Rice, Party Style" source="seed" minutes={45} serves={4} difficulty="medium" heroImage={{ kind: 'photo' }} size="compact" />
         {detail}
         <HonestyBar source="seed" imageKind="photo" />
       </SceneBody>

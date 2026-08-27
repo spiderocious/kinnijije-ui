@@ -1,5 +1,7 @@
 import { ENV } from '@shared/config/env';
 
+import { sessionStore } from './session-store';
+
 interface RequestOptions {
   signal?: AbortSignal;
   headers?: Record<string, string>;
@@ -47,16 +49,83 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit, options: RequestOptions): Promise<T> {
-  const response = await fetch(`${ENV.API_BASE_URL}${path}`, {
+/** Paths that must never trigger a refresh — refreshing on them would recurse. */
+const AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout'];
+
+const isAuthPath = (path: string): boolean => AUTH_PATHS.some((p) => path.includes(p));
+
+/**
+ * A single in-flight refresh, shared by every caller.
+ *
+ * Without this, five queries failing 401 at once fire five refreshes. Because
+ * the backend ROTATES refresh tokens and treats a replayed one as theft, that
+ * would revoke every session the user has — the concurrency bug becomes a
+ * forced logout. One promise, awaited by all.
+ */
+let refreshInFlight: Promise<boolean> | null = null;
+
+async function refreshSession(): Promise<boolean> {
+  const stored = sessionStore.get();
+  if (stored === null) return false;
+
+  try {
+    const response = await fetch(`${ENV.API_BASE_URL}/api/v1/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: stored.refreshToken }),
+    });
+
+    if (!response.ok) {
+      sessionStore.clear();
+      return false;
+    }
+
+    const body = (await response.json()) as {
+      data: { tokens: { access_token: string; refresh_token: string } };
+    };
+    sessionStore.set({
+      accessToken: body.data.tokens.access_token,
+      refreshToken: body.data.tokens.refresh_token,
+    });
+    return true;
+  } catch {
+    sessionStore.clear();
+    return false;
+  }
+}
+
+function ensureRefresh(): Promise<boolean> {
+  refreshInFlight ??= refreshSession().finally(() => {
+    refreshInFlight = null;
+  });
+  return refreshInFlight;
+}
+
+async function send(path: string, init: RequestInit, options: RequestOptions): Promise<Response> {
+  const token = sessionStore.getAccessToken();
+  return fetch(`${ENV.API_BASE_URL}${path}`, {
     ...init,
     ...(options.signal ? { signal: options.signal } : {}),
     headers: {
       'Content-Type': 'application/json',
+      ...(token !== null && { Authorization: `Bearer ${token}` }),
       ...options.headers,
       ...init.headers,
     },
   });
+}
+
+async function request<T>(path: string, init: RequestInit, options: RequestOptions): Promise<T> {
+  let response = await send(path, init, options);
+
+  // An expired access token is an ordinary event, not an error the caller
+  // should have to handle: refresh once, transparently, and retry.
+  if (response.status === 401 && !isAuthPath(path)) {
+    const refreshed = await ensureRefresh();
+    if (refreshed) {
+      response = await send(path, init, options);
+    }
+  }
 
   if (!response.ok) {
     // A body is not guaranteed on an error response — never assume it parses.

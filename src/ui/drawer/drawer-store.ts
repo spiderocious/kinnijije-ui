@@ -69,8 +69,17 @@ export interface StandardModalEntry extends ModalEntryBase {
   title: ReactNode;
   description?: ReactNode;
   confirmLabel: string;
-  cancelLabel?: string;
+  /** `null` removes the cancel control — used only where there is nothing to go back to. */
+  cancelLabel?: string | null;
   onConfirm: () => void;
+  /**
+   * Committing.
+   *
+   * The modal STAYS OPEN and both controls lock. Closing on press and showing a
+   * toast on failure loses the user's place in whatever they were confirming —
+   * and for a destructive confirm, leaves them unsure whether it happened.
+   */
+  committing?: boolean;
 }
 
 /**
@@ -88,6 +97,8 @@ export interface CriticalModalEntry extends ModalEntryBase {
   confirmLabel: string;
   cancelLabel?: string;
   onConfirm: () => void;
+  /** Committing. Same rule as the standard modal: it stays open and locks. */
+  committing?: boolean;
 }
 
 export interface CustomModalEntry extends ModalEntryBase {
@@ -112,6 +123,14 @@ export interface BannerEntry {
   cta?: {
     label: string;
     onClick: () => void;
+    /**
+     * The retry is in flight.
+     *
+     * The banner STAYS while this runs. Dismissing it optimistically and
+     * re-showing it on failure makes an offline blip flash the strip twice,
+     * which reads as two separate problems.
+     */
+    loading?: boolean;
   };
   position: BannerPosition;
   /** Banners default sticky; opt out with `sticky: false` + a duration. */

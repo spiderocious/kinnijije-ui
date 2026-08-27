@@ -6,6 +6,9 @@
  */
 
 export * from './card/card';
+export * from './layout/layout';
 export * from './panel/panel';
+export * from './promo-card/promo-card';
 export * from './rows/rows';
+export * from './rows-more/rows-more';
 export * from './section-header/section-header';

@@ -21,6 +21,19 @@ export const EP = {
     CHANGE_PASSWORD: `${V1}/auth/change-password`,
   },
 
+  ONBOARDING: {
+    GET: `${V1}/onboarding`,
+    SAVE: `${V1}/onboarding`,
+    COMPLETE: `${V1}/onboarding/complete`,
+  },
+
+  FILES: {
+    UPLOAD_URL: `${V1}/files/upload-url`,
+    LIST: `${V1}/files`,
+    DETAIL: (fileId: string) => `${V1}/files/${fileId}`,
+    CONFIRM: (fileId: string) => `${V1}/files/${fileId}/confirm`,
+  },
+
   USERS: {
     ME: `${V1}/users/me`,
     LIST: `${V1}/users`,

@@ -17,3 +17,4 @@ export * from './icon-button/icon-button';
 export * from './link/link';
 export * from './pill-button/pill-button';
 export * from './segmented/segmented';
+export * from './typography/typography';

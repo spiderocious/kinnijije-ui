@@ -34,6 +34,7 @@ export interface InputProps
   readonly loading?: boolean;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/41-input-search.html */
 export function Input({
   size = 'md',
   leading,

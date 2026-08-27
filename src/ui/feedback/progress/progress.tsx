@@ -88,6 +88,14 @@ export interface StepProgressProps {
    * looks clickable but is not is a small betrayal.
    */
   readonly clickable?: boolean;
+  /**
+   * Flow locked — the steps show but none can be jumped to.
+   *
+   * Used where the sequence is enforced server-side. The dots stay visible so
+   * the user still knows how long the flow is; hiding them would make a locked
+   * flow feel endless.
+   */
+  readonly locked?: boolean;
   readonly onStepClick?: (step: number) => void;
   readonly disabled?: boolean;
   readonly className?: string;
@@ -100,6 +108,7 @@ export function StepProgress({
   clickable = false,
   onStepClick,
   disabled = false,
+  locked = false,
   className,
 }: StepProgressProps) {
   const steps = Array.from({ length: total }, (_, index) => index + 1);
@@ -116,7 +125,9 @@ export function StepProgress({
               step > current && 'bg-line-2',
             );
 
-            if (clickable && !disabled && step < current) {
+            // `locked` blocks navigation but does NOT dim: the flow is real and
+            // in progress, it simply cannot be re-entered out of order.
+            if (clickable && !disabled && !locked && step < current) {
               return (
                 <button
                   key={step}

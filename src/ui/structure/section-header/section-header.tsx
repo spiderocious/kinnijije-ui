@@ -134,6 +134,7 @@ export interface AvatarProps {
  * A thin wrapper over `Blob` for the common "creature + name + detail" row, so
  * an account row does not re-implement the layout at every call site.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/90-avatar-group.html */
 export function Avatar({ name, size = 36, label, sublabel, className }: AvatarProps) {
   if (label === undefined) {
     return <Blob name={name} size={size} className={className} />;
@@ -148,6 +149,57 @@ export function Avatar({ name, size = 36, label, sublabel, className }: AvatarPr
           <span className="block truncate font-mono text-xs text-ink-3">{sublabel}</span>
         </Show>
       </span>
+    </span>
+  );
+}
+
+/**
+ * The header's rail, before its title arrives.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/200-section-header.html
+ *
+ * A section that loads its title late must still hold the space, or every row
+ * beneath it shifts down when the words appear.
+ */
+export function SectionHeaderSkeleton({ className }: { readonly className?: string }) {
+  return (
+    <div aria-hidden="true" className={cn('flex items-center justify-between gap-3', className)}>
+      <span className="block h-[17px] w-40 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-16 animate-shimmer rounded-[3px] bg-paper-2" />
+    </div>
+  );
+}
+
+/**
+ * A person's mark, loading.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/89-avatar.html
+ *
+ * The blob is generated from the name, so there is no image to fail — an avatar
+ * "error" is a missing NAME, and that renders as this same neutral disc rather
+ * than a broken-image glyph or a guessed set of initials.
+ */
+export function AvatarSkeleton({
+  size = 36,
+  withLabel = false,
+  className,
+}: {
+  readonly size?: number;
+  readonly withLabel?: boolean;
+  readonly className?: string;
+}) {
+  return (
+    <span aria-hidden="true" className={cn('flex items-center gap-2.5', className)}>
+      <span
+        className="block shrink-0 animate-shimmer rounded-round bg-paper-2"
+        style={{ width: size, height: size }}
+      />
+      {withLabel && (
+        <span className="flex flex-col gap-1">
+          <span className="block h-[13px] w-24 animate-shimmer rounded-[3px] bg-paper-2" />
+          <span className="block h-[11px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
+        </span>
+      )}
     </span>
   );
 }

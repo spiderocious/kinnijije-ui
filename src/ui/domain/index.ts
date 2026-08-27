@@ -6,9 +6,11 @@
  */
 
 export * from './cook-step/cook-step';
+export * from './flag-step/flag-step';
 export * from './have-need/have-need';
 export * from './honesty/honesty';
 export * from './meal-card/meal-card';
 export * from './provenance/provenance';
+export * from './recipe-hero/recipe-hero';
 export * from './step-timer/step-timer';
 export * from './suggest-cta/suggest-cta';

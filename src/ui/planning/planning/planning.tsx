@@ -124,6 +124,7 @@ export interface ConstraintChipProps {
 }
 
 /** A hard filter — dietary, time, difficulty. Unlike mood, it excludes. */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/461-constraint-chip.html */
 export function ConstraintChip({ label, active, onToggle, icon }: ConstraintChipProps) {
   return (
     <button
@@ -170,6 +171,7 @@ export interface MealSlotProps {
  * most weeks are empty, so the empty treatment is the one that had to be right.
  * It is calm, not an error.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/462-meal-slot.html */
 export function MealSlot({ day, meal, cooked = false, missing = false, onPick, onClear }: MealSlotProps) {
   if (missing) {
     return (
@@ -260,6 +262,7 @@ export interface PortionScalerProps {
  * gives a cook no way to sanity-check a quantity that looks wrong — and
  * scaling is where recipe maths most often goes astray.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/465-portion-scaler.html */
 export function PortionScaler({ serves, onChange, baseServes, className }: PortionScalerProps) {
   const scaled = serves !== baseServes;
 
@@ -274,6 +277,23 @@ export function PortionScaler({ serves, onChange, baseServes, className }: Porti
           <span className="font-mono tnum">{(serves / baseServes).toFixed(2)}</span>.
         </p>
       </Show>
+    </div>
+  );
+}
+
+/** Same grid, loading. The mood tiles are a fixed set, so the shape is known. */
+export function MoodPickerSkeleton({
+  count = 6,
+  className,
+}: {
+  readonly count?: number;
+  readonly className?: string;
+}) {
+  return (
+    <div aria-hidden="true" className={cn('grid grid-cols-3 gap-2', className)}>
+      {Array.from({ length: count }, (_, i) => (
+        <span key={i} className="block h-[64px] animate-shimmer rounded-blade-sm bg-paper-2" />
+      ))}
     </div>
   );
 }

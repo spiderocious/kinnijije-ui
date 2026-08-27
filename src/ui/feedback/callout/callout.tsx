@@ -51,6 +51,7 @@ export interface CalloutProps {
   readonly className?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/151-feedback-message.html */
 export function Callout({ tone, title, body, action, loading = false, className }: CalloutProps) {
   return (
     <div

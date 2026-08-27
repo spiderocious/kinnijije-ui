@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { Repeat } from 'meemaw';
+import { Repeat, Show } from 'meemaw';
 
+import { Loader2 } from '@icons';
 import { cn } from '@shared/utils/cn';
 import type { FieldTriad } from '../field-contract';
 
@@ -24,6 +25,21 @@ export interface OtpInputProps extends FieldTriad {
   readonly length?: number;
   readonly label?: string;
   readonly autoFocus?: boolean;
+  /**
+   * Wrong code, or locked out after too many tries — the message says which.
+   *
+   * The digits STAY on screen. Clearing them on a wrong code makes the user
+   * retype six characters to fix one, and hides whether they mistyped or the
+   * code itself was stale.
+   *
+   * Pair with `invalid` for the field-contract edge; this carries the words.
+   */
+  readonly error?: string;
+  /**
+   * Verifying against the server. The boxes lock but stay full ink — the code
+   * is real and current, it is simply not yet answered.
+   */
+  readonly verifying?: boolean;
   readonly className?: string;
 }
 
@@ -36,6 +52,8 @@ export function OtpInput({
   autoFocus = false,
   disabled = false,
   invalid = false,
+  error,
+  verifying = false,
   className,
 }: OtpInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,10 +68,14 @@ export function OtpInput({
   }, [value, length, onComplete]);
 
   const cells = Array.from({ length }, (_, index) => index);
+  // Verifying locks the control without dimming it — the difference between
+  // "you may not touch this" and "we are reading what you already typed".
+  const locked = disabled || verifying;
 
   return (
+    <div className={cn('inline-flex flex-col gap-2', className)}>
     <div
-      className={cn('relative inline-flex gap-2', disabled && 'opacity-[0.42]', className)}
+      className={cn('relative inline-flex gap-2', disabled && 'opacity-[0.42]')}
       onClick={() => inputRef.current?.focus()}
     >
       {/* The real control. Everything visible below is presentation. */}
@@ -66,7 +88,7 @@ export function OtpInput({
         aria-invalid={invalid ? true : undefined}
         maxLength={length}
         value={value}
-        disabled={disabled}
+        disabled={locked}
         autoFocus={autoFocus}
         onChange={(event) => onChange(event.target.value.replace(/\D/g, '').slice(0, length))}
         className="peer absolute inset-0 z-base w-full cursor-default opacity-0"
@@ -95,6 +117,20 @@ export function OtpInput({
           );
         }}
       </Repeat>
+      <Show when={verifying}>
+        <span className="absolute -right-6 top-1/2 -translate-y-1/2">
+          <Loader2 size={15} className="animate-spin text-ink-3" aria-label="Verifying" />
+        </span>
+      </Show>
+    </div>
+
+      {/* One error surface, beneath the boxes — wrong code and locked-out both
+          land here, because a user only ever looks in one place. */}
+      <Show when={error !== undefined}>
+        <span role="alert" className="text-sm font-semibold text-critical">
+          {error}
+        </span>
+      </Show>
     </div>
   );
 }

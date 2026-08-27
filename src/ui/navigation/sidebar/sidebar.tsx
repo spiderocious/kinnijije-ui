@@ -20,7 +20,14 @@ export interface SidebarItem {
   readonly id: string;
   readonly label: string;
   readonly icon: KoboyoIconName;
+  /**
+   * A count beside the destination. `undefined` means still resolving and
+   * renders a small shimmer; `0` means resolved-and-empty and renders nothing.
+   * The two are different answers and must not collapse into one.
+   */
   readonly count?: number;
+  /** Explicitly marks the count as still loading, when 0 is a real value. */
+  readonly countLoading?: boolean;
 }
 
 export interface SidebarGroup {
@@ -70,6 +77,13 @@ export function Sidebar({
                 </p>
               </Show>
 
+              {/* A section with nothing in it still shows, greyed. Removing it
+                  would change the shape of the nav between two users of the
+                  same product, so nobody could be told where anything lives. */}
+              <Show when={group.items.length === 0}>
+                <p className="px-2 py-1.5 text-sm text-ink-4">Nothing here yet</p>
+              </Show>
+
               <ul className="flex flex-col gap-[2px]">
                 <Repeat each={[...group.items]}>
                   {(item: SidebarItem) => {
@@ -91,7 +105,21 @@ export function Sidebar({
                         >
                           <KoboyoIcon name={item.icon} size={18} className="shrink-0" />
                           <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                          <Show when={item.count !== undefined && item.count > 0}>
+                          {/* Counts resolving — the badge's space is held so the
+                              labels do not shift when the numbers land. */}
+                          <Show when={item.countLoading === true}>
+                            <span
+                              aria-hidden="true"
+                              className="block h-[18px] w-6 animate-shimmer rounded-pill bg-paper-2"
+                            />
+                          </Show>
+                          <Show
+                            when={
+                              item.countLoading !== true &&
+                              item.count !== undefined &&
+                              item.count > 0
+                            }
+                          >
                             <Badge count={item.count ?? 0} />
                           </Show>
                         </button>

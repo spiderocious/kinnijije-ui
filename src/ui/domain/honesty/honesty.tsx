@@ -104,6 +104,7 @@ export interface AiDisclosureProps {
  * **A badge alone is a claim, not a disclosure.** This says what the model was
  * given, what it was asked, and what the user should treat with caution.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/292-ai-disclosure.html */
 export function AiDisclosure({ onClose, className }: AiDisclosureProps) {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
@@ -158,6 +159,7 @@ export interface WhyThisMealProps {
  * **It names the MATCHED ingredients** — a rationale with no evidence is
  * marketing, and a suggestion nobody can audit is one nobody can report.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/293-why-this-meal.html */
 export function WhyThisMeal({
   matched,
   totalInBasket,
@@ -197,6 +199,27 @@ export function WhyThisMeal({
           </Repeat>
         </ul>
       </Show>
+    </div>
+  );
+}
+
+/**
+ * The honesty bar, loading.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/291-honesty-bar.html
+ *
+ * **The bar holds its space even before it knows what to say.** If it appeared
+ * only once provenance resolved, a recipe would render for a beat with no
+ * disclosure at all — which is the one moment this component exists to prevent.
+ */
+export function HonestyBarSkeleton({ className }: { readonly className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('flex items-center gap-2 rounded-blade-sm bg-paper-2 px-3 py-2', className)}
+    >
+      <span className="block h-[14px] w-[14px] animate-shimmer rounded-round bg-line" />
+      <span className="block h-[12px] w-44 animate-shimmer rounded-[3px] bg-line" />
     </div>
   );
 }

@@ -58,6 +58,9 @@ export function FilterChip({
       {...rest}
     >
       <span>{children}</span>
+      {/* `count === 0` renders, deliberately. A filter that matched nothing must
+          keep showing its chip — hiding it strands the user in an empty list
+          with no visible thing to remove. */}
       {pressed && (loading || count !== undefined) && (
         <>
           <span aria-hidden="true" className="opacity-50">

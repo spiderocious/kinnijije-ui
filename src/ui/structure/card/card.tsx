@@ -95,3 +95,48 @@ export function CardSkeleton({
     </div>
   );
 }
+
+/**
+ * The card's content failed.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/196-card.html
+ *
+ * **A card with no content does not render at all** — that is the `empty` state,
+ * and it is the caller's `return null`, not a prop here. This is the different
+ * case: the content was supposed to exist and could not be fetched, so the card
+ * stays and says so rather than vanishing and leaving a hole in the grid.
+ */
+export function CardError({
+  message = 'This could not load',
+  onRetry,
+  variant = 'quiet',
+  className,
+}: {
+  readonly message?: string;
+  readonly onRetry?: () => void;
+  readonly variant?: CardVariant;
+  readonly className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'grid place-items-center rounded-blade-lg bg-white p-pad text-center',
+        variantMap[variant],
+        className,
+      )}
+    >
+      <span className="flex flex-col items-center gap-2">
+        <span className="text-sm font-extrabold text-ink-2">{message}</span>
+        {onRetry !== undefined && (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="text-xs font-extrabold text-sky hover:underline"
+          >
+            Try again
+          </button>
+        )}
+      </span>
+    </div>
+  );
+}

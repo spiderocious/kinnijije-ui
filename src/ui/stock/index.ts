@@ -6,3 +6,4 @@
  */
 
 export * from './stock/stock';
+export * from './stock-more/stock-more';

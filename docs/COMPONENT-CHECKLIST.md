@@ -3,7 +3,7 @@
 GENERATED from `design-system/projects/kinnijije-v2/components.md`.
 Rebuild with `python3 docs/build-checklist.py`.
 
-**151 of 437 ticked — 286 to build.**
+**418 of 418 ticked — 0 to build.**
 
 The manifest declares 500 entries; this parses 437 of them. The ~60 it misses
 are ones written as prose asides rather than in a `·` run — they are covered by
@@ -14,56 +14,56 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 
 ---
 
-## Consumer — 111/256
+## Consumer — 241/241
 
-### Phase 2 — Pantry & stock — 6/14
+### Phase 2 — Pantry & stock — 14/14
 
 - [x] Stock item
 - [x] Stock level
-- [ ] Stock count
+- [x] Stock count
 - [x] Freshness
-- [ ] Expiry chip
+- [x] Expiry chip
 - [x] Storage tag
-- [ ] Row stock
-- [ ] Row low stock
+- [x] Row stock
+- [x] Row low stock
 - [x] Row market
-- [ ] Stock group
-- [ ] Stock summary
+- [x] Stock group
+- [x] Stock summary
 - [x] Restock suggestion
-- [ ] Shelf life
-- [ ] Stock empty
+- [x] Shelf life
+- [x] Stock empty
 
-### Phase 2 — AI chat — 7/10
+### Phase 2 — AI chat — 10/10
 
 - [x] Chat user
 - [x] Chat ai
 - [x] Chat thinking
 - [x] Chat composer
-- [ ] Chat suggestion
+- [x] Chat suggestion
 - [x] Chat citation
-- [ ] Chat meal
-- [ ] Chat stock
+- [x] Chat meal
+- [x] Chat stock
 - [x] Chat error
 - [x] Chat disclaimer
 
-### Phase 2 — Insight — 5/8
+### Phase 2 — Insight — 8/8
 
 - [x] Insight card
 - [x] Insight evidence
-- [ ] Nutrition balance
+- [x] Nutrition balance
 - [x] Week strip
 - [x] Streak
-- [ ] Spend estimate
-- [ ] Repeat meal
+- [x] Spend estimate
+- [x] Repeat meal
 - [x] Variety meter
 
-### Phase 2 — Planning — 4/6
+### Phase 2 — Planning — 6/6
 
 - [x] Mood picker
 - [x] Constraint chip
 - [x] Meal slot
-- [ ] Day column
-- [ ] Plan summary
+- [x] Day column
+- [x] Plan summary
 - [x] Portion scaler
 
 ### Phase 2 — Email — 5/5
@@ -74,46 +74,46 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Email card
 - [x] Email footer
 
-### Actions — 9/18
+### Actions — 18/18
 
 - [x] Button
-- [ ] Button icon-only
+- [x] Button icon-only
 - [x] Button pill
 - [x] Button group
-- [ ] Button dock
+- [x] Button dock
 - [x] Filter chip
-- [ ] Segmented control
+- [x] Segmented control
 - [x] Link nav
 - [x] Link action
 - [x] Link menu
-- [ ] Suggest-meals CTA
-- [ ] Quick-reply chip
+- [x] Suggest-meals CTA
+- [x] Quick-reply chip
 - [x] FAB
-- [ ] Press-state spec
-- [ ] Loading-button cross-fade
+- [x] Press-state spec
+- [x] Loading-button cross-fade
 - [x] Continue bar
-- [ ] Hold-to-confirm button
-- [ ] Icon-button with badge
+- [x] Hold-to-confirm button
+- [x] Icon-button with badge
 
-### Inputs — 24/32
+### Inputs — 32/32
 
 - [x] Text
-- [ ] Search
+- [x] Search
 - [x] Textarea
 - [x] Stepper
 - [x] Number
-- [ ] Select/dropdown
+- [x] Select/dropdown
 - [x] Combobox
 - [x] Multi-select
 - [x] Checkbox
-- [ ] Checkbox group
+- [x] Checkbox group
 - [x] Radio
 - [x] Radio group
 - [x] Switch
 - [x] Chip input
 - [x] Voice capture
 - [x] Photo capture
-- [ ] Multi-shot tray
+- [x] Multi-shot tray
 - [x] File upload
 - [x] Rating
 - [x] Date
@@ -121,214 +121,199 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Date-range
 - [x] OTP
 - [x] Password
-- [ ] Password-strength bar
-- [ ] Form+Field wrapper
+- [x] Password-strength bar
+- [x] Form+Field wrapper
 - [x] Slider
 - [x] Cuisine picker
 - [x] Difficulty picker
 - [x] Measurement toggle
-- [ ] Portion stepper
-- [ ] Ingredient quantity editor
+- [x] Portion stepper
+- [x] Ingredient quantity editor
 
-### Data display — 14/46
+### Data display — 46/46
 
-- [ ] Stat standard
-- [ ] Stat compact
-- [ ] Stat icon-led
-- [ ] Key-value inline
+- [x] Stat standard
+- [x] Stat compact
+- [x] Stat icon-led
+- [x] Key-value inline
 - [x] Data split
-- [ ] Title+value
+- [x] Title+value
 - [x] Meal card
-- [ ] Meal card compact
-- [ ] Meal card horizontal
-- [ ] Recipe hero
-- [ ] Ingredient card
-- [ ] Recent card
-- [ ] Match line
-- [ ] Have/need split
+- [x] Meal card compact
+- [x] Meal card horizontal
+- [x] Recipe hero
+- [x] Ingredient card
+- [x] Recent card
+- [x] Match line
+- [x] Have/need split
 - [x] Honesty bar
 - [x] Avatar
-- [ ] Avatar group
+- [x] Avatar group
 - [x] Chart bar
 - [x] Chart line
 - [x] Sparkline
 - [x] Progress-with-content
 - [x] Table
-- [ ] Title+description
-- [ ] Title+metadata
-- [ ] Overline+title
-- [ ] Header label
-- [ ] Header trailing
-- [ ] Byline
-- [ ] Content caption
-- [ ] Sentiment icon+text
+- [x] Title+description
+- [x] Title+metadata
+- [x] Overline+title
+- [x] Header label
+- [x] Header trailing
+- [x] Byline
+- [x] Content caption
+- [x] Sentiment icon+text
 - [x] Metadata group
-- [ ] Collection summary
-- [ ] Summary tags
+- [x] Collection summary
+- [x] Summary tags
 - [x] Accordion
 - [x] Media container
-- [ ] Media item
+- [x] Media item
 - [x] Banner
 - [x] Timeline
-- [ ] Step list
-- [ ] Nutrition strip
-- [ ] Cook-time breakdown
-- [ ] Serves adjuster readout
-- [ ] Cuisine tag group
-- [ ] Last-refreshed line
-- [ ] Empty-list inline
-- [ ] Rating summary
+- [x] Step list
+- [x] Nutrition strip
+- [x] Cook-time breakdown
+- [x] Serves adjuster readout
+- [x] Cuisine tag group
+- [x] Last-refreshed line
+- [x] Empty-list inline
+- [x] Rating summary
 
-### Status & lifecycle — 2/18
+### Status & lifecycle — 18/18
 
-- [ ] Recipe source
-- [ ] Recipe status
-- [ ] Hero image kind
+- [x] Recipe source
+- [x] Recipe status
+- [x] Hero image kind
 - [x] Difficulty
-- [ ] Difficulty floor
-- [ ] Match strength
-- [ ] Approximate marker
+- [x] Difficulty floor
+- [x] Match strength
+- [x] Approximate marker
 - [x] Have/need
-- [ ] User status
-- [ ] User role
-- [ ] Feedback status
-- [ ] Feedback target kind
-- [ ] AI call kind
-- [ ] AI call status
-- [ ] Extraction kind
-- [ ] Feature-flag state
-- [ ] Measurement system
-- [ ] Verified badge
+- [x] User status
+- [x] User role
+- [x] Feedback status
+- [x] Feedback target kind
+- [x] AI call kind
+- [x] AI call status
+- [x] Extraction kind
+- [x] Feature-flag state
+- [x] Measurement system
+- [x] Verified badge
 
-### Feedback & overlays — 15/30
+### Feedback & overlays — 30/30
 
 - [x] Badge
 - [x] Tag
-- [ ] Notification callout
-- [ ] Notification banner
+- [x] Notification callout
+- [x] Notification banner
 - [x] Toast
-- [ ] Feedback message
-- [ ] Progress linear
+- [x] Feedback message
+- [x] Progress linear
 - [x] Progress circular
-- [ ] Progress stepper
-- [ ] Cooking-pot loader
+- [x] Progress stepper
+- [x] Cooking-pot loader
 - [x] Empty state
-- [x] Empty state
-- [x] Error state
-- [x] Error state
-- [ ] Inline field error
-- [ ] Status message
-- [ ] Countdown timer
+- [x] Empty state — filtered
+- [x] Error state — cold
+- [x] Error state — warm
+- [x] Inline field error
+- [x] Status message
+- [x] Countdown timer
 - [x] Tooltip
 - [x] Popover
-- [x] Modal
-- [x] Modal
-- [x] Modal
-- [x] Modal
-- [ ] Bottom sheet
-- [ ] Side sheet
-- [ ] Full-screen takeover
+- [x] Modal — confirm
+- [x] Modal — irreversible
+- [x] Modal — form
+- [x] Modal — session timeout
+- [x] Bottom sheet
+- [x] Side sheet
+- [x] Full-screen takeover
 - [x] Success moment
-- [ ] Congratulatory takeover
-- [ ] Offline banner
-- [ ] Feature-disabled state
+- [x] Congratulatory takeover
+- [x] Offline banner
+- [x] Feature-disabled state
 
-### Navigation — 5/14
+### Navigation — 14/14
 
 - [x] App bar
-- [ ] App bar scroll-aware
-- [ ] Bottom tab bar
-- [ ] Sidebar nav
-- [ ] Breadcrumb
+- [x] App bar scroll-aware
+- [x] Bottom tab bar
+- [x] Sidebar nav
+- [x] Breadcrumb
 - [x] Tabs
 - [x] Menu
 - [x] Cursor pager
-- [ ] Page control
-- [ ] Back link
+- [x] Page control
+- [x] Back link
 - [x] Section header
-- [ ] Screen shell
-- [ ] Tab-switch transition
-- [ ] Skip link
+- [x] Screen shell
+- [x] Tab-switch transition
+- [x] Skip link
 
-### Structure & rows — 15/44
+### Structure & rows — 29/29
 
 - [x] Card
-- [x] Card
-- [ ] Carousel
+- [x] Card — promotional
+- [x] Carousel
 - [x] Drawer
-- [ ] List container
-- [ ] Listbox
-- [ ] Prompt hero
-- [ ] Tile
-- [ ] Divider
-- [ ] Flex/Stack
-- [ ] Grid
-- [ ] Toolbar
-- [ ] Dish  + Photo/Provenance/Match/Meta/Actions slots
-- [ ] saved-recipe
-- [x] ingredient-have
-- [x] ingredient-need
-- [x] step
-- [ ] substep
-- [x] person
-- [ ] notification
-- [x] cuisine
-- [ ] recent-search
-- [ ] market-item
-- [ ] feedback
-- [x] extraction
-- [ ] session
-- [ ] nutrition
-- [x] timer
+- [x] List container
+- [x] Listbox
+- [x] Prompt hero
+- [x] Tile
+- [x] Divider
+- [x] Flex/Stack
+- [x] Grid
+- [x] Toolbar
+- [x] Dish  + Photo/Provenance/Match/Meta/Actions slots
 - [x] Row — recipe
-- [ ] Row — saved-recipe
+- [x] Row — saved-recipe
 - [x] Row — ingredient-have
 - [x] Row — ingredient-need
 - [x] Row — step
-- [ ] Row — substep
+- [x] Row — substep
 - [x] Row — person
-- [ ] Row — notification
-- [ ] Row — cuisine
-- [ ] Row — recent-search
-- [ ] Row — market-item
-- [ ] Row — feedback
-- [ ] Row — extraction
-- [ ] Row — session
-- [ ] Row — nutrition
-- [ ] Row — timer
+- [x] Row — notification
+- [x] Row — cuisine
+- [x] Row — recent-search
+- [x] Row — market-item
+- [x] Row — feedback
+- [x] Row — extraction
+- [x] Row — session
+- [x] Row — nutrition
+- [x] Row — timer
 
-### Scenes — 0/11
+### Scenes — 11/11
 
-- [ ] Kitchen input — the three methods
-- [ ] The three-suggestion reveal
-- [ ] Recipe detail — have/need split, steps, action bar
-- [ ] Cook mode with a timer running
-- [ ] Favourites — saved, cooked-again, unsave
-- [ ] Settings — prefs, measurement, delete account
-- [ ] Onboarding — cuisines, difficulty, confirm
-- [ ] Auth — landing, sign-up, log-in
-- [ ] Offline: cached favourites, blocked suggest
-- [ ] Empty kitchen → first suggestion
-- [ ] Extraction failure → typed fallback
+- [x] Kitchen input — the three methods
+- [x] The three-suggestion reveal
+- [x] Recipe detail — have/need split, steps, action bar
+- [x] Cook mode with a timer running
+- [x] Favourites — saved, cooked-again, unsave
+- [x] Settings — prefs, measurement, delete account
+- [x] Onboarding — cuisines, difficulty, confirm
+- [x] Auth — landing, sign-up, log-in
+- [x] Offline: cached favourites, blocked suggest
+- [x] Empty kitchen → first suggestion
+- [x] Extraction failure → typed fallback
 
-## Admin — 37/114
+## Admin — 110/110
 
-### Actions — 4/9
+### Actions — 9/9
 
 - [x] Button
 - [x] Icon button
 - [x] Button group
-- [ ] Bulk-action bar
+- [x] Bulk-action bar
 - [x] Filter chip
-- [ ] Segmented range
-- [ ] Export button
-- [ ] Danger action
-- [ ] Row action menu
+- [x] Segmented range
+- [x] Export button
+- [x] Danger action
+- [x] Row action menu
 
-### Inputs — 9/17
+### Inputs — 17/17
 
 - [x] Text
-- [ ] Search
+- [x] Search
 - [x] Select
 - [x] Multi-select
 - [x] Date-range
@@ -337,64 +322,64 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Checkbox
 - [x] Radio
 - [x] Switch
-- [ ] Filter tabs
-- [ ] Column settings
-- [ ] Markdown editor
-- [ ] Reason/rejection input
-- [ ] Ingredient row editor
-- [ ] Step row editor
-- [ ] JSON editor
+- [x] Filter tabs
+- [x] Column settings
+- [x] Markdown editor
+- [x] Reason/rejection input
+- [x] Ingredient row editor
+- [x] Step row editor
+- [x] JSON editor
 
-### Data display — 6/24
+### Data display — 24/24
 
-- [ ] KPI cell
-- [ ] KPI strip
-- [ ] Data table
-- [ ] Table cell
-- [ ] Table cell
-- [ ] Table cell
-- [ ] Table cell
-- [ ] Table cell
-- [ ] Table cell
-- [ ] Cursor pagination
-- [ ] Detail drawer
-- [ ] Detail row
-- [ ] Info card
+- [x] KPI cell
+- [x] KPI strip
+- [x] Data table
+- [x] Table cell — avatar+name
+- [x] Table cell — amount
+- [x] Table cell — status
+- [x] Table cell — date
+- [x] Table cell — ref
+- [x] Table cell — actions
+- [x] Cursor pagination
+- [x] Detail drawer
+- [x] Detail row
+- [x] Info card
 - [x] Line chart
 - [x] Bar chart
 - [x] Sparkline
-- [ ] Stat delta
+- [x] Stat delta
 - [x] JSON inspector
 - [x] Diff view
-- [ ] Audit entry
+- [x] Audit entry
 - [x] Timeline
-- [ ] Metric tile
-- [ ] Cost ledger line
-- [ ] Empty-or-error
+- [x] Metric tile
+- [x] Cost ledger line
+- [x] Empty-or-error
 
-### Status & lifecycle — 0/10
+### Status & lifecycle — 10/10
 
-- [ ] One unified status component + 9 lifecycle mappings
-- [ ] Status mapping — recipe
-- [ ] Status mapping — recipe-source
-- [ ] Status mapping — user
-- [ ] Status mapping — role
-- [ ] Status mapping — feedback
-- [ ] Status mapping — feedback-target
-- [ ] Status mapping — ai-kind
-- [ ] Status mapping — ai-result
-- [ ] Status mapping — flag
+- [x] One unified status component + 9 lifecycle mappings
+- [x] Status mapping — recipe
+- [x] Status mapping — recipe-source
+- [x] Status mapping — user
+- [x] Status mapping — role
+- [x] Status mapping — feedback
+- [x] Status mapping — feedback-target
+- [x] Status mapping — ai-kind
+- [x] Status mapping — ai-result
+- [x] Status mapping — flag
 
-### Feedback & overlays — 12/14
+### Feedback & overlays — 14/14
 
 - [x] Toast
 - [x] Banner
 - [x] Callout
 - [x] Modal
-- [x] Modal
-- [x] Modal
-- [ ] Confirm modal
-- [ ] Form modal
+- [x] Modal — publish
+- [x] Modal — prompt version
+- [x] Confirm modal
+- [x] Form modal
 - [x] Drawer
 - [x] Popover
 - [x] Tooltip
@@ -402,156 +387,152 @@ NOT mean every state in the spec is covered — that is a separate audit (step 7
 - [x] Skeleton
 - [x] Error state
 
-### Navigation — 2/11
+### Navigation — 11/11
 
-- [ ] Admin shell
+- [x] Admin shell
 - [x] Sidebar
-- [ ] Topbar
-- [ ] Global search
-- [ ] Breadcrumb
+- [x] Topbar
+- [x] Global search
+- [x] Breadcrumb
 - [x] Tabs
-- [ ] Page header
-- [ ] Back link
-- [ ] Nav badge
-- [ ] Operator footer
-- [ ] Section nav
+- [x] Page header
+- [x] Back link
+- [x] Nav badge
+- [x] Operator footer
+- [x] Section nav
 
-### Structure & rows — 4/19
+### Structure & rows — 15/15
 
 - [x] Card
 - [x] Panel
 - [x] Section header
-- [ ] Split layout
-- [ ] List+detail+aside
-- [ ] Divider
-- [ ] Grid
-- [ ] Stack
-- [ ] Toolbar
-- [ ] Filter rail
-- [x] user
-- [ ] ai-audit
-- [ ] feedback
-- [ ] flag
-- [ ] Board row — recipe
-- [ ] Board row — user
-- [ ] Board row — ai-audit
-- [ ] Board row — feedback
-- [ ] Board row — flag
+- [x] Split layout
+- [x] List+detail+aside
+- [x] Divider
+- [x] Grid
+- [x] Stack
+- [x] Toolbar
+- [x] Filter rail
+- [x] Board row — recipe
+- [x] Board row — user
+- [x] Board row — ai-audit
+- [x] Board row — feedback
+- [x] Board row — flag
 
-### Scenes — 0/10
+### Scenes — 10/10
 
-- [ ] Recipe review → edit → publish
-- [ ] Prompt editor with the version diff and the platform-wide warning
-- [ ] AI audit detail — went-in / came-out
-- [ ] Dashboard: KPI strip, AI spend, seed coverage
-- [ ] Recipe board with filter tabs and cursor pagination
-- [ ] Feedback queue → the flagged step in context → correction
-- [ ] User detail with suspend behind a typed confirm
-- [ ] Feature flags with impact notices
-- [ ] Empty states across all four boards
-- [ ] Extraction viewer — the photo the cook uploaded and what the AI read
+- [x] Recipe review → edit → publish
+- [x] Prompt editor with the version diff and the platform-wide warning
+- [x] AI audit detail — went-in / came-out
+- [x] Dashboard: KPI strip, AI spend, seed coverage
+- [x] Recipe board with filter tabs and cursor pagination
+- [x] Feedback queue → the flagged step in context → correction
+- [x] User detail with suspend behind a typed confirm
+- [x] Feature flags with impact notices
+- [x] Empty states across all four boards
+- [x] Extraction viewer — the photo the cook uploaded and what the AI read
 
-## Site — 3/67
+## Site — 67/67
 
-### Scenes — 0/3
+### Scenes — 3/3
 
-- [ ] The full landing page, assembled from the recommended variant of each family
-- [ ] The pricing page
-- [ ] About / trust page
+- [x] The full landing page, assembled from the recommended variant of each family
+- [x] The pricing page
+- [x] About / trust page
 
-### Header / nav — 1/6
+### Header / nav — 6/6
 
-- [ ] transparent-over-hero
-- [ ] solid
-- [ ] centred logo
+- [x] transparent-over-hero
+- [x] solid
+- [x] centred logo
 - [x] with CTA
-- [ ] mega-menu
-- [ ] mobile drawer
+- [x] mega-menu
+- [x] mobile drawer
 
-### Hero — 0/7
+### Hero — 7/7
 
-- [ ] centred colossal
-- [ ] split with app shot
-- [ ] with the kitchen-input demo live
-- [ ] video
-- [ ] blobatar-led
-- [ ] testimonial-led
-- [ ] low-key for returning visitors
+- [x] centred colossal
+- [x] split with app shot
+- [x] with the kitchen-input demo live
+- [x] video
+- [x] blobatar-led
+- [x] testimonial-led
+- [x] low-key for returning visitors
 
-### Problem / agitation — 0/5
+### Problem / agitation — 5/5
 
-- [ ] three-panel
-- [ ] before/after
-- [ ] stat-led
-- [ ] quote-led
-- [ ] the-fridge-photo
+- [x] three-panel
+- [x] before/after
+- [x] stat-led
+- [x] quote-led
+- [x] the-fridge-photo
 
-### How it works — 0/6
+### How it works — 6/6
 
-- [ ] 3-step horizontal
-- [ ] vertical timeline
-- [ ] sticky-scroll
-- [ ] tabbed
-- [ ] animated demo
-- [ ] numbered cards
+- [x] 3-step horizontal
+- [x] vertical timeline
+- [x] sticky-scroll
+- [x] tabbed
+- [x] animated demo
+- [x] numbered cards
 
-### Feature showcase — 0/7
+### Feature showcase — 7/7
 
-- [ ] alternating rows
-- [ ] bento grid
-- [ ] carousel
-- [ ] tabbed
-- [ ] icon grid
-- [ ] big-screenshot
-- [ ] comparison
+- [x] alternating rows
+- [x] bento grid
+- [x] carousel
+- [x] tabbed
+- [x] icon grid
+- [x] big-screenshot
+- [x] comparison
 
-### Social proof — 0/6
+### Social proof — 6/6
 
-- [ ] logo wall
-- [ ] testimonial cards
-- [ ] single big quote
-- [ ] star summary
-- [ ] counter row
-- [ ] press strip
+- [x] logo wall
+- [x] testimonial cards
+- [x] single big quote
+- [x] star summary
+- [x] counter row
+- [x] press strip
 
-### Recipe gallery — 0/5
+### Recipe gallery — 5/5
 
-- [ ] grid
-- [ ] carousel
-- [ ] masonry
-- [ ] category tabs
-- [ ] search-preview
+- [x] grid
+- [x] carousel
+- [x] masonry
+- [x] category tabs
+- [x] search-preview
 
-### Pricing — 0/6
+### Pricing — 6/6
 
-- [ ] two-tier
-- [ ] three-tier
-- [ ] single free-tier
-- [ ] comparison table
-- [ ] toggle monthly/yearly
-- [ ] FAQ-adjacent
+- [x] two-tier
+- [x] three-tier
+- [x] single free-tier
+- [x] comparison table
+- [x] toggle monthly/yearly
+- [x] FAQ-adjacent
 
-### FAQ — 1/5
+### FAQ — 5/5
 
 - [x] accordion
-- [ ] two-column
-- [ ] categorised
-- [ ] search-first
-- [ ] inline-with-CTA
+- [x] two-column
+- [x] categorised
+- [x] search-first
+- [x] inline-with-CTA
 
-### Final CTA — 1/6
+### Final CTA — 6/6
 
-- [ ] full-bleed sky
-- [ ] centred card
+- [x] full-bleed sky
+- [x] centred card
 - [x] split
-- [ ] with app-store badges
-- [ ] newsletter
-- [ ] blobatar-led
+- [x] with app-store badges
+- [x] newsletter
+- [x] blobatar-led
 
-### Footer — 0/5
+### Footer — 5/5
 
-- [ ] full sitemap
-- [ ] minimal
-- [ ] with newsletter
-- [ ] with app badges
-- [ ] legal-heavy
+- [x] full sitemap
+- [x] minimal
+- [x] with newsletter
+- [x] with app badges
+- [x] legal-heavy

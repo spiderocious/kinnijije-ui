@@ -182,16 +182,25 @@ export function HaveYouEatenEmail({ suggestion, stale = false }: HaveYouEatenEma
 
 export interface WeeklyEmailProps {
   readonly cooked: number;
+  /** The week's figures come from a stale count — the email says so. */
+  readonly staleDays?: number;
   readonly meals: readonly { readonly name: string; readonly minutes: number; readonly source: 'seed' | 'ai' }[];
 }
 
 /** **Weekly**, on a fixed day. The only cadence email that always has something to say. */
-export function WeeklyEmail({ cooked, meals }: WeeklyEmailProps) {
+export function WeeklyEmail({ cooked, meals, staleDays }: WeeklyEmailProps) {
   return (
     <EmailShell preheader={`You cooked ${cooked} times this week`}>
       <EmailHeader title="Your week" />
       <EmailBody>
         <EmailHeading>You cooked {cooked} times</EmailHeading>
+        {/* The count is real; its basis may be old, and that is said up front
+            rather than left for the cook to discover it does not add up. */}
+        {staleDays !== undefined && (
+          <EmailText>
+            Some of this is estimated — your kitchen count is about {staleDays} days old.
+          </EmailText>
+        )}
         <EmailText>
           Here is what you might make next, from what was in your kitchen this week.
         </EmailText>
@@ -220,7 +229,21 @@ export function WeeklyEmail({ cooked, meals }: WeeklyEmailProps) {
 export interface UseItUpEmailProps {
   readonly ingredient: string;
   readonly daysLeft: number;
-  readonly meal: { readonly name: string; readonly minutes: number };
+  /**
+   * `null` means: things are turning, but nothing makeable uses them.
+   *
+   * **Still worth sending** — the cook can act on "your spinach is going" even
+   * without a recipe. Suppressing the email because the suggestion engine came
+   * back empty would withhold the useful half to protect the other one.
+   */
+  readonly meal: { readonly name: string; readonly minutes: number } | null;
+  /**
+   * Freshness estimated from an old count.
+   *
+   * The email then drops the day figure rather than stating a number derived
+   * from a stock level nobody has confirmed in a week.
+   */
+  readonly staleDays?: number;
 }
 
 /**
@@ -228,26 +251,44 @@ export interface UseItUpEmailProps {
  * week. This is the one email that saves the cook money, so it earns its place
  * — but only while it stays true.
  */
-export function UseItUpEmail({ ingredient, daysLeft, meal }: UseItUpEmailProps) {
+export function UseItUpEmail({ ingredient, daysLeft, meal, staleDays }: UseItUpEmailProps) {
+  const stale = staleDays !== undefined;
+  const item = ingredient.toLowerCase();
+
   return (
-    <EmailShell preheader={`Your ${ingredient.toLowerCase()} has about ${daysLeft} days left`}>
+    <EmailShell
+      preheader={
+        stale ? `Your ${item} may be turning` : `Your ${item} has about ${daysLeft} days left`
+      }
+    >
       <EmailHeader />
       <EmailBody>
-        <EmailHeading>Use up your {ingredient.toLowerCase()}</EmailHeading>
+        <EmailHeading>Use up your {item}</EmailHeading>
+
+        {/* Stale freshness drops the number rather than asserting one. */}
         <EmailText>
-          About {daysLeft} {daysLeft === 1 ? 'day' : 'days'} left. Here is something that uses it
-          tonight.
+          {stale
+            ? `Your kitchen count is about ${staleDays} days old, so this is a rough guess.`
+            : `About ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left.`}{' '}
+          {meal !== null
+            ? 'Here is something that uses it tonight.'
+            : 'Nothing in your kitchen quite makes a meal from it yet — worth a look before it turns.'}
         </EmailText>
 
-        <EmailCard
-          name={meal.name}
-          minutes={meal.minutes}
-          source="seed"
-          href="https://kinnijije.ng/meals"
-        />
+        {meal !== null && (
+          <EmailCard
+            name={meal.name}
+            minutes={meal.minutes}
+            source="seed"
+            href="https://kinnijije.ng/meals"
+          />
+        )}
 
         <div style={{ marginTop: 18 }}>
-          <EmailButton href="https://kinnijije.ng/meals" label="Cook this tonight" />
+          <EmailButton
+            href="https://kinnijije.ng/meals"
+            label={meal !== null ? 'Cook this tonight' : 'Open your kitchen'}
+          />
         </div>
       </EmailBody>
       <EmailFooter unsubscribeHref={UNSUBSCRIBE} pauseHref={PAUSE} />

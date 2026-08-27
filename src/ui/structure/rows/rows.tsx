@@ -245,6 +245,7 @@ export interface MarketRowProps extends Omit<RowShellProps, 'children'> {
   readonly icon?: KoboyoIconName;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/408-row-market.html */
 function RowMarket({ name, quantity, ticked, onToggle, icon = 'shoppingBasket', ...shell }: MarketRowProps) {
   return (
     <RowShell {...shell}>
@@ -287,6 +288,13 @@ function RowSkeleton({ withAvatar = true }: { readonly withAvatar?: boolean }) {
   );
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/225-row-notification.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/226-row-cuisine.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/227-row-recent.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/228-row-market.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/229-row-extraction.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/230-row-session.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/231-row-nutrition.html */
 export const Row = {
   Recipe: RowRecipe,
   IngredientHave: RowIngredientHave,

@@ -1,9 +1,10 @@
 # KinniJije v2 — "Sky kitchen" migration report
 
-**Shipped:** 2026-08-26
+**Shipped:** 2026-08-26 · **completed** 2026-08-27
 **From:** `dockito/design-system/projects/kinnijije-v2/` (the canonical visual spec — 281 HTML specimens)
 **To:** `cookiepot/web/src/ui/`
-**Viewer:** `/preview` — 57 specimens, every component in every state
+**Viewer:** `/preview` — 88 specimens
+**Coverage:** 418/418 manifest rows · 223 specimens' states, all reached
 **Scenes:** `/scenes` — 57 screens, each also at `/scenes/<id>`
 
 ---
@@ -32,8 +33,15 @@ Three subordinate rules: **sky acts, it never reports** · **provenance travels 
 
 ## What was generated
 
-**~160 components** across 76 module files, plus **57 scenes** — every component
-visible in the `/preview` viewer, every scene reachable at its own route.
+**355 exported components** across 107 module files, plus **57 scenes** — every
+component visible in the `/preview` viewer, every scene reachable at its own
+route.
+
+The counts are derived, not asserted. `python3 docs/build-checklist.py` walks the
+Studio manifest and reports **418/418** rows built; `python3 docs/state-audit.py`
+walks every specimen's declared states and reports **0 missing** across the 223
+specimens a component cites. See `docs/GAP-AUDIT.md` for why this number is
+418 and not the 500 an earlier, double-counting parser reported.
 
 ### Importing
 
@@ -211,9 +219,18 @@ hand.
 
 ## Not built
 
-- **Date/time inputs** (`59-62`) — no surface in the app currently needs them.
-- **Charts** (`94-96`) — the insight scenes use stats and the week strip instead; a
-  real chart library decision is worth making against real data.
+Nothing in the manifest is unbuilt. Two states are specified and *deliberately*
+absent, documented at the point where someone would otherwise add them:
+
+- **`EmailButton` has no `disabled`.** No mail client honours `pointer-events`, so
+  a greyed anchor still navigates. An unavailable action is omitted from the
+  email and the prose says why.
+- **`Text` has no `disabled`.** A disabled control dims its whole subtree, so text
+  inside one inherits it; a second grey would drift from the first.
+
+Charts are hand-rolled SVG (`BarChart`, `LineChart`, `Sparkline`) rather than a
+library — the four charts this product needs did not justify the dependency, and
+a real library decision is still worth making against real data.
 
 ---
 
@@ -223,7 +240,7 @@ hand.
 2. **No tests.** Matches the repo (an empty `__tests__/` folder, no framework installed) and the standing preference.
 3. **Dish photography** is the one real asset gap. Every hero falls through to a type-led degrade with the dish family's mark, which is specimen'd and honest — but real photographs would carry the product.
 4. **`index.html`** had an uncommitted `Cookiepot` → `Kinnijije` title change before this ship. Left as found.
-5. **Scenes use fixture data.** Every screen renders from a local constant, not from TanStack Query. Wiring one to real data means replacing that constant and adding the loading/error states the components already ship.
+5. **Preview specimens and scenes both use fixture data.** Deliberate — the viewer must render without a backend. Every screen reads a local constant rather than TanStack Query, so wiring one to real data means replacing that constant and reaching for the loading, empty and error states the components already ship.
 
 ---
 

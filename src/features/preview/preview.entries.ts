@@ -1,5 +1,21 @@
 import type { PreviewEntry } from './preview.registry';
 
+import {
+  DurationInputPart,
+  LoadingStatesPart,
+  PromoCardPart,
+  TypographyPart,
+} from './screen/parts/loading-states';
+import {
+  CounterActionsPart,
+  CounterBoardPart,
+  CounterEditorsPart,
+} from './screen/parts/counter-more';
+import {
+  SiteBodyPart,
+  SiteClosersPart,
+  SiteHeaderHeroPart,
+} from './screen/parts/site-variants';
 import { PalettePart } from './screen/parts/palette';
 import { TypePart } from './screen/parts/type';
 import { GeometryPart } from './screen/parts/geometry';
@@ -101,6 +117,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   /* ---------- Foundation ---------- */
   { id: 'palette', label: 'Palette', group: 'Foundation', Part: PalettePart },
   { id: 'type', label: 'Type', group: 'Foundation', Part: TypePart },
+  { id: 'typography', label: 'Heading · Text · Caption', group: 'Foundation', Part: TypographyPart },
   { id: 'geometry', label: 'Geometry', group: 'Foundation', Part: GeometryPart },
   { id: 'blade', label: 'The blade', group: 'Foundation', Part: BladePart },
   { id: 'motion', label: 'Motion', group: 'Foundation', Part: MotionPart },
@@ -138,6 +155,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'inputs-date', label: 'Date · Time · Range', group: 'Inputs', Part: InputsDatePart },
   { id: 'inputs-upload', label: 'File upload', group: 'Inputs', Part: InputsUploadPart },
   { id: 'inputs-domain', label: 'Domain pickers', group: 'Inputs', Part: InputsDomainPart },
+  { id: 'inputs-duration', label: 'Duration input', group: 'Inputs', Part: DurationInputPart },
   { id: 'inputs-editors', label: 'Row editors', group: 'Inputs', Part: InputsEditorsPart },
 
   /* ---------- Status ---------- */
@@ -185,6 +203,7 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
 
   /* ---------- Structure ---------- */
   { id: 'card', label: 'Card · Panel', group: 'Structure', Part: CardPart },
+  { id: 'promo-card', label: 'Promotional card', group: 'Structure', Part: PromoCardPart },
   { id: 'rows', label: 'Rows', group: 'Structure', Part: RowsPart },
 
   /* ---------- Navigation ---------- */
@@ -195,9 +214,18 @@ export const PREVIEW_ENTRIES: readonly PreviewEntry[] = [
   { id: 'console', label: 'The COUNTER register', group: 'Counter', Part: ConsolePart },
   { id: 'table', label: 'Table · Cursor pager', group: 'Counter', Part: TablePart },
   { id: 'audit', label: 'JSON · Diff', group: 'Counter', Part: AuditPart },
+  { id: 'counter-actions', label: 'Bulk · Filters · Danger', group: 'Counter', Part: CounterActionsPart },
+  { id: 'counter-board', label: 'Board rows', group: 'Counter', Part: CounterBoardPart },
+  { id: 'counter-editors', label: 'Shell · Editors · Ledger', group: 'Counter', Part: CounterEditorsPart },
+
+  /* ---------- The states everything shares ---------- */
+  { id: 'loading-states', label: 'Skeletons · Empties · Failures', group: 'Feedback', Part: LoadingStatesPart },
 
   /* ---------- Marketing ---------- */
   { id: 'site', label: 'Marketing site', group: 'Marketing', Part: SitePart },
+  { id: 'site-hero', label: 'Header · Hero', group: 'Marketing', Part: SiteHeaderHeroPart },
+  { id: 'site-body', label: 'Problem · Features · Proof · Gallery', group: 'Marketing', Part: SiteBodyPart },
+  { id: 'site-closers', label: 'How · Pricing · FAQ · CTA · Footer', group: 'Marketing', Part: SiteClosersPart },
 
   /* ---------- Email ---------- */
   { id: 'email', label: 'Email templates', group: 'Email', Part: EmailPart },

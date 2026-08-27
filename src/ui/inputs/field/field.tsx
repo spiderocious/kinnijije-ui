@@ -36,6 +36,7 @@ export interface FieldProps {
   readonly children: (props: { id: string; describedBy: string | undefined }) => ReactNode;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/160-inline-error.html */
 export function Field({
   label,
   hint,
@@ -83,6 +84,49 @@ export function Field({
             {hint}
           </p>
         )
+      )}
+    </div>
+  );
+}
+
+/**
+ * A field loading its value into a known shape.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/40-input-text.html
+ *
+ * **This is not the same as `loading`.** `loading` means the field is real,
+ * populated, and validating against the server; the skeleton means the value
+ * has not arrived yet. Rendering an empty enabled input while a value is in
+ * flight is how a user starts typing into a box that is about to be overwritten.
+ *
+ * The height reads `--h-md`, so this is 46px in the KITCHEN and 34px under
+ * `.counter` without taking a density prop — the same rule as every control.
+ *
+ * Every input in the library shares this rather than shipping twenty variants
+ * of the same grey box, and the label rail is preserved so nothing shifts when
+ * the real field replaces it.
+ */
+export interface FieldSkeletonProps {
+  /** Reserves the hint row, so a hinted field does not jump when it loads. */
+  readonly withHint?: boolean;
+  /** For a textarea and other tall controls. Defaults to one control height. */
+  readonly rows?: number;
+  readonly className?: string;
+}
+
+export function FieldSkeleton({ withHint = false, rows = 1, className }: FieldSkeletonProps) {
+  return (
+    <div aria-hidden="true" className={cn('block', className)}>
+      <span className="mb-1.5 block h-[13px] w-24 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span
+        className={cn(
+          'block w-full animate-shimmer rounded-blade-sm bg-paper-2',
+          rows === 1 && 'h-ctrl',
+        )}
+        style={rows > 1 ? { height: `calc(var(--h-md) * ${rows})` } : undefined}
+      />
+      {withHint && (
+        <span className="mt-1.5 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-paper-2" />
       )}
     </div>
   );

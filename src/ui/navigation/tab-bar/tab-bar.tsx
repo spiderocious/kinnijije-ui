@@ -22,8 +22,14 @@ export interface TabBarItem {
   readonly id: string;
   readonly label: string;
   readonly icon: KoboyoIconName;
-  /** An unread count on this destination. */
+  /** An unread count on this destination. Zero shows no badge. */
   readonly count?: number;
+  /**
+   * Gated — signed out, typically. The tab STAYS in the bar rather than
+   * disappearing: a nav that changes shape on sign-out teaches the user a
+   * different map of the app than the one they will have after signing in.
+   */
+  readonly disabled?: boolean;
 }
 
 export interface TabBarProps {
@@ -46,16 +52,19 @@ export function TabBar({ items, value, onValueChange, className }: TabBarProps) 
       <Repeat each={[...items]}>
         {(item: TabBarItem) => {
           const active = item.id === value;
+          const gated = item.disabled === true;
           return (
             <button
               key={item.id}
               type="button"
               aria-current={active ? 'page' : undefined}
+              disabled={gated}
               onClick={() => onValueChange(item.id)}
               className={cn(
                 'relative flex flex-1 flex-col items-center gap-[3px] py-2',
                 'transition-colors duration-fast',
                 'focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_3px_var(--sky-glow)]',
+                gated && 'cursor-not-allowed opacity-[0.42]',
                 active ? 'text-sky-on' : 'text-ink-3 hover:text-ink',
               )}
             >

@@ -96,6 +96,8 @@ export type DifficultyFloor = 'easy' | 'medium' | 'anything';
 export interface DifficultyPickerProps {
   readonly value: DifficultyFloor;
   readonly onChange: (value: DifficultyFloor) => void;
+  /** Unavailable — onboarding not finished, or the preference is server-locked. */
+  readonly disabled?: boolean;
   readonly className?: string;
 }
 
@@ -107,15 +109,26 @@ export interface DifficultyPickerProps {
  * Settings leaked the raw value straight to the user. The humanised label lives
  * in `STATUS_REGISTRY`, so no screen renders `anything`.
  */
-export function DifficultyPicker({ value, onChange, className }: DifficultyPickerProps) {
+/** Visual spec: design-system/projects/kinnijije-v2/preview/68-difficulty-picker.html */
+export function DifficultyPicker({
+  value,
+  onChange,
+  disabled = false,
+  className,
+}: DifficultyPickerProps) {
   const family = STATUS_REGISTRY['difficulty-floor'];
   const options: DifficultyFloor[] = ['easy', 'medium', 'anything'];
 
   return (
     <div
+      aria-disabled={disabled || undefined}
       role="radiogroup"
       aria-label="How much effort are you up for?"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(
+        'flex flex-col gap-2',
+        disabled && 'pointer-events-none opacity-[0.42]',
+        className,
+      )}
     >
       <Repeat each={options}>
         {(option: DifficultyFloor) => {
@@ -126,6 +139,7 @@ export function DifficultyPicker({ value, onChange, className }: DifficultyPicke
               type="button"
               role="radio"
               aria-checked={on}
+              disabled={disabled}
               onClick={() => onChange(option)}
               className={cn(
                 'flex items-center gap-3 rounded-blade border px-4 py-3 text-left',
@@ -164,6 +178,16 @@ export type MeasurementSystem = 'metric' | 'imperial' | 'as_we_measure';
 export interface MeasurementToggleProps {
   readonly value: MeasurementSystem;
   readonly onChange: (value: MeasurementSystem) => void;
+  /** Saving the preference. The control locks; the current value stays lit. */
+  readonly saving?: boolean;
+  /**
+   * The save failed.
+   *
+   * **`value` must already have been reverted by the caller.** This component
+   * shows one truth at a time: the selection on screen is what the server holds,
+   * and this message explains why it is not what the user just pressed.
+   */
+  readonly error?: string;
   readonly className?: string;
 }
 
@@ -177,16 +201,29 @@ export interface MeasurementToggleProps {
  * paint rubber. No generic recipe app offers it, and it is part of why this
  * product is for this audience.
  */
-export function MeasurementToggle({ value, onChange, className }: MeasurementToggleProps) {
+/** Visual spec: design-system/projects/kinnijije-v2/preview/69-measurement-toggle.html */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/143-status-measurement.html */
+export function MeasurementToggle({
+  value,
+  onChange,
+  saving = false,
+  error,
+  className,
+}: MeasurementToggleProps) {
   const family = STATUS_REGISTRY.measurement;
   const options: MeasurementSystem[] = ['metric', 'imperial', 'as_we_measure'];
 
   return (
     <div className={className}>
+      {/* The failure sits under the control that caused it. */}
       <div
         role="radiogroup"
         aria-label="How quantities are shown"
-        className="inline-flex items-center gap-1 rounded-blade-sm border border-ink bg-paper-2 p-1"
+        aria-busy={saving || undefined}
+        className={cn(
+          'inline-flex items-center gap-1 rounded-blade-sm border border-ink bg-paper-2 p-1',
+          saving && 'pointer-events-none',
+        )}
       >
         <Repeat each={options}>
           {(option: MeasurementSystem) => {
@@ -211,6 +248,12 @@ export function MeasurementToggle({ value, onChange, className }: MeasurementTog
           }}
         </Repeat>
       </div>
+
+      <Show when={error !== undefined}>
+        <p role="alert" className="mt-2 text-sm font-semibold text-critical">
+          {error}
+        </p>
+      </Show>
 
       <p className="mt-2 flex items-start gap-2 text-sm text-ink-2">
         <KoboyoIcon name="info" size={14} className="mt-[3px] shrink-0 text-ink-3" />

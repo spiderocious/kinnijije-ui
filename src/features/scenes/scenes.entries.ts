@@ -78,7 +78,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'kitchen',
     label: 'The kitchen',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '310-scene-kitchen.html',
     summary: "The product's front door. Three ways in, one basket, one commit.",
     frames: ['phone', 'desktop'],
@@ -87,7 +87,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'kitchen-empty',
     label: 'The kitchen — empty',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '310-scene-kitchen.html',
     summary: 'Nothing added yet — the CTA is off and says why.',
     frames: ['phone', 'desktop'],
@@ -96,7 +96,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'suggestions',
     label: 'Suggestions',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '311-scene-suggestions.html',
     summary: 'Three meals, one decision. The weak match demotes its own CTA.',
     frames: ['phone', 'desktop'],
@@ -105,7 +105,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'suggestions-loading',
     label: 'Suggestions — loading',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '311-scene-suggestions.html',
     summary: 'The engine is running; skeletons mirror the cards they become.',
     frames: ['phone', 'desktop'],
@@ -114,7 +114,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'suggestions-empty',
     label: 'Suggestions — empty',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '311-scene-suggestions.html',
     summary: 'Nothing came back — and the way forward is offered.',
     frames: ['phone', 'desktop'],
@@ -123,7 +123,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'recipe',
     label: 'The recipe',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '312-scene-recipe.html',
     summary: 'What you have, what you need, one commit. Provenance sits on the photo.',
     frames: ['phone', 'desktop'],
@@ -132,7 +132,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'cook',
     label: 'Cook mode',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '313-scene-cook.html',
     summary: 'Hands busy, phone propped. No nav — leaving is a decision.',
     frames: ['phone', 'desktop'],
@@ -141,7 +141,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'favourites',
     label: 'Favourites',
-    group: 'Core',
+    group: 'Cooking tonight',
     spec: '314-scene-favourites.html',
     summary: 'What was saved, with provenance intact.',
     frames: ['phone', 'desktop'],
@@ -150,7 +150,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'settings',
     label: 'Settings',
-    group: 'Core',
+    group: 'Account',
     spec: '315-scene-settings.html',
     summary: 'Measures, what we send, and how AI is used — stated plainly.',
     frames: ['phone', 'desktop'],
@@ -159,7 +159,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'onboarding',
     label: 'Onboarding',
-    group: 'Core',
+    group: 'First run',
     spec: '316-scene-onboarding.html',
     summary: 'One screen. The trust claim is made before anything is asked.',
     frames: ['phone', 'desktop'],
@@ -168,7 +168,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'offline',
     label: 'Offline',
-    group: 'Core',
+    group: 'Account',
     spec: '317-scene-offline.html',
     summary: 'Saved recipes still work, and each says how old it is.',
     frames: ['phone', 'desktop'],
@@ -177,7 +177,7 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   {
     id: 'auth',
     label: 'Sign in',
-    group: 'Core',
+    group: 'First run',
     spec: '318-scene-auth.html',
     summary: 'Optional by design — you can cook without an account.',
     frames: ['phone', 'desktop'],
@@ -190,19 +190,19 @@ export const SCENE_ENTRIES: readonly SceneEntry[] = [
   { id: 'low-stock', label: 'Running low', group: 'Standing kitchen', spec: '332-scene-low-stock.html', summary: 'Only what blocks a meal you cook often.', frames: ['phone', 'desktop'], Scene: LowStockScene },
   { id: 'add-stock', label: 'Add stock', group: 'Standing kitchen', spec: '333-scene-add-stock.html', summary: 'For correcting something — never for stock-taking.', frames: ['phone', 'desktop'], Scene: AddStockScene },
   { id: 'stock-detail', label: 'One thing', group: 'Standing kitchen', spec: '334-scene-stock-detail.html', summary: 'Everything that changed a count, and none of it typed in.', frames: ['phone', 'desktop'], Scene: StockDetailScene },
-  { id: 'market-list', label: 'Market list', group: 'Standing kitchen', spec: '335-scene-market-list.html', summary: 'What to buy, and what each thing unblocks.', frames: ['phone', 'desktop'], Scene: MarketListScene },
-  { id: 'market-mode', label: 'In the market', group: 'Standing kitchen', spec: '336-scene-market-mode.html', summary: 'Big targets, one hand, a bag in the other.', frames: ['phone'], Scene: MarketModeScene },
-  { id: 'market-empty', label: 'Market list — empty', group: 'Standing kitchen', spec: '335-scene-market-list.html', summary: 'Nothing to buy — the good outcome, so no CTA.', frames: ['phone', 'desktop'], Scene: MarketEmptyScene },
+  { id: 'market-list', label: 'Market list', group: 'Market', spec: '335-scene-market-list.html', summary: 'What to buy, and what each thing unblocks.', frames: ['phone', 'desktop'], Scene: MarketListScene },
+  { id: 'market-mode', label: 'In the market', group: 'Market', spec: '336-scene-market-mode.html', summary: 'Big targets, one hand, a bag in the other.', frames: ['phone'], Scene: MarketModeScene },
+  { id: 'market-empty', label: 'Market list — empty', group: 'Market', spec: '335-scene-market-list.html', summary: 'Nothing to buy — the good outcome, so no CTA.', frames: ['phone', 'desktop'], Scene: MarketEmptyScene },
   { id: 'use-it-up', label: 'Use these first', group: 'Standing kitchen', spec: '337-scene-use-it-up.html', summary: 'What is turning, and what would use it tonight.', frames: ['phone', 'desktop'], Scene: UseItUpScene },
   { id: 'stock-history', label: 'Kitchen history', group: 'Standing kitchen', spec: '338-scene-stock-history.html', summary: 'Every change, and where it came from.', frames: ['phone', 'desktop'], Scene: StockHistoryScene },
-  { id: 'empty-kitchen', label: 'Empty kitchen', group: 'Standing kitchen', spec: '339-scene-empty-kitchen.html', summary: 'Camera first, and the skip always visible.', frames: ['phone', 'desktop'], Scene: EmptyKitchenScene },
+  { id: 'empty-kitchen', label: 'Empty kitchen', group: 'First run', spec: '339-scene-empty-kitchen.html', summary: 'Camera first, and the skip always visible.', frames: ['phone', 'desktop'], Scene: EmptyKitchenScene },
 
   /* ---------- Capture ---------- */
   { id: 'shelf-scan', label: 'Photograph a shelf', group: 'Capture', spec: '341-scene-shelf-scan.html', summary: 'The multi-shot tray — more angles read better.', frames: ['phone', 'desktop'], Scene: ShelfScanScene },
   { id: 'upload-receipt', label: 'Upload a receipt', group: 'Capture', spec: '340-scene-upload-receipt.html', summary: 'The fastest way to fill a kitchen.', frames: ['phone', 'desktop'], Scene: UploadReceiptScene },
   { id: 'extraction-review', label: 'What we read', group: 'Capture', spec: '342-scene-extraction-review.html', summary: 'Reviewed, never auto-committed. Desktop shows the source photo.', frames: ['phone', 'desktop'], Scene: ExtractionReviewScene },
   { id: 'capture-recovery', label: 'Capture failed', group: 'Capture', spec: '343-scene-capture-recovery.html', summary: 'Typing offered as an equal, not a fallback.', frames: ['phone', 'desktop'], Scene: CaptureRecoveryScene },
-  { id: 'permission', label: 'Camera permission', group: 'Capture', spec: '344-scene-label-capture.html', summary: 'Asked in context, with the reason, always skippable.', frames: ['phone', 'desktop'], Scene: LabelCaptureScene },
+  { id: 'permission', label: 'Camera permission', group: 'First run', spec: '344-scene-label-capture.html', summary: 'Asked in context, with the reason, always skippable.', frames: ['phone', 'desktop'], Scene: LabelCaptureScene },
 
   /* ---------- Chat ---------- */
   { id: 'chat-meal', label: 'Ask about a meal', group: 'Chat', spec: '350-scene-chat-meal.html', summary: 'Answered from the kitchen, cited.', frames: ['phone', 'desktop'], Scene: ChatMealScene },

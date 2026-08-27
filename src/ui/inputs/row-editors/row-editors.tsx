@@ -146,6 +146,7 @@ export interface StepEditorProps {
   readonly className?: string;
 }
 
+/** Visual spec: design-system/projects/kinnijije-v2/preview/71-step-editor.html */
 export function StepEditor({
   steps,
   onChange,

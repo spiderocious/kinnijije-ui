@@ -57,6 +57,7 @@ export interface DataSplitProps {
  * The gap between them is what makes a column of these scannable — a receipt
  * where every value starts right after its label cannot be read down.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/86-data-split.html */
 export function DataSplit({ label, value, total = false, className }: DataSplitProps) {
   return (
     <div
@@ -88,6 +89,7 @@ export interface DataValueProps {
  * thing and its measure. Used where the surrounding context already says what
  * the number is.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/87-data-value.html */
 export function DataValue({
   title,
   value,
@@ -124,6 +126,7 @@ export interface PriceDisplayProps {
  * ₦ set at the same size as the digits reads as another digit. Everything is
  * tabular so a column of prices aligns on the decimal.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/88-price-display.html */
 export function PriceDisplay({
   amount,
   currency = '₦',
@@ -201,5 +204,116 @@ export function LastRefreshed({ at, onRefresh, className }: LastRefreshedProps) 
         </button>
       </Show>
     </p>
+  );
+}
+
+/**
+ * A pair whose value has not arrived.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/85-key-value.html
+ *
+ * **The label is real; only the value shimmers.** A key-value pair almost always
+ * knows its own key before it knows its value, and shimmering both throws away
+ * information the screen already has.
+ */
+export function KeyValueSkeleton({
+  label,
+  width = 72,
+  className,
+}: {
+  /** Pass it when the key is known. Omitted, both halves shimmer. */
+  readonly label?: string;
+  readonly width?: number;
+  readonly className?: string;
+}) {
+  return (
+    <div className={cn('flex items-baseline justify-between gap-3', className)}>
+      {label !== undefined ? (
+        <span className="text-sm text-ink-3">{label}</span>
+      ) : (
+        <span aria-hidden="true" className="h-[13px] w-20 animate-shimmer rounded-[3px] bg-paper-2" />
+      )}
+      <span
+        aria-hidden="true"
+        className="h-[15px] animate-shimmer rounded-[3px] bg-paper-2"
+        style={{ width }}
+      />
+    </div>
+  );
+}
+
+/** No value on the record. A neutral mark, never a guess and never a zero. */
+export function KeyValueEmpty({
+  label,
+  className,
+}: {
+  readonly label: string;
+  readonly className?: string;
+}) {
+  return (
+    <div className={cn('flex items-baseline justify-between gap-3', className)}>
+      <span className="text-sm text-ink-3">{label}</span>
+      {/* An em dash, not "0" and not "N/A" — neither of which is true. */}
+      <span className="text-sm text-ink-4" aria-label="No value">
+        —
+      </span>
+    </div>
+  );
+}
+
+/**
+ * No spend in this window.
+ *
+ * Visual spec: design-system/projects/kinnijije-v2/preview/88-price-display.html
+ *
+ * **Not "₦0".** Zero spend and no data are different claims, and a household
+ * budget screen that shows ₦0 for a week nobody logged is actively misleading.
+ */
+export function PriceEmpty({
+  currency = '₦',
+  className,
+}: {
+  readonly currency?: string;
+  readonly className?: string;
+}) {
+  return (
+    <span className={cn('font-mono text-sm font-bold tnum text-ink-4', className)}>
+      <span aria-hidden="true">{currency}</span>
+      <span className="ml-[1px]">—</span>
+      <span className="sr-only">No spend recorded</span>
+    </span>
+  );
+}
+
+/** Cached. The number is real; its age is stated. */
+export function PriceStale({
+  amount,
+  age,
+  currency = '₦',
+  className,
+}: {
+  readonly amount: string;
+  readonly age: string;
+  readonly currency?: string;
+  readonly className?: string;
+}) {
+  return (
+    <span className={cn('inline-flex items-baseline gap-2', className)}>
+      <PriceDisplay amount={amount} currency={currency} size="sm" />
+      <span className="font-mono text-xs text-ink-4">cached · {age}</span>
+    </span>
+  );
+}
+
+/** The figure failed to load. A `?`, never a zero. */
+export function PriceError({ className }: { readonly className?: string }) {
+  return (
+    <span
+      className={cn('font-mono text-sm font-bold tnum text-critical', className)}
+      title="This amount could not load"
+    >
+      ?
+      <span className="sr-only">Amount could not load</span>
+    </span>
   );
 }

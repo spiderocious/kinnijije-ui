@@ -126,6 +126,7 @@ export interface FeatureDisabledProps {
  * deliberately **no retry**: retrying does not flip a flag, and offering one
  * teaches a user to press a button that cannot work.
  */
+/** Visual spec: design-system/projects/kinnijije-v2/preview/175-feature-disabled.html */
 export function FeatureDisabled({
   flag,
   alternative,
