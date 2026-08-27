@@ -4,7 +4,6 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 
 import { Loader2 } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
-import { AppHeader } from '@ui/components';
 
 function RouteFallback() {
   return (
@@ -38,7 +37,6 @@ export function AppEntrypoint() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <AppHeader />
       <main className="flex-1">
         <Suspense fallback={<RouteFallback />}>
           <Outlet />

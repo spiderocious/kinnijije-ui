@@ -1,0 +1,149 @@
+import { useEffect, useState } from 'react';
+
+import { Show } from 'meemaw';
+
+import { Button } from '@ui/primitives';
+
+import { EXPLAINER_SLIDES } from '../content/onboarding.content';
+import {
+  useCompleteOnboarding,
+  useOnboardingState,
+  useSaveOnboarding,
+} from '../hooks/use-onboarding';
+import { ExplainerStep } from '../parts/explainer-step';
+import { KitchenStep } from '../parts/kitchen-step';
+import { OnboardingShell } from '../parts/onboarding-shell';
+import { TasteStep } from '../parts/taste-step';
+
+/** Three explainer slides, then taste, then the kitchen. */
+const EXPLAINER_COUNT = EXPLAINER_SLIDES.length;
+const TASTE_STEP = EXPLAINER_COUNT + 1;
+const KITCHEN_STEP = EXPLAINER_COUNT + 2;
+const TOTAL_STEPS = KITCHEN_STEP;
+
+export default function OnboardingScreen() {
+  const { data: state, isLoading } = useOnboardingState();
+  const save = useSaveOnboarding();
+  const complete = useCompleteOnboarding();
+
+  const [step, setStep] = useState(1);
+
+  // Local drafts, seeded from the server once it answers. Editing straight
+  // against the query cache would fire a save on every keystroke.
+  const [cuisines, setCuisines] = useState<string[]>([]);
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'anything'>('anything');
+  const [items, setItems] = useState<string[]>([]);
+  const [seeded, setSeeded] = useState(false);
+
+  useEffect(() => {
+    // Seed once. Re-seeding on every response would overwrite what the person
+    // is in the middle of typing each time a save resolves.
+    if (state === undefined || seeded) return;
+    setCuisines(state.cuisines);
+    setDifficulty(state.difficulty);
+    setItems(state.kitchen_items);
+    setSeeded(true);
+  }, [state, seeded]);
+
+  const toggleCuisine = (cuisine: string) => {
+    setCuisines((current) =>
+      current.includes(cuisine) ? current.filter((c) => c !== cuisine) : [...current, cuisine],
+    );
+  };
+
+  const addItem = (label: string) => {
+    const trimmed = label.trim();
+    if (trimmed.length === 0) return;
+    setItems((current) =>
+      // Case-insensitive, matching what the server does, so the list the person
+      // sees is the list that gets stored.
+      current.some((item) => item.toLowerCase() === trimmed.toLowerCase())
+        ? current
+        : [...current, trimmed],
+    );
+  };
+
+  const removeItem = (label: string) => {
+    setItems((current) => current.filter((item) => item !== label));
+  };
+
+  const goBack = () => {
+    setStep((current) => Math.max(1, current - 1));
+  };
+
+  const advance = () => {
+    setStep((current) => Math.min(TOTAL_STEPS, current + 1));
+  };
+
+  /** Saves this step's answers, then advances. A failed save keeps you here. */
+  const saveAndAdvance = () => {
+    if (step === TASTE_STEP) {
+      save.mutate({ cuisines, difficulty }, { onSuccess: advance });
+      return;
+    }
+    advance();
+  };
+
+  const finish = () => {
+    // Saved and completed in sequence rather than in parallel: completing
+    // first would let a failed save leave someone onboarded with no kitchen.
+    save.mutate(
+      { kitchen_items: items },
+      {
+        onSuccess: () => {
+          complete.mutate();
+        },
+      },
+    );
+  };
+
+  if (isLoading) {
+    return <div className="grid min-h-dvh place-items-center bg-ground text-ink-3">Loading…</div>;
+  }
+
+  const isExplainer = step <= EXPLAINER_COUNT;
+  const slide = EXPLAINER_SLIDES[step - 1];
+
+  return (
+    <OnboardingShell
+      step={step}
+      total={TOTAL_STEPS}
+      {...(step > 1 && { onBack: goBack })}
+      onNext={step === KITCHEN_STEP ? finish : saveAndAdvance}
+      nextLabel={step === KITCHEN_STEP ? 'Open my kitchen' : 'Continue'}
+      nextLoading={save.isPending || complete.isPending}
+      // The kitchen step needs at least one thing, or the first suggestion has
+      // nothing to work from.
+      nextDisabled={step === KITCHEN_STEP && items.length === 0}
+      secondary={
+        <Show when={step === TASTE_STEP}>
+          {/* Skippable because the defaults are a real answer, not a blank. */}
+          <Button variant="tertiary" size="lg" onClick={advance}>
+            Skip
+          </Button>
+        </Show>
+      }
+    >
+      <Show when={isExplainer && slide !== undefined}>
+        <ExplainerStep
+          slide={slide ?? EXPLAINER_SLIDES[0]!}
+          showProvenance={step === EXPLAINER_COUNT}
+        />
+      </Show>
+
+      <Show when={step === TASTE_STEP}>
+        <TasteStep
+          availableCuisines={state?.available_cuisines ?? []}
+          selectedCuisines={cuisines}
+          onToggleCuisine={toggleCuisine}
+          difficulty={difficulty}
+          onDifficultyChange={setDifficulty}
+        />
+      </Show>
+
+      <Show when={step === KITCHEN_STEP}>
+        <KitchenStep items={items} onAdd={addItem} onRemove={removeItem} />
+      </Show>
+    </OnboardingShell>
+  );
+}
