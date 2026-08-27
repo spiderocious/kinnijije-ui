@@ -2,18 +2,13 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { ROUTES } from '@shared/constants/routes';
 import { DESKTOP_QUERY, useMediaQuery } from '@shared/hooks/use-media-query';
-import {
-  SiteFaq,
-  SiteFinalCta,
-  SiteFooter,
-  SiteHeader,
-  SiteHero,
-  SiteHowItWorks,
-  SitePricing,
-  SiteTrust,
-} from '@ui/site';
+import { SiteFaq, SiteFooter, SiteHeader, SiteHero, SitePricing } from '@ui/site';
 
 import { FAQ_ITEMS, PRICING_TIERS } from '../content/landing.content';
+import { FinalHob } from './parts/final-hob';
+import { KitchenConveyor } from './parts/kitchen-conveyor';
+import { LiveMatch } from './parts/live-match';
+import { TrustPlate } from './parts/trust-plate';
 
 /**
  * The front door.
@@ -37,17 +32,21 @@ export default function LandingScreen() {
   };
 
   return (
-    <div className="min-h-dvh bg-ground">
+    <div className="min-h-dvh bg-paper">
       <SiteHeader onStart={goRegister} onSignIn={goLogin} />
       <SiteHero variant={isDesktop ? 'split' : 'centred'} onStart={goRegister} />
-      <SiteHowItWorks layout={isDesktop ? 'across' : 'timeline'} />
-      <SiteTrust />
-      {/* SitePricing takes no callback — its tier CTAs are presentational in
-          the design system, so the page's conversion paths are the header,
-          the hero and the closing CTA. */}
+
+      <KitchenConveyor />
+      <LiveMatch />
+      <TrustPlate />
+
+      {/* SitePricing takes no callback — its tier CTAs are presentational in the
+          design system, so the page's conversion paths are the header, the hero
+          and the closing hob. */}
       <SitePricing tiers={PRICING_TIERS} />
       <SiteFaq items={FAQ_ITEMS} />
-      <SiteFinalCta onStart={goRegister} />
+
+      <FinalHob onStart={goRegister} />
       <SiteFooter />
     </div>
   );

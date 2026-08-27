@@ -1,56 +1,131 @@
-import { useSession } from '@features/auth';
-import { useSignOut } from '@features/auth';
-import { KoboyoIcon } from '@icons';
-import { Button } from '@ui/primitives';
-import { Card } from '@ui/structure';
+import { useNavigate } from '@tanstack/react-router';
+
+import { useSession, useSignOut } from '@features/auth';
+import { ROUTES } from '@shared/constants/routes';
+import { DESKTOP_QUERY, useMediaQuery } from '@shared/hooks/use-media-query';
+import { Figure } from '@ui/display';
+import { Dock } from '@ui/primitives';
+import { AppBar, TabBar } from '@ui/navigation';
+import { Avatar, Card } from '@ui/structure';
+import { SuggestCTA } from '@ui/domain';
+
+import { useKitchen } from '../hooks/use-kitchen';
+import { KitchenBasket } from '../parts/kitchen-basket';
+import { KitchenCapture } from '../parts/kitchen-capture';
+import { DESKTOP_NAV, PHONE_NAV } from '../parts/kitchen-nav';
+import { KitchenSidebar } from '../parts/kitchen-sidebar';
 
 /**
- * A placeholder landing spot for a signed-in, onboarded cook.
+ * Home. What a signed-in cook opens by default.
  *
- * The real kitchen — capture, suggestions, the standing pantry — is the next
- * unit of work. This exists so the redirect after onboarding has somewhere
- * honest to go, and it says plainly that it is not finished rather than
- * pretending to be an empty state.
+ * The scenes take a `frame` prop because the viewer renders phone and desktop
+ * side by side. A real screen has one viewport, so the same choice is made from
+ * a media query — and the difference is a genuinely different composition, not
+ * a class swap: the desktop gains a sidebar and an aside that the phone has no
+ * room for.
  */
 export default function KitchenScreen() {
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
   const { user } = useSession();
   const signOut = useSignOut();
+  const navigate = useNavigate();
+
+  const kitchen = useKitchen();
+
+  const suggest = () => {
+    // The suggestions screen is the next unit of work; until it exists this
+    // deliberately does nothing rather than routing somewhere broken.
+  };
+
+  const capture = <KitchenCapture onAdd={kitchen.add} />;
+
+  const basket = (
+    <KitchenBasket
+      items={kitchen.items}
+      recent={kitchen.recent}
+      onAdd={kitchen.add}
+      onRemove={kitchen.remove}
+    />
+  );
+
+  const cta =
+    kitchen.items.length === 0 ? (
+      <SuggestCTA
+        ingredientCount={0}
+        state="disabled"
+        disabledReason="Add at least one ingredient"
+      />
+    ) : (
+      <SuggestCTA ingredientCount={kitchen.items.length} onSuggest={suggest} />
+    );
+
+  if (isDesktop) {
+    return (
+      <div className="flex min-h-dvh bg-ground">
+        <KitchenSidebar items={DESKTOP_NAV} active="kitchen" onSignOut={signOut} />
+
+        <main className="flex-1 px-8 py-8">
+          <h1 className="mb-6 font-display text-3xl font-extrabold tracking-display">
+            What is in your kitchen?
+          </h1>
+
+          <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+            <div>
+              {capture}
+              <div className="mt-6">{basket}</div>
+            </div>
+
+            {/* The makeable count only fits here — that is what earns the width. */}
+            <aside className="flex flex-col gap-4">
+              <Card variant="quiet">
+                <p className="text-sm text-ink-2">From your kitchen you could make</p>
+                {/* Honest placeholder: the suggestion engine does not exist yet,
+                    so this shows the basket size rather than inventing a number. */}
+                <Figure value={kitchen.items.length} size="3xl" />
+                <p className="text-sm text-ink-2">
+                  {kitchen.items.length === 1 ? 'ingredient' : 'ingredients'} ready
+                </p>
+              </Card>
+              {cta}
+            </aside>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-dvh bg-ground">
-      <div className="mx-auto max-w-[560px] px-5 py-10 sm:px-6">
-        <KoboyoIcon name="cookingPot" size={48} className="text-sky" alone />
+    <div className="flex min-h-dvh flex-col bg-ground pb-[132px]">
+      <AppBar
+        title="Kinnijije"
+        action={
+          <button
+            type="button"
+            onClick={() => {
+              void navigate({ to: ROUTES.KITCHEN });
+            }}
+            aria-label="Your account"
+          >
+            <Avatar name={user?.email ?? 'you'} size={30} />
+          </button>
+        }
+      />
 
-        <h1 className="mt-4 font-display text-2xl font-extrabold leading-tight tracking-display sm:text-3xl">
-          You are all set{user !== null ? `, ${user.name}` : ''}
+      <div className="flex-1 px-5 py-5">
+        <h1 className="mb-4 font-display text-2xl font-extrabold tracking-display">
+          What is in your kitchen?
         </h1>
-        <p className="mt-2 text-md text-ink-2">
-          Your kitchen is saved. The suggestion engine is the next thing being built — this
-          screen is a placeholder, not the finished product.
-        </p>
-
-        <Card variant="quiet" className="mt-7">
-          <p className="text-xs font-extrabold uppercase tracking-overline text-ink-3">
-            What you told us
-          </p>
-          <dl className="mt-3 flex flex-col gap-2 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-ink-2">Cuisines</dt>
-              <dd className="text-right font-extrabold text-ink">
-                {user?.prefs.cuisines.join(', ') || '—'}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-ink-2">Difficulty</dt>
-              <dd className="text-right font-extrabold text-ink">{user?.prefs.difficulty ?? '—'}</dd>
-            </div>
-          </dl>
-        </Card>
-
-        <Button variant="secondary" size="lg" className="mt-7" onClick={signOut}>
-          Sign out
-        </Button>
+        {capture}
+        <div className="mt-6">{basket}</div>
       </div>
+
+      <Dock>
+        <Dock.Actions>
+          <Dock.Primary>{cta}</Dock.Primary>
+        </Dock.Actions>
+      </Dock>
+
+      <TabBar items={PHONE_NAV} value="kitchen" onValueChange={() => undefined} />
     </div>
   );
 }

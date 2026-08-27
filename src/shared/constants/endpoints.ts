@@ -27,6 +27,11 @@ export const EP = {
     COMPLETE: `${V1}/onboarding/complete`,
   },
 
+  KITCHEN: {
+    GET: `${V1}/kitchen`,
+    SAVE: `${V1}/kitchen`,
+  },
+
   FILES: {
     UPLOAD_URL: `${V1}/files/upload-url`,
     LIST: `${V1}/files`,

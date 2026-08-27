@@ -166,6 +166,13 @@ export const apiClient = {
       options,
     ),
 
+  put: <T>(path: string, payload?: unknown, options: RequestOptions = {}) =>
+    request<T>(
+      path,
+      { method: 'PUT', ...(payload !== undefined && { body: JSON.stringify(payload) }) },
+      options,
+    ),
+
   patch: <T>(path: string, payload?: unknown, options: RequestOptions = {}) =>
     request<T>(
       path,
