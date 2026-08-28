@@ -1,3 +1,17 @@
+import {
+  adminAiLogRoute,
+  adminAiRoute,
+  adminDashboardRoute,
+  adminJobRoute,
+  adminJobsRoute,
+  adminLoginRoute,
+  adminRecipeNewRoute,
+  adminRecipeRoute,
+  adminRecipesRoute,
+  adminSetupRoute,
+  adminUserRoute,
+  adminUsersRoute,
+} from '@features/admin/admin.routes';
 import { loginRoute, registerRoute } from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
@@ -45,6 +59,20 @@ export const routeTree = rootRoute.addChildren([
   mealRoute,
   cookRoute,
   stockItemRoute,
+
+  // The console. Literals before parameters, same rule as above.
+  adminSetupRoute,
+  adminLoginRoute,
+  adminDashboardRoute,
+  adminRecipeNewRoute,
+  adminRecipesRoute,
+  adminUsersRoute,
+  adminAiRoute,
+  adminJobsRoute,
+  adminRecipeRoute,
+  adminUserRoute,
+  adminAiLogRoute,
+  adminJobRoute,
 
   // Design-system surfaces, not product screens.
   previewRoute,

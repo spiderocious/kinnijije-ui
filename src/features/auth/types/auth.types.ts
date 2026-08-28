@@ -25,7 +25,13 @@ export interface AuthUser {
   /** Drives the weather that shapes an AI answer. */
   city: string | null;
   country: string | null;
-  notifications: { low_stock_nudges: boolean; weekly_summary: boolean };
+  notifications: {
+    running_low: boolean;
+    use_it_up: boolean;
+    have_you_eaten: boolean;
+    daily_digest: boolean;
+    weekly_summary: boolean;
+  };
   created_at: string;
   updated_at: string;
 }

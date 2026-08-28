@@ -150,21 +150,75 @@ export default function SettingsScreen() {
           <Panel>
             <Panel.Header title="What we send you" />
             <Panel.Body>
-              <div className="flex flex-col gap-4">
-                <Switch
-                  checked={user?.notifications.low_stock_nudges ?? false}
-                  onCheckedChange={(checked) => {
-                    update.mutate({ low_stock_nudges: checked });
-                  }}
-                  label="Low-stock nudges"
-                />
-                <Switch
-                  checked={user?.notifications.weekly_summary ?? false}
-                  onCheckedChange={(checked) => {
-                    update.mutate({ weekly_summary: checked });
-                  }}
-                  label="Weekly summary"
-                />
+              {/* Each of these is its own switch on purpose. "You are out of
+                  rice" and "have you eaten?" are very different things to
+                  receive, and one toggle for both meant somebody had to accept
+                  the personal one to keep the useful one. */}
+              <div className="flex flex-col gap-5">
+                <div>
+                  <Switch
+                    checked={user?.notifications.daily_digest ?? false}
+                    onCheckedChange={(checked) => {
+                      update.mutate({ daily_digest: checked });
+                    }}
+                    label="Every morning"
+                  />
+                  <p className="mt-1 text-xs text-ink-3">
+                    What is in your kitchen, what you could cook today, and anything about to turn.
+                  </p>
+                </div>
+
+                <div>
+                  <Switch
+                    checked={user?.notifications.weekly_summary ?? false}
+                    onCheckedChange={(checked) => {
+                      update.mutate({ weekly_summary: checked });
+                    }}
+                    label="Your week"
+                  />
+                  <p className="mt-1 text-xs text-ink-3">
+                    A note on Sundays about what you cooked. Not a scorecard.
+                  </p>
+                </div>
+
+                <div>
+                  <Switch
+                    checked={user?.notifications.running_low ?? false}
+                    onCheckedChange={(checked) => {
+                      update.mutate({ running_low: checked });
+                    }}
+                    label="When something runs out"
+                  />
+                  <p className="mt-1 text-xs text-ink-3">
+                    Only when it is blocking a meal you actually make. At most once a week.
+                  </p>
+                </div>
+
+                <div>
+                  <Switch
+                    checked={user?.notifications.use_it_up ?? false}
+                    onCheckedChange={(checked) => {
+                      update.mutate({ use_it_up: checked });
+                    }}
+                    label="When something is about to turn"
+                  />
+                  <p className="mt-1 text-xs text-ink-3">
+                    Only when we can also tell you what to make with it.
+                  </p>
+                </div>
+
+                <div>
+                  <Switch
+                    checked={user?.notifications.have_you_eaten ?? false}
+                    onCheckedChange={(checked) => {
+                      update.mutate({ have_you_eaten: checked });
+                    }}
+                    label="Have you eaten?"
+                  />
+                  <p className="mt-1 text-xs text-ink-3">
+                    A question, if it has been quiet for a while. No streaks, nothing to catch up on.
+                  </p>
+                </div>
               </div>
             </Panel.Body>
           </Panel>

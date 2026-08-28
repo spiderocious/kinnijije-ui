@@ -69,6 +69,28 @@ export const EP = {
     COOKED: (mealId: string) => `${V1}/meals/${mealId}/cooked`,
   },
 
+  /** The console. Everything under /admin, guarded by role on the server. */
+  ADMIN: {
+    SETUP: `${V1}/admin/setup`,
+    OVERVIEW: `${V1}/admin/overview`,
+    RECIPES: `${V1}/admin/recipes`,
+    RECIPES_BULK: `${V1}/admin/recipes/bulk`,
+    RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
+    RECIPE_STATUS: (mealId: string) => `${V1}/admin/recipes/${mealId}/status`,
+    USERS: `${V1}/admin/users`,
+    USER: (userId: string) => `${V1}/admin/users/${userId}`,
+    USER_STATUS: (userId: string) => `${V1}/admin/users/${userId}/status`,
+    USER_ROLE: (userId: string) => `${V1}/admin/users/${userId}/role`,
+    AI: `${V1}/admin/ai`,
+    AI_PROMPT_IDS: `${V1}/admin/ai/prompt-ids`,
+    AI_LOG: (logId: string) => `${V1}/admin/ai/${logId}`,
+    JOBS: `${V1}/admin/jobs`,
+    JOB_TYPES: `${V1}/admin/jobs/types`,
+    JOB: (jobId: string) => `${V1}/admin/jobs/${jobId}`,
+    JOB_RETRY: (jobId: string) => `${V1}/admin/jobs/${jobId}/retry`,
+    JOB_CANCEL: (jobId: string) => `${V1}/admin/jobs/${jobId}/cancel`,
+  },
+
   CHAT: {
     HISTORY: `${V1}/chat`,
     ASK: `${V1}/chat`,

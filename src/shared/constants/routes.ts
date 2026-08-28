@@ -38,6 +38,20 @@ export const ROUTES = {
   // Design-system surfaces, not product screens
   PREVIEW: '/preview',
   SCENES: '/scenes',
+
+  /** The console. A separate surface behind the same origin. */
+  ADMIN_SETUP: '/admin/setup',
+  ADMIN_LOGIN: '/admin/login',
+  ADMIN_DASHBOARD: '/admin',
+  ADMIN_RECIPES: '/admin/recipes',
+  ADMIN_RECIPE: (mealId: string) => `/admin/recipes/${mealId}`,
+  ADMIN_RECIPE_NEW: '/admin/recipes/new',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_USER: (userId: string) => `/admin/users/${userId}`,
+  ADMIN_AI: '/admin/ai',
+  ADMIN_AI_LOG: (logId: string) => `/admin/ai/${logId}`,
+  ADMIN_JOBS: '/admin/jobs',
+  ADMIN_JOB: (jobId: string) => `/admin/jobs/${jobId}`,
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

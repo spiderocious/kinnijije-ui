@@ -12,7 +12,10 @@ export interface SettingsPatch {
   measurement?: 'metric' | 'imperial';
   city?: string;
   country?: string;
-  low_stock_nudges?: boolean;
+  running_low?: boolean;
+  use_it_up?: boolean;
+  have_you_eaten?: boolean;
+  daily_digest?: boolean;
   weekly_summary?: boolean;
 }
 
