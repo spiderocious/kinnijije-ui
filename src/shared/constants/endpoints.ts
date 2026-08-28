@@ -88,6 +88,8 @@ export const EP = {
     AI_LOG: (logId: string) => `${V1}/admin/ai/${logId}`,
     EMAILS: `${V1}/admin/emails`,
     EMAIL_KINDS: `${V1}/admin/emails/kinds`,
+    EMAIL_SETTINGS: `${V1}/admin/emails/settings`,
+    EMAIL_SETTING: (kind: string) => `${V1}/admin/emails/settings/${kind}`,
     EMAIL_PREVIEW: `${V1}/admin/emails/preview`,
     EMAIL_SEND: `${V1}/admin/emails/send`,
     EMAIL: (emailId: string) => `${V1}/admin/emails/${emailId}`,

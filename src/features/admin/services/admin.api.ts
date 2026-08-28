@@ -218,6 +218,14 @@ export interface EmailLogDetail extends EmailLogRow {
   text: string;
 }
 
+export interface EmailSetting {
+  kind: string;
+  enabled: boolean;
+  updated_by: string | null;
+  reason: string | null;
+  updated_at: string | null;
+}
+
 export interface Paged<T> {
   items: T[];
   total: number;
@@ -270,6 +278,10 @@ export const adminApi = {
   email: (emailId: string): Promise<EmailLogDetail> =>
     apiClient.get<EmailLogDetail>(EP.ADMIN.EMAIL(emailId)),
   emailKinds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.EMAIL_KINDS),
+  emailSettings: (): Promise<EmailSetting[]> =>
+    apiClient.get<EmailSetting[]>(EP.ADMIN.EMAIL_SETTINGS),
+  setEmailKind: (kind: string, enabled: boolean, reason?: string): Promise<void> =>
+    apiClient.patch<void>(EP.ADMIN.EMAIL_SETTING(kind), { enabled, reason }),
   previewAudience: (
     audience: EmailAudience,
     userIds?: string[],

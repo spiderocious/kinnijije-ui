@@ -1,10 +1,11 @@
 import { useEffect, type ReactNode } from 'react';
 
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
 
+import { buildNext, NEXT_PARAM } from '../hooks/use-next-path';
 import { useSession } from '../hooks/use-session';
 
 interface RouteGuardProps {
@@ -38,12 +39,20 @@ export function RouteGuard({
 }: RouteGuardProps) {
   const { isSignedIn, hasOnboarded, isLoading } = useSession();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const searchStr = useRouterState({ select: (state) => state.location.searchStr });
 
   useEffect(() => {
     if (isLoading) return;
 
     if (!isSignedIn) {
-      void navigate({ to: redirectTo, replace: true });
+      // Carry where they were going, so signing in finishes the journey rather
+      // than dumping them on the kitchen and making them navigate again.
+      void navigate({
+        to: redirectTo,
+        search: { [NEXT_PARAM]: buildNext(pathname, searchStr) } as never,
+        replace: true,
+      });
       return;
     }
 
@@ -57,7 +66,16 @@ export function RouteGuard({
     if (hasOnboarded && isOnboardingRoute) {
       void navigate({ to: ROUTES.KITCHEN, replace: true });
     }
-  }, [isLoading, isSignedIn, hasOnboarded, isOnboardingRoute, navigate, redirectTo]);
+  }, [
+    isLoading,
+    isSignedIn,
+    hasOnboarded,
+    isOnboardingRoute,
+    navigate,
+    redirectTo,
+    pathname,
+    searchStr,
+  ]);
 
   const allowed = isSignedIn && (isOnboardingRoute ? !hasOnboarded : hasOnboarded);
 

@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import type { ApiError } from '@shared/services/api-client';
 
+import { useNextPath } from './use-next-path';
 import { authApi } from '../services/auth.api';
 import type { AuthSession, LoginPayload, RegisterPayload } from '../types/auth.types';
 import { useSession } from './use-session';
@@ -38,11 +39,22 @@ export function useRegister() {
 export function useLogin() {
   const { signIn } = useSession();
   const navigate = useNavigate();
+  const next = useNextPath();
 
   return useMutation<AuthSession, ApiError, LoginPayload>({
     mutationFn: authApi.login,
     onSuccess: (session) => {
       signIn(session);
+
+      // Back to whatever they were trying to reach — but ONLY once onboarding
+      // is done. Somebody who has never set up a kitchen cannot use the page
+      // they were sent to anyway, and the guard would only bounce them here
+      // again.
+      if (next !== null && session.user.has_onboarded) {
+        void navigate({ to: next as never });
+        return;
+      }
+
       void navigate({ to: landingRouteFor(session) });
     },
   });

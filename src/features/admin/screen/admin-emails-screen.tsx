@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
 import { useNavigate } from '@tanstack/react-router';
-import { Show } from 'meemaw';
+import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
 import { Input } from '@ui/inputs';
 import { Button } from '@ui/primitives';
+import { InfoCard } from '@ui/admin';
+import { Switch } from '@ui/inputs';
 import { Tag } from '@ui/status';
 
-import { useAdminEmails, useEmailKinds } from '../hooks/use-admin';
+import { useAdminEmails, useEmailKinds, useEmailSettings, useSetEmailKind } from '../hooks/use-admin';
 import { ConsoleShell } from '../parts/console-shell';
 import { DataTable, type Column } from '../parts/data-table';
 import type { EmailLogRow } from '../services/admin.api';
@@ -17,7 +19,66 @@ const STATUS_TONE: Record<string, string> = {
   sent: 'text-success-onsoft',
   failed: 'text-critical-onsoft',
   suppressed: 'text-ink-3',
+  blocked: 'text-caution-onsoft',
 };
+
+/** Plain English for each kind, so the switches read as decisions. */
+const KIND_LABELS: Record<string, { label: string; hint: string }> = {
+  welcome: { label: 'Welcome', hint: 'Sent once, when somebody registers.' },
+  password_reset: { label: 'Password reset', hint: 'The link somebody asked for. Think hard before switching this off.' },
+  password_changed: { label: 'Password changed', hint: 'A security notice after a password changes.' },
+  status_changed: { label: 'Account status', hint: 'When an account is suspended or restored.' },
+  daily_digest: { label: 'The daily rundown', hint: 'Every morning: what is going off, the weather, what to eat.' },
+  weekly_summary: { label: 'Your week', hint: 'Sundays. What they cooked.' },
+  low_stock: { label: 'Running low', hint: 'At most weekly, and only when it blocks a meal.' },
+  use_it_up: { label: 'Use it up', hint: 'Not currently sent by anything.' },
+  have_you_eaten: { label: 'Have you eaten?', hint: 'Not currently sent by anything.' },
+  admin_broadcast: { label: 'Written by an operator', hint: 'Anything sent by hand from here.' },
+};
+
+/**
+ * The switches.
+ *
+ * Off means the app keeps triggering exactly as it did — the send is refused at
+ * the one place email leaves, recorded as `blocked`, and still visible below.
+ * Nothing upstream knows or cares.
+ */
+function EmailSwitches() {
+  const settings = useEmailSettings();
+  const setKind = useSetEmailKind();
+
+  return (
+    <InfoCard title="What gets sent">
+      <Show when={settings.isLoading}>
+        <div aria-hidden="true" className="h-40 animate-shimmer rounded-blade bg-paper-2" />
+      </Show>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Repeat each={settings.data ?? []}>
+          {(setting: { kind: string; enabled: boolean; reason: string | null }) => (
+            <div key={setting.kind}>
+              <Switch
+                checked={setting.enabled}
+                onCheckedChange={(enabled) => {
+                  setKind.mutate({ kind: setting.kind, enabled });
+                }}
+                label={KIND_LABELS[setting.kind]?.label ?? setting.kind}
+              />
+              <p className="mt-1 text-xs text-ink-3">
+                {KIND_LABELS[setting.kind]?.hint ?? setting.kind}
+              </p>
+              <Show when={!setting.enabled}>
+                <p className="mt-1 text-xs font-extrabold text-caution-onsoft">
+                  Off — nothing of this kind is going out.
+                </p>
+              </Show>
+            </div>
+          )}
+        </Repeat>
+      </div>
+    </InfoCard>
+  );
+}
 
 const COLUMNS: Column<EmailLogRow>[] = [
   {
@@ -102,6 +163,10 @@ export default function AdminEmailsScreen() {
         </Button>
       }
     >
+      <div className="mb-5">
+        <EmailSwitches />
+      </div>
+
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Input
           placeholder="Search by address…"
@@ -138,6 +203,7 @@ export default function AdminEmailsScreen() {
           <option value="sent">Sent</option>
           <option value="failed">Failed</option>
           <option value="suppressed">Suppressed</option>
+          <option value="blocked">Blocked</option>
         </select>
 
         <Show when={data !== undefined}>

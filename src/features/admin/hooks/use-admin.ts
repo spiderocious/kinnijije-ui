@@ -153,6 +153,21 @@ export function useAdminEmail(emailId: string | null) {
   });
 }
 
+export function useEmailSettings() {
+  return useQuery({ queryKey: [...ADMIN_KEY, 'email-settings'], queryFn: adminApi.emailSettings });
+}
+
+export function useSetEmailKind() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ kind, enabled, reason }: { kind: string; enabled: boolean; reason?: string }) =>
+      adminApi.setEmailKind(kind, enabled, reason),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
 export function useEmailKinds() {
   return useQuery({ queryKey: [...ADMIN_KEY, 'email-kinds'], queryFn: adminApi.emailKinds });
 }
