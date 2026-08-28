@@ -5,6 +5,7 @@ import { Repeat, Show } from 'meemaw';
 
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
+import { searchValue } from '@shared/utils/search-value';
 import { cn } from '@shared/utils/cn';
 import { Callout } from '@ui/feedback';
 import { AppBar } from '@ui/navigation';
@@ -44,7 +45,7 @@ export default function MealScreen() {
    * a page whose only job is to regenerate itself.
    */
   const isGenerated = mealId === ROUTES.GENERATED_MEAL_ID;
-  const wantedName = search.meal ?? '';
+  const wantedName = searchValue(search.meal);
 
   const generate = useGenerateMeal();
   const { data, isLoading } = useMealDetail(isGenerated ? null : mealId);

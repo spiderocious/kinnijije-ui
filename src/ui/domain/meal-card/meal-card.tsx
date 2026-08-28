@@ -1,3 +1,5 @@
+import type { KeyboardEvent } from 'react';
+
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { cn } from '@shared/utils/cn';
 import { Button } from '@ui/primitives';
@@ -108,10 +110,30 @@ export function MealCard({
   const weak = match === 'needs_a_shop';
 
   if (compact) {
+    // The compact card has no button — it IS the button. Without this it
+    // rendered `onOpen` nowhere at all, so a meal in a chat reply looked
+    // tappable and did nothing.
+    const openable = onOpen !== undefined && !paused;
+
     return (
       <article
+        {...(openable && {
+          role: 'button',
+          tabIndex: 0,
+          onClick: onOpen,
+          onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+            // Enter and Space, because this is a button wearing an article.
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              onOpen();
+            }
+          },
+          'aria-label': `Open ${name}`,
+        })}
         className={cn(
           'flex overflow-hidden rounded-blade border-bold border-ink bg-white shadow-drop-sm',
+          openable &&
+            'cursor-pointer transition-shadow hover:shadow-drop focus-visible:outline-none focus-visible:shadow-[var(--drop),0_0_0_4px_var(--sky-glow)]',
           className,
         )}
       >
@@ -122,6 +144,9 @@ export function MealCard({
             <Provenance source={source} size="sm" />
             <Figure value={minutes} unit="min" approximate={approximate} size="sm" />
           </div>
+          {matchLine !== undefined && (
+            <p className="truncate text-xs text-ink-2">{matchLine}</p>
+          )}
         </div>
       </article>
     );

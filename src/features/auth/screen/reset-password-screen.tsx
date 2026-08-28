@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
+import { searchValue } from '@shared/utils/search-value';
 import { Callout } from '@ui/feedback';
 import { PasswordInput } from '@ui/inputs';
 import { Button } from '@ui/primitives';
@@ -23,7 +24,7 @@ import { FormError } from '../parts/form-error';
 export default function ResetPasswordScreen() {
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { token?: string };
-  const token = search.token ?? '';
+  const token = searchValue(search.token);
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');

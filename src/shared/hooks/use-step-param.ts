@@ -14,6 +14,25 @@ import { useNavigate, useRouterState } from '@tanstack/react-router';
  * it must bounce to the entry point, or somebody pasting a URL sees an empty
  * confirm screen with nothing to confirm.
  */
+/**
+ * Undoes the router's JSON encoding of a search value.
+ *
+ * A route with no `validateSearch` gets TanStack's default serialiser, which
+ * writes `?step="2"` — quotes and all. Reading that back gave `"2"` rather than
+ * `2`, which matched no stage, so every flow silently bounced to its first
+ * step: the onboarding Continue button changed the url and nothing else.
+ *
+ * Stripping here rather than declaring `validateSearch` on nine routes keeps
+ * the fix in the one place that reads these values.
+ */
+function unquote(value: string | null): string | null {
+  if (value === null) return null;
+  if (value.length >= 2 && value.startsWith('"') && value.endsWith('"')) {
+    return value.slice(1, -1);
+  }
+  return value;
+}
+
 export function useStepParam<T extends string>(options: {
   /** The query key, e.g. `step`. */
   readonly key: string;
@@ -32,11 +51,18 @@ export function useStepParam<T extends string>(options: {
   const search = useRouterState({ select: (state) => state.location.searchStr });
 
   const params = new URLSearchParams(search);
-  const raw = params.get(options.key);
+  const raw = unquote(params.get(options.key));
 
   // An unknown or absent stage is the first one — a mistyped URL must land
   // somewhere sane rather than rendering nothing.
   const stage = (options.stages.includes(raw as T) ? raw : options.stages[0]) as T;
+
+  // Callers read other flow params off this — `method`, `prefill`, `unit` —
+  // and every one of them carries the same quotes.
+  for (const [name, value] of [...params.entries()]) {
+    const cleaned = unquote(value);
+    if (cleaned !== value && cleaned !== null) params.set(name, cleaned);
+  }
 
   const write = useCallback(
     (next: URLSearchParams, replace = false) => {
