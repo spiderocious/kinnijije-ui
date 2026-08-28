@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { Repeat, Show } from 'meemaw';
 
@@ -79,6 +79,15 @@ const UNCHECKED_LABEL: Record<'shelf' | 'receipt', string> = {
 export function PhotoCapture({ max, onChange, accept, label, kind = 'shelf' }: PhotoCaptureProps) {
   const upload = useFileUpload('shelf_photo');
   const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
+
+  /** Same handling whichever input produced the files. */
+  const onPicked = (event: ChangeEvent<HTMLInputElement>): void => {
+    const picked = Array.from(event.target.files ?? []).slice(0, max - upload.items.length);
+    for (const file of picked) void upload.upload(file);
+    // Reset so picking the same file again still fires a change.
+    event.target.value = '';
+  };
   const [checks, setChecks] = useState<Record<string, { state: PhotoState; message: string }>>({});
   // Which uploads have already been sent for checking, so a re-render cannot
   // queue the same photo twice.
@@ -192,20 +201,27 @@ export function PhotoCapture({ max, onChange, accept, label, kind = 'shelf' }: P
 
   return (
     <div>
+      {/*
+        TWO inputs, deliberately.
+
+        `capture` and `multiple` fight each other: with both set, browsers drop
+        the capture hint and open the file picker — which is why "take a photo"
+        was landing in the gallery. So the camera input carries `capture` and
+        takes ONE shot, and the library input carries `multiple` and no capture.
+
+        On a phone the camera one is the primary action; on a desktop, where
+        `capture` means nothing, only the library input is shown.
+      */}
       <input
-        ref={fileInput}
+        ref={cameraInput}
         type="file"
         accept={accept}
         capture="environment"
-        multiple
         hidden
-        onChange={(event) => {
-          const picked = Array.from(event.target.files ?? []).slice(0, max - upload.items.length);
-          for (const file of picked) void upload.upload(file);
-          // Reset so picking the same file again still fires a change.
-          event.target.value = '';
-        }}
+        onChange={onPicked}
       />
+
+      <input ref={fileInput} type="file" accept={accept} multiple hidden onChange={onPicked} />
 
       {/* Two across, not four — each tile has to carry a line of text under it
           and a cramped tile truncates the one thing the person needs to read. */}
@@ -297,18 +313,39 @@ export function PhotoCapture({ max, onChange, accept, label, kind = 'shelf' }: P
         </Repeat>
 
         <Show when={!atLimit}>
-          <button
-            type="button"
-            onClick={() => {
-              fileInput.current?.click();
-            }}
-            className="grid aspect-square place-items-center rounded-blade-sm border-2 border-dashed border-line text-sm text-ink-3 hover:border-sky hover:text-sky-on"
-          >
-            <span className="flex flex-col items-center gap-1">
-              <KoboyoIcon name="takingPhotoCamera" size={24} alone />
-              {label}
-            </span>
-          </button>
+          <div className="flex aspect-square flex-col gap-2">
+            {/* Camera first, and bigger — on a phone this is the thing being
+                asked for. It opens the rear camera straight away rather than a
+                gallery nobody wanted. */}
+            <button
+              type="button"
+              onClick={() => {
+                cameraInput.current?.click();
+              }}
+              className="grid flex-1 place-items-center rounded-blade-sm border-2 border-dashed border-line text-sm text-ink-3 hover:border-sky hover:text-sky-on sm:hidden"
+            >
+              <span className="flex flex-col items-center gap-1">
+                <KoboyoIcon name="takingPhotoCamera" size={24} alone />
+                {label}
+              </span>
+            </button>
+
+            {/* On a desktop `capture` means nothing, so this is the only way
+                in — and it keeps `multiple`, which the camera input cannot. */}
+            <button
+              type="button"
+              onClick={() => {
+                fileInput.current?.click();
+              }}
+              className="grid place-items-center rounded-blade-sm border-2 border-dashed border-line py-3 text-sm text-ink-3 hover:border-sky hover:text-sky-on sm:h-full sm:flex-1 sm:py-0"
+            >
+              <span className="flex flex-col items-center gap-1">
+                <KoboyoIcon name="upload" size={20} className="hidden sm:block" alone />
+                <span className="sm:hidden">Choose a file instead</span>
+                <span className="hidden sm:inline">{label}</span>
+              </span>
+            </button>
+          </div>
         </Show>
       </div>
 

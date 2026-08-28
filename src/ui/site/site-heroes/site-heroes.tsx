@@ -57,8 +57,10 @@ export function SiteHeaderVariant({
 }: SiteHeaderVariantProps) {
   const wordmark = (
     <span className="inline-flex items-center gap-2">
-      <KoboyoIcon name="cookingPot" size={24} className="text-sky" />
-      <span className="font-display text-xl font-extrabold tracking-display">Kinnijije</span>
+      <img src="/favicon.svg" alt="" width={26} height={26} className="rounded-blade-xs" />
+      <span className="font-display text-xl font-extrabold tracking-display">
+        Kinni<span className="text-sky-on">Jije</span>
+      </span>
     </span>
   );
 

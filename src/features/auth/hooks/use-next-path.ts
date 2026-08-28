@@ -1,5 +1,6 @@
 import { useRouterState } from '@tanstack/react-router';
 
+import { ROUTES } from '@shared/constants/routes';
 import { searchValue } from '@shared/utils/search-value';
 
 /** The query key carrying where somebody was trying to go. */
@@ -18,8 +19,25 @@ export const NEXT_PARAM = 'next';
 export function isSafeNext(value: string): boolean {
   if (!value.startsWith('/')) return false;
   if (value.startsWith('//') || value.startsWith('/\\')) return false;
+
+  // Never point back at an auth page. `?next=/login` sends somebody who just
+  // signed in straight to the sign-in screen, and a nested one is how the
+  // parameter ends up eating itself.
+  const path = value.split('?')[0] ?? '';
+  if (AUTH_PATHS.includes(path)) return false;
+
   return true;
 }
+
+/** Pages it makes no sense to return TO after signing in. */
+const AUTH_PATHS: readonly string[] = [
+  ROUTES.LOGIN,
+  ROUTES.REGISTER,
+  ROUTES.FORGOT_PASSWORD,
+  ROUTES.RESET_PASSWORD,
+  ROUTES.ENTRY,
+  ROUTES.ADMIN_LOGIN,
+];
 
 /** Builds the `?next=` value for the current location, path and query. */
 export function buildNext(pathname: string, searchStr: string): string {

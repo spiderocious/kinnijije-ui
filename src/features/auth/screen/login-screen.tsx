@@ -7,6 +7,7 @@ import { Button } from '@ui/primitives';
 import { Field, Input, PasswordInput } from '@ui/inputs';
 
 import { useLogin } from '../hooks/use-auth-actions';
+import { useNextPath } from '../hooks/use-next-path';
 import { fieldError } from '../hooks/use-field-errors';
 import { AuthShell } from '../parts/auth-shell';
 import { FormError } from '../parts/form-error';
@@ -16,6 +17,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const login = useLogin();
+  const next = useNextPath();
   const error = login.error ?? null;
 
   const submit = (event: FormEvent) => {
@@ -30,7 +32,13 @@ export default function LoginScreen() {
       footer={
         <>
           New here?{' '}
-          <Link to={ROUTES.REGISTER} className="font-extrabold text-sky underline-offset-2 hover:underline">
+          {/* `next` follows across, so somebody who detours to sign up still
+              lands where they were originally going. */}
+          <Link
+            to={ROUTES.REGISTER}
+            {...(next !== null && { search: { next } as never })}
+            className="font-extrabold text-sky underline-offset-2 hover:underline"
+          >
             Create an account
           </Link>
         </>

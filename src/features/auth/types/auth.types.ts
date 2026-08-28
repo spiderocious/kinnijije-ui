@@ -52,6 +52,8 @@ export interface RegisterPayload {
   email: string;
   password: string;
   name: string;
+  /** Optional. Drives the weather in the daily email. */
+  city?: string;
 }
 
 export interface LoginPayload {

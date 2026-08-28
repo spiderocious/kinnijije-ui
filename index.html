@@ -3,8 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/logo-icon.svg" />
-    <title>Kinnijije</title>
+
+    <title>KinniJije — cook what you already have</title>
+    <meta
+      name="description"
+      content="Tell KinniJije what is in your kitchen and it tells you what you can cook tonight. Nigerian home cooking, no counting, no shopping list you did not ask for."
+    />
+
+    <!-- SVG first for anything modern; the .ico is the fallback for older
+         browsers and for Windows, which still wants a real icon file. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+    <link rel="alternate icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Tints the browser chrome on Android, and the notch area on iOS. -->
+    <meta name="theme-color" content="#38B6F0" />
+    <meta name="apple-mobile-web-app-title" content="KinniJije" />
+
+    <meta property="og:title" content="KinniJije — cook what you already have" />
+    <meta
+      property="og:description"
+      content="Tell it what is in your kitchen. It tells you what you can cook tonight."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

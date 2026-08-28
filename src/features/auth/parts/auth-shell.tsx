@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 
 import { Link } from '@tanstack/react-router';
 
-import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 
 import { AuthArt } from './auth-art';
@@ -30,7 +29,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
         <div className="w-full max-w-[400px]">
           <header className="mb-7 text-center lg:text-left">
             <Link to={ROUTES.ENTRY} aria-label="KinniJije home">
-              <KoboyoIcon name="cookingPot" size={40} className="text-sky" alone />
+              <img src="/favicon.svg" alt="KinniJije" width={44} height={44} className="mx-auto rounded-blade-sm lg:mx-0" />
             </Link>
             <h1 className="mt-3 font-display text-2xl font-extrabold leading-tight tracking-display sm:text-3xl">
               {title}

@@ -7,6 +7,7 @@ import { ROUTES } from '@shared/constants/routes';
 import { Button } from '@ui/primitives';
 import { Field, Input, PasswordInput } from '@ui/inputs';
 
+import { useNextPath } from '../hooks/use-next-path';
 import { useRegister } from '../hooks/use-auth-actions';
 import { fieldError } from '../hooks/use-field-errors';
 import { AuthShell } from '../parts/auth-shell';
@@ -30,10 +31,12 @@ function localPasswordProblem(password: string): string | undefined {
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
+  const [city, setCity] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const register = useRegister();
+  const next = useNextPath();
   const error = register.error ?? null;
 
   const localProblem = localPasswordProblem(password);
@@ -49,7 +52,13 @@ export default function RegisterScreen() {
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (!canSubmit) return;
-    register.mutate({ name: name.trim(), email: email.trim(), password });
+    register.mutate({
+      name: name.trim(),
+      email: email.trim(),
+      password,
+      // Only sent when they filled it in — an empty string is not an answer.
+      ...(city.trim().length > 0 && { city: city.trim() }),
+    });
   };
 
   return (
@@ -59,7 +68,11 @@ export default function RegisterScreen() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to={ROUTES.LOGIN} className="font-extrabold text-sky underline-offset-2 hover:underline">
+          <Link
+            to={ROUTES.LOGIN}
+            {...(next !== null && { search: { next } as never })}
+            className="font-extrabold text-sky underline-offset-2 hover:underline"
+          >
             Sign in
           </Link>
         </>
@@ -78,6 +91,30 @@ export default function RegisterScreen() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               invalid={fieldError(error, 'name') !== undefined}
+              size="lg"
+            />
+          )}
+        </Field>
+
+        {/* Asked here rather than later, because it is what makes the weather
+            in the morning email real — and a field asked for after signup is a
+            field nobody fills in. Optional, so it never blocks anyone. */}
+        <Field
+          label="Which city?"
+          hint="e.g. Lagos, Ibadan, Ogbomoso, Abuja"
+          error={fieldError(error, 'city')}
+        >
+          {({ id, describedBy }) => (
+            <Input
+              id={id}
+              aria-describedby={describedBy}
+              autoComplete="address-level2"
+              placeholder="Lagos"
+              value={city}
+              onChange={(event) => {
+                setCity(event.target.value);
+              }}
+              invalid={fieldError(error, 'city') !== undefined}
               size="lg"
             />
           )}

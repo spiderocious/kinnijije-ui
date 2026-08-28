@@ -46,6 +46,14 @@ export function RouteGuard({
     if (isLoading) return;
 
     if (!isSignedIn) {
+      // ALREADY on the sign-in page? Then there is nothing to do.
+      //
+      // Without this the guard re-fires after its own navigate — `pathname` is
+      // a dependency — and builds `?next=/login?next=/login?next=…`, growing
+      // the url on every pass until the tab runs out of memory and Chrome
+      // shows "Aw, Snap". That is the crash.
+      if (pathname === redirectTo) return;
+
       // Carry where they were going, so signing in finishes the journey rather
       // than dumping them on the kitchen and making them navigate again.
       void navigate({

@@ -47,7 +47,7 @@ function useNavCounts(): { market: number; attention: number } {
 
 function buildPhoneNav(counts: { market: number; attention: number }): TabBarItem[] {
   return [
-    { id: 'kitchen', label: 'Kitchen', icon: 'hob', ...(counts.attention > 0 && { count: counts.attention }) },
+    { id: 'kitchen', label: 'Kitchen', icon: 'cookingPot', ...(counts.attention > 0 && { count: counts.attention }) },
     { id: 'saved', label: 'Saved', icon: 'bookmark' },
     { id: 'market', label: 'Market', icon: 'shoppingBasket', ...(counts.market > 0 && { count: counts.market }) },
     { id: 'ai', label: 'Ask', icon: 'robotForAi' },
@@ -59,8 +59,8 @@ function buildDesktopNav(counts: { market: number; attention: number }): Sidebar
   return [
     {
       items: [
-        { id: 'kitchen', label: 'Kitchen', icon: 'hob' },
-        { id: 'stock', label: 'Stock', icon: 'shelf', ...(counts.attention > 0 && { count: counts.attention }) },
+        { id: 'kitchen', label: 'Kitchen', icon: 'cookingPot' },
+        { id: 'stock', label: 'Stock', icon: 'foodBankShelf', ...(counts.attention > 0 && { count: counts.attention }) },
         { id: 'market', label: 'Market list', icon: 'shoppingBasket', ...(counts.market > 0 && { count: counts.market }) },
         { id: 'ai', label: 'Ask AI', icon: 'robotForAi' },
         { id: 'saved', label: 'Saved', icon: 'bookmark' },
@@ -144,8 +144,13 @@ export function AppShell({
           onValueChange={goTo}
           header={
             <div className="flex items-center gap-2 px-1">
-              <KoboyoIcon name="cookingPot" size={26} className="text-sky" alone />
-              <span className="font-display text-lg font-extrabold tracking-display">Kinnijije</span>
+              {/* The real logo mark, not the pot icon — Kitchen wears the pot
+                  now, and the same drawing twice in one column reads as a
+                  mistake. This one is the tile, which is the brand. */}
+              <img src="/favicon.svg" alt="" width={26} height={26} className="rounded-blade-xs" />
+              <span className="font-display text-lg font-extrabold tracking-display">
+                Kinni<span className="text-sky-on">Jije</span>
+              </span>
             </div>
           }
           footer={

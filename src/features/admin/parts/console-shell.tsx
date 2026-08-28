@@ -4,7 +4,6 @@ import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { useSession, useSignOut } from '@features/auth';
-import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { Sidebar, type SidebarGroup } from '@ui/navigation';
 import { Avatar } from '@ui/structure';
@@ -69,8 +68,10 @@ export function ConsoleShell({
         groups={CONSOLE_NAV}
         header={
           <span className="inline-flex items-center gap-2">
-            <KoboyoIcon name="cookingPot" size={20} className="text-sky" />
-            <span className="font-display text-md font-extrabold tracking-display">Kinnijije</span>
+            <img src="/favicon.svg" alt="" width={22} height={22} className="rounded-blade-xs" />
+            <span className="font-display text-md font-extrabold tracking-display">
+              Kinni<span className="text-sky-on">Jije</span>
+            </span>
             <span className="font-mono text-xs text-ink-3">admin</span>
           </span>
         }
