@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
-import { Repeat } from 'meemaw';
+import type { ReactNode } from "react";
+import { Repeat } from "meemaw";
 
-import { Blob, KoboyoIcon, type KoboyoIconName } from '@icons';
-import { cn } from '@shared/utils/cn';
-import { Button } from '@ui/primitives';
-import { MealCard } from '@ui/domain';
+import { Blob, KoboyoIcon, type KoboyoIconName } from "@icons";
+import { cn } from "@shared/utils/cn";
+import { Button } from "@ui/primitives";
+import { MealCard } from "@ui/domain";
 
 /**
  * The marketing site's section families.
@@ -29,21 +29,25 @@ import { MealCard } from '@ui/domain';
 
 export interface SectionProps {
   /** A tinted band. `paper` is the default ground. */
-  readonly tone?: 'paper' | 'white' | 'sky' | 'ink';
+  readonly tone?: "paper" | "white" | "sky" | "ink";
   readonly className?: string;
   readonly children: ReactNode;
 }
 
 const SECTION_TONE = {
-  paper: 'bg-paper text-ink',
-  white: 'bg-white text-ink',
-  sky: 'bg-sky-soft text-ink',
-  ink: 'bg-ink text-ink-inv',
+  paper: "bg-paper text-ink",
+  white: "bg-white text-ink",
+  sky: "bg-sky-soft text-ink",
+  ink: "bg-ink text-ink-inv",
 } as const;
 
-export function SiteSection({ tone = 'paper', className, children }: SectionProps) {
+export function SiteSection({
+  tone = "paper",
+  className,
+  children,
+}: SectionProps) {
   return (
-    <section className={cn('px-6 py-11', SECTION_TONE[tone], className)}>
+    <section className={cn("px-6 py-11", SECTION_TONE[tone], className)}>
       <div className="mx-auto max-w-[1080px]">{children}</div>
     </section>
   );
@@ -52,7 +56,9 @@ export function SiteSection({ tone = 'paper', className, children }: SectionProp
 /** The overline that opens most sections. */
 export function SiteEyebrow({ children }: { readonly children: ReactNode }) {
   return (
-    <p className="mb-3 text-xs font-extrabold uppercase tracking-overline text-ink-3">{children}</p>
+    <p className="mb-3 text-xs font-extrabold uppercase tracking-overline text-ink-3">
+      {children}
+    </p>
   );
 }
 
@@ -68,18 +74,33 @@ export function SiteHeader({ onStart, onSignIn }: SiteHeaderProps) {
     <header className="sticky top-0 z-nav border-b border-line bg-paper/95 px-6 py-4 backdrop-blur">
       <div className="mx-auto flex max-w-[1080px] items-center justify-between gap-4">
         <span className="inline-flex items-center gap-2">
-          <KoboyoIcon name="cookingPot" size={26} className="text-sky" />
-          <span className="font-display text-xl font-extrabold tracking-display">Kinnijije</span>
+          <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-blade-xs bg-sky text-white">
+            {/* Lighter than the nav marks — it sits on solid sky, where a
+                    thinner line holds up and a heavy one fills in. */}
+            <KoboyoIcon name="utensilsCrossed" size={15} weight={0.75} alone />
+          </span>
+          <span className="font-display text-xl font-extrabold tracking-display">
+            Kinnijije
+          </span>
         </span>
 
         <nav className="hidden items-center gap-6 md:flex">
-          <a href="#how" className="text-sm font-extrabold text-ink-2 hover:text-ink">
+          <a
+            href="#how"
+            className="text-sm font-extrabold text-ink-2 hover:text-ink"
+          >
             How it works
           </a>
-          <a href="#recipes" className="text-sm font-extrabold text-ink-2 hover:text-ink">
+          <a
+            href="#recipes"
+            className="text-sm font-extrabold text-ink-2 hover:text-ink"
+          >
             Recipes
           </a>
-          <a href="#pricing" className="text-sm font-extrabold text-ink-2 hover:text-ink">
+          <a
+            href="#pricing"
+            className="text-sm font-extrabold text-ink-2 hover:text-ink"
+          >
             Pricing
           </a>
         </nav>
@@ -99,7 +120,12 @@ export function SiteHeader({ onStart, onSignIn }: SiteHeaderProps) {
 
 /* ---------- Hero ---------- */
 
-export type HeroVariant = 'centred' | 'split' | 'blob' | 'testimonial' | 'returning';
+export type HeroVariant =
+  | "centred"
+  | "split"
+  | "blob"
+  | "testimonial"
+  | "returning";
 
 export interface SiteHeroProps {
   readonly variant?: HeroVariant;
@@ -108,12 +134,16 @@ export interface SiteHeroProps {
 }
 
 /** The one promise, in the same words, at five levels of evidence. */
-const HEADLINE = 'Stop staring at the fridge.';
+const HEADLINE = "Stop staring at the fridge.";
 const BODY =
-  'Tell it what is in your kitchen and it will tell you what to cook tonight — Nigerian and West African food, first.';
+  "Tell it what is in your kitchen and it will tell you what to cook tonight — Nigerian and West African food, first.";
 
-export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroProps) {
-  if (variant === 'split') {
+export function SiteHero({
+  variant = "centred",
+  onStart,
+  className,
+}: SiteHeroProps) {
+  if (variant === "split") {
     return (
       <SiteSection className={className}>
         <div className="grid items-center gap-9 md:grid-cols-2">
@@ -137,7 +167,7 @@ export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroPr
             source="seed"
             minutes={45}
             match="nothing_to_buy"
-            heroImage={{ kind: 'photo' }}
+            heroImage={{ kind: "photo" }}
             matchLine="Uses 6 of your 6 things"
           />
         </div>
@@ -145,7 +175,7 @@ export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroPr
     );
   }
 
-  if (variant === 'blob') {
+  if (variant === "blob") {
     return (
       <SiteSection tone="sky" className={className}>
         <div className="flex flex-col items-center text-center">
@@ -162,7 +192,7 @@ export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroPr
     );
   }
 
-  if (variant === 'testimonial') {
+  if (variant === "testimonial") {
     return (
       <SiteSection className={className}>
         <div className="flex flex-col items-center text-center">
@@ -173,7 +203,9 @@ export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroPr
             <Blob name="ada@kinnijije.ng" size={28} />
             Ada, Lagos
           </p>
-          <p className="mt-7 font-display text-2xl font-extrabold tracking-display">{HEADLINE}</p>
+          <p className="mt-7 font-display text-2xl font-extrabold tracking-display">
+            {HEADLINE}
+          </p>
           <Button size="lg" className="mt-5" onClick={onStart}>
             Start cooking
           </Button>
@@ -182,12 +214,14 @@ export function SiteHero({ variant = 'centred', onStart, className }: SiteHeroPr
     );
   }
 
-  if (variant === 'returning') {
+  if (variant === "returning") {
     return (
       <SiteSection tone="white" className={className}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl font-extrabold tracking-display">Welcome back.</h1>
+            <h1 className="font-display text-2xl font-extrabold tracking-display">
+              Welcome back.
+            </h1>
             <p className="mt-1 text-md text-ink-2">
               Your kitchen is empty — tell us what you have.
             </p>
@@ -231,27 +265,27 @@ export interface HowStep {
 /** Three steps, always three. The product genuinely is three steps. */
 const STEPS: HowStep[] = [
   {
-    icon: 'basket',
-    title: 'Say what you have',
-    body: 'Type it, say it into your phone, or take a photo of your fridge.',
+    icon: "basket",
+    title: "Say what you have",
+    body: "Type it, say it into your phone, or take a photo of your fridge.",
   },
   {
-    icon: 'cookingPot',
-    title: 'Get three meals',
-    body: 'Mostly from what is already there, with what you would need to buy.',
+    icon: "cookingPot",
+    title: "Get three meals",
+    body: "Mostly from what is already there, with what you would need to buy.",
   },
   {
-    icon: 'kitchenTimer',
-    title: 'Cook one',
-    body: 'Full-screen steps, timers, and the screen stays awake.',
+    icon: "kitchenTimer",
+    title: "Cook one",
+    body: "Full-screen steps, timers, and the screen stays awake.",
   },
 ];
 
 export function SiteHowItWorks({
-  layout = 'across',
+  layout = "across",
   className,
 }: {
-  readonly layout?: 'across' | 'timeline';
+  readonly layout?: "across" | "timeline";
   readonly className?: string;
 }) {
   return (
@@ -261,14 +295,20 @@ export function SiteHowItWorks({
         Three steps. That is the whole thing.
       </h2>
 
-      <div className={cn(layout === 'across' ? 'grid gap-6 md:grid-cols-3' : 'flex flex-col gap-6')}>
+      <div
+        className={cn(
+          layout === "across"
+            ? "grid gap-6 md:grid-cols-3"
+            : "flex flex-col gap-6",
+        )}
+      >
         <Repeat each={STEPS}>
           {(step: HowStep, index: number) => (
             <div
               key={step.title}
               className={cn(
-                'rounded-blade-lg border border-line-2 bg-paper p-6',
-                layout === 'timeline' && 'flex items-start gap-5',
+                "rounded-blade-lg border border-line-2 bg-paper p-6",
+                layout === "timeline" && "flex items-start gap-5",
               )}
             >
               <span className="mb-3 flex items-center gap-3">
@@ -276,14 +316,16 @@ export function SiteHowItWorks({
                   <KoboyoIcon name={step.icon} size={22} />
                 </span>
                 <span className="font-mono text-sm font-bold tnum text-ink-3">
-                  {String(index + 1).padStart(2, '0')}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
               </span>
               <span className="block">
                 <span className="block font-display text-lg font-extrabold tracking-display">
                   {step.title}
                 </span>
-                <span className="mt-1 block text-md text-ink-2">{step.body}</span>
+                <span className="mt-1 block text-md text-ink-2">
+                  {step.body}
+                </span>
               </span>
             </div>
           )}
@@ -305,9 +347,10 @@ export function SiteTrust({ className }: { readonly className?: string }) {
             You always know who wrote the recipe.
           </h2>
           <p className="mt-3 max-w-[48ch] text-md text-ink-2">
-            Recipes written and tested by a person are marked <b>✓ Verified</b>. When nothing
-            tested matches your kitchen, we ask a model and label it <b>◆ Made by AI</b> — with the
-            quantities marked as estimates and the time padded, because models under-estimate.
+            Recipes written and tested by a person are marked <b>✓ Verified</b>.
+            When nothing tested matches your kitchen, we ask a model and label
+            it <b>◆ Made by AI</b> — with the quantities marked as estimates and
+            the time padded, because models under-estimate.
           </p>
         </div>
 
@@ -319,7 +362,13 @@ export function SiteTrust({ className }: { readonly className?: string }) {
             match="nothing_to_buy"
             compact
           />
-          <MealCard name="Egusi Soup" source="ai" minutes={70} match="strong_match" compact />
+          <MealCard
+            name="Egusi Soup"
+            source="ai"
+            minutes={70}
+            match="strong_match"
+            compact
+          />
         </div>
       </div>
     </SiteSection>
@@ -358,10 +407,10 @@ export function SitePricing({
             <div
               key={tier.name}
               className={cn(
-                'flex flex-col rounded-blade-lg border p-6',
+                "flex flex-col rounded-blade-lg border p-6",
                 tier.featured === true
-                  ? 'border-bold border-ink bg-paper shadow-drop'
-                  : 'border-line-2 bg-paper',
+                  ? "border-bold border-ink bg-paper shadow-drop"
+                  : "border-line-2 bg-paper",
               )}
             >
               <p className="text-xs font-extrabold uppercase tracking-overline text-ink-3">
@@ -380,8 +429,15 @@ export function SitePricing({
               <ul className="mt-5 flex flex-1 flex-col gap-2">
                 <Repeat each={[...tier.features]}>
                   {(feature: string) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm text-ink-2">
-                      <KoboyoIcon name="tick" size={15} className="mt-[2px] shrink-0 text-success" />
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-sm text-ink-2"
+                    >
+                      <KoboyoIcon
+                        name="tick"
+                        size={15}
+                        className="mt-[2px] shrink-0 text-success"
+                      />
                       {feature}
                     </li>
                   )}
@@ -391,7 +447,7 @@ export function SitePricing({
               <Button
                 className="mt-6"
                 fullWidth
-                variant={tier.featured === true ? 'primary' : 'secondary'}
+                variant={tier.featured === true ? "primary" : "secondary"}
               >
                 {tier.cta}
               </Button>
@@ -470,23 +526,38 @@ export function SiteFooter() {
         <div>
           <span className="inline-flex items-center gap-2">
             <KoboyoIcon name="cookingPot" size={22} className="text-sky" />
-            <span className="font-display text-lg font-extrabold tracking-display">Kinnijije</span>
+            <span className="font-display text-lg font-extrabold tracking-display">
+              Kinnijije
+            </span>
           </span>
           <p className="mt-2 max-w-[36ch] text-sm text-ink-3">
-            What to cook, from what you have. Nigerian and West African food, first.
+            What to cook, from what you have. Nigerian and West African food,
+            first.
           </p>
         </div>
 
         <nav className="flex flex-wrap gap-x-10 gap-y-4 text-sm">
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-extrabold uppercase tracking-overline text-ink-4">Product</p>
-            <a href="#how" className="text-ink-2 hover:text-ink">How it works</a>
-            <a href="#pricing" className="text-ink-2 hover:text-ink">Pricing</a>
+            <p className="text-xs font-extrabold uppercase tracking-overline text-ink-4">
+              Product
+            </p>
+            <a href="#how" className="text-ink-2 hover:text-ink">
+              How it works
+            </a>
+            <a href="#pricing" className="text-ink-2 hover:text-ink">
+              Pricing
+            </a>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-extrabold uppercase tracking-overline text-ink-4">Company</p>
-            <a href="#about" className="text-ink-2 hover:text-ink">About</a>
-            <a href="#ai" className="text-ink-2 hover:text-ink">How we use AI</a>
+            <p className="text-xs font-extrabold uppercase tracking-overline text-ink-4">
+              Company
+            </p>
+            <a href="#about" className="text-ink-2 hover:text-ink">
+              About
+            </a>
+            <a href="#ai" className="text-ink-2 hover:text-ink">
+              How we use AI
+            </a>
           </div>
         </nav>
       </div>

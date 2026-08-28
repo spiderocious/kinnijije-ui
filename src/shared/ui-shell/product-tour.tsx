@@ -5,6 +5,7 @@ import { Show } from 'meemaw';
 
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
+import { useFeatures } from '@shared/hooks/use-features';
 import { cn } from '@shared/utils/cn';
 import { Button } from '@ui/primitives';
 
@@ -236,6 +237,7 @@ export function ProductTour() {
   const [step, setStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [box, setBox] = useState<Box | null>(null);
+  const features = useFeatures();
   /** Set once a forced run begins, so finishing it does not immediately restart. */
   const forcedRef = useRef(false);
 
@@ -273,6 +275,9 @@ export function ProductTour() {
   useEffect(() => {
     if (open || forcedRef.current) return;
     if (pathname !== START_ROUTE) return;
+    // Switched off in the console. `?tour=true` cannot override it — an
+    // operator who turned the tour off means it, including for themselves.
+    if (!features.onboarding_tour) return;
 
     const forced = isForced(search);
     if (!forced && hasSeenTour()) return;
@@ -280,7 +285,7 @@ export function ProductTour() {
     if (forced) forcedRef.current = true;
     setStep(0);
     setOpen(true);
-  }, [open, pathname, search]);
+  }, [open, pathname, search, features.onboarding_tour]);
 
   // Walk to the step's screen. Compared against the CURRENT url so re-running
   // this effect on an unrelated render does not re-navigate.

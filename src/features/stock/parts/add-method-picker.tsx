@@ -1,6 +1,8 @@
 import { KoboyoIcon } from '@icons';
 import { cn } from '@shared/utils/cn';
 
+import { useFeatures } from '@shared/hooks/use-features';
+
 export type AddMethod = 'manual' | 'photo' | 'receipt';
 
 interface AddMethodPickerProps {
@@ -35,9 +37,20 @@ const METHODS: { id: AddMethod; icon: string; title: string; body: string }[] = 
  * depend on a model, and leading with the reliable one is honest.
  */
 export function AddMethodPicker({ onPick }: AddMethodPickerProps) {
+  const features = useFeatures();
+
+  // A switched-off way in is REMOVED, not disabled. A greyed-out button that
+  // says nothing invites somebody to keep pressing it; typing always works and
+  // is always here, so there is no dead end.
+  const available = METHODS.filter((method) => {
+    if (method.id === 'photo') return features.upload_photo;
+    if (method.id === 'receipt') return features.upload_receipt;
+    return true;
+  });
+
   return (
     <div className="flex flex-col gap-3">
-      {METHODS.map((method) => (
+      {available.map((method) => (
         <button
           key={method.id}
           type="button"

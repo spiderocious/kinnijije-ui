@@ -72,6 +72,11 @@ export const EP = {
   },
 
   /** The console. Everything under /admin, guarded by role on the server. */
+  /** Public: what the app is allowed to show. No session needed. */
+  CONFIG: {
+    FEATURES: `${V1}/config/features`,
+  },
+
   ADMIN: {
     SETUP: `${V1}/admin/setup`,
     OVERVIEW: `${V1}/admin/overview`,
@@ -86,6 +91,8 @@ export const EP = {
     AI: `${V1}/admin/ai`,
     AI_PROMPT_IDS: `${V1}/admin/ai/prompt-ids`,
     AI_LOG: (logId: string) => `${V1}/admin/ai/${logId}`,
+    FEATURES: `${V1}/admin/features`,
+    FEATURE: (flag: string) => `${V1}/admin/features/${flag}`,
     EMAILS: `${V1}/admin/emails`,
     EMAIL_KINDS: `${V1}/admin/emails/kinds`,
     EMAIL_SETTINGS: `${V1}/admin/emails/settings`,

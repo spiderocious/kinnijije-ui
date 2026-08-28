@@ -137,6 +137,27 @@ export function useAiPromptIds() {
   return useQuery({ queryKey: [...ADMIN_KEY, 'prompt-ids'], queryFn: adminApi.aiPromptIds });
 }
 
+// ── Features ─────────────────────────────────────────────────────────
+export function useFeatureFlags() {
+  return useQuery({ queryKey: [...ADMIN_KEY, 'features'], queryFn: adminApi.features });
+}
+
+export function useSetFeatureFlag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ flag, enabled, reason }: { flag: string; enabled: boolean; reason?: string }) =>
+      adminApi.setFeature(flag, enabled, reason),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ADMIN_KEY }),
+        // The consumer app reads the same flags — drop its copy too, or the
+        // operator's own browser keeps showing the feature they just switched off.
+        queryClient.invalidateQueries({ queryKey: ['config', 'features'] }),
+      ]);
+    },
+  });
+}
+
 // ── Email ────────────────────────────────────────────────────────────
 export function useAdminEmails(params: Record<string, string | number | undefined>) {
   return useQuery({

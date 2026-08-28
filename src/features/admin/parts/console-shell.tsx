@@ -24,6 +24,11 @@ const CONSOLE_NAV: SidebarGroup[] = [
       { id: 'emails', label: 'Email', icon: 'envelope' },
     ],
   },
+  {
+    items: [
+      { id: 'settings', label: 'Settings', icon: 'settings' },
+    ],
+  },
 ];
 
 const DESTINATIONS: Record<string, string> = {
@@ -33,6 +38,7 @@ const DESTINATIONS: Record<string, string> = {
   ai: ROUTES.ADMIN_AI,
   jobs: ROUTES.ADMIN_JOBS,
   emails: ROUTES.ADMIN_EMAILS,
+  settings: ROUTES.ADMIN_SETTINGS,
 };
 
 /**

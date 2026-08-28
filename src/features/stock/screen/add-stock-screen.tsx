@@ -7,6 +7,7 @@ import { useJob } from '@features/jobs/hooks/use-job';
 import { EP } from '@shared/constants/endpoints';
 import { ROUTES } from '@shared/constants/routes';
 import { JOB_POLL_TIMEOUT_MS } from '@shared/constants/polling';
+import { useFeatures } from '@shared/hooks/use-features';
 import { useStepParam } from '@shared/hooks/use-step-param';
 import { apiClient } from '@shared/services/api-client';
 import { AppShell } from '@shared/ui-shell/app-shell';
@@ -56,6 +57,7 @@ export default function AddStockScreen() {
     ? (rawMethod as AddMethod)
     : 'manual';
 
+  const features = useFeatures();
   const drafts = useStockDrafts();
   const addStock = useAddStock();
   const createUnit = useCreateUnit();
@@ -81,8 +83,26 @@ export default function AddStockScreen() {
     }
     if (stage === 'entry' && rawMethod === null) {
       go('method');
+      return;
     }
-  }, [stage, drafts.drafts.length, rawMethod, method, go]);
+
+    // A switched-off method is not reachable by url either. Hiding the tile
+    // but honouring `?method=photo` would leave a working back door into a
+    // feature somebody deliberately turned off.
+    const blocked =
+      (method === 'photo' && !features.upload_photo) ||
+      (method === 'receipt' && !features.upload_receipt);
+
+    if (stage !== 'method' && blocked) go('method');
+  }, [
+    stage,
+    drafts.drafts.length,
+    rawMethod,
+    method,
+    go,
+    features.upload_photo,
+    features.upload_receipt,
+  ]);
 
   const usablePhotos = photos.filter((photo) => photo.state === 'usable');
   const stillWorking = photos.some(

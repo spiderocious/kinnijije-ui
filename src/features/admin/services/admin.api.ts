@@ -218,6 +218,17 @@ export interface EmailLogDetail extends EmailLogRow {
   text: string;
 }
 
+export interface FeatureFlagRow {
+  key: string;
+  label: string;
+  /** What actually stops happening. Written next to the switch. */
+  when_off: string;
+  enabled: boolean;
+  updated_by: string | null;
+  reason: string | null;
+  updated_at: string | null;
+}
+
 export interface EmailSetting {
   kind: string;
   enabled: boolean;
@@ -272,6 +283,11 @@ export const adminApi = {
     apiClient.get<Paged<AiLogRow>>(`${EP.ADMIN.AI}${qs(params)}`),
   aiLog: (logId: string): Promise<AiLogDetail> => apiClient.get<AiLogDetail>(EP.ADMIN.AI_LOG(logId)),
   aiPromptIds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.AI_PROMPT_IDS),
+
+  features: (): Promise<FeatureFlagRow[]> =>
+    apiClient.get<FeatureFlagRow[]>(EP.ADMIN.FEATURES),
+  setFeature: (flag: string, enabled: boolean, reason?: string): Promise<void> =>
+    apiClient.patch<void>(EP.ADMIN.FEATURE(flag), { enabled, reason }),
 
   emails: (params: Record<string, string | number | undefined>): Promise<Paged<EmailLogRow>> =>
     apiClient.get<Paged<EmailLogRow>>(`${EP.ADMIN.EMAILS}${qs(params)}`),

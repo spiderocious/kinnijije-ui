@@ -58,6 +58,12 @@ export const adminAiRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-ai-route')),
 });
 
+export const adminSettingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_SETTINGS,
+  component: lazyRouteComponent(() => import('./screen/admin-settings-route')),
+});
+
 export const adminEmailNewRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ADMIN_EMAIL_NEW,
