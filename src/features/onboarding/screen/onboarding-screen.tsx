@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { Show } from 'meemaw';
 
+import { useStepParam } from '@shared/hooks/use-step-param';
+
 import { Button } from '@ui/primitives';
 
 import { EXPLAINER_SLIDES } from '../content/onboarding.content';
@@ -26,7 +28,19 @@ export default function OnboardingScreen() {
   const save = useSaveOnboarding();
   const complete = useCompleteOnboarding();
 
-  const [step, setStep] = useState(1);
+  /**
+   * The step lives in the URL, so BACK walks back through onboarding rather
+   * than dropping the person out of it, and a refresh keeps their place.
+   */
+  const STEP_VALUES = ['1', '2', '3', '4', '5'] as const;
+  const { stage, go } = useStepParam<(typeof STEP_VALUES)[number]>({
+    key: 'step',
+    stages: STEP_VALUES,
+  });
+  const step = Number(stage);
+  const setStep = (next: number): void => {
+    go(String(Math.max(1, Math.min(TOTAL_STEPS, next))) as (typeof STEP_VALUES)[number]);
+  };
 
   // Local drafts, seeded from the server once it answers. Editing straight
   // against the query cache would fire a save on every keystroke.
@@ -68,11 +82,12 @@ export default function OnboardingScreen() {
   };
 
   const goBack = () => {
-    setStep((current) => Math.max(1, current - 1));
+    // Real history, so this and the browser back button agree.
+    window.history.back();
   };
 
   const advance = () => {
-    setStep((current) => Math.min(TOTAL_STEPS, current + 1));
+    setStep(step + 1);
   };
 
   /** Saves this step's answers, then advances. A failed save keeps you here. */
@@ -98,7 +113,15 @@ export default function OnboardingScreen() {
   };
 
   if (isLoading) {
-    return <div className="grid min-h-dvh place-items-center bg-ground text-ink-3">Loading…</div>;
+    return (
+      <div className="grid min-h-dvh place-items-center bg-ground p-5">
+        <div className="flex w-full max-w-[560px] flex-col items-center gap-4">
+          <div aria-hidden="true" className="h-16 w-16 animate-shimmer rounded-blade bg-paper-2" />
+          <div aria-hidden="true" className="h-8 w-2/3 animate-shimmer rounded bg-paper-2" />
+          <div aria-hidden="true" className="h-20 w-full animate-shimmer rounded-blade bg-paper-2" />
+        </div>
+      </div>
+    );
   }
 
   const isExplainer = step <= EXPLAINER_COUNT;

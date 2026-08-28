@@ -52,14 +52,15 @@ export function AppBar({
         <button
           type="button"
           onClick={onBack}
+          aria-label={backLabel}
+          title={backLabel}
           className={cn(
             'flex shrink-0 items-center gap-1 rounded-blade-xs px-2 py-1 text-sm font-extrabold',
             'transition-colors duration-fast focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_var(--sky-glow)]',
             onDark ? 'text-ink-inv hover:bg-white/10' : 'text-ink-2 hover:bg-paper-2 hover:text-ink',
           )}
         >
-          <ArrowLeft size={17} strokeWidth={2.5} aria-hidden="true" />
-          {backLabel}
+          <ArrowLeft size={19} strokeWidth={2.5} aria-hidden="true" />
         </button>
       )}
 

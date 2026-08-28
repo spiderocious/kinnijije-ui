@@ -12,14 +12,21 @@ import type { ApiError } from '@shared/services/api-client';
 export function FormError({ error }: { readonly error: ApiError | null }) {
   if (error === null) return null;
 
-  // Field-level problems are shown on the fields themselves; repeating them
-  // up here would say the same thing twice.
-  const isFieldOnly =
+  /**
+   * Hide this banner ONLY when every problem is already visible on a field.
+   *
+   * A `_root` error belongs to the whole request and no input can render it, so
+   * hiding the banner would leave the person with a form that refuses to submit
+   * and nothing on screen explaining why. Same for a field this form does not
+   * render — the message has nowhere else to go.
+   */
+  const fieldKeys = Object.keys(error.fieldErrors ?? {});
+  const everyProblemHasAField =
     error.code === 'validation_error' &&
-    error.fieldErrors !== undefined &&
-    Object.keys(error.fieldErrors).length > 0;
+    fieldKeys.length > 0 &&
+    !fieldKeys.includes('_root');
 
-  if (isFieldOnly) return null;
+  if (everyProblemHasAField) return null;
 
   // Being rate-limited or hitting a server fault is a "wait and retry", not a
   // "you did something wrong" — a softer tone reads more honestly.

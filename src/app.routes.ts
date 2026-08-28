@@ -1,23 +1,50 @@
 import { loginRoute, registerRoute } from '@features/auth/auth.routes';
+import { chatRoute } from '@features/chat/chat.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
 import { landingRoute } from '@features/landing/landing.routes';
+import { marketRoute } from '@features/market/market.routes';
+import { cookRoute, favouritesRoute, mealRoute, suggestionsRoute } from '@features/meals/meals.routes';
 import { onboardingRoute } from '@features/onboarding/onboarding.routes';
 import { previewRoute } from '@features/preview/preview.routes';
 import { sceneIndexRoute, sceneRoute } from '@features/scenes/scenes.routes';
+import { settingsRoute } from '@features/settings/settings.routes';
+import { addStockRoute, stockItemRoute, stockRoute } from '@features/stock/stock.routes';
+import { weekRoute } from '@features/week/week.routes';
 
 import { rootRoute } from './app.root-route';
 
 /**
- * Top-level route tree. Features own their own route definitions;
- * this file only composes them.
+ * The route tree, composed from feature-owned definitions.
+ *
+ * ORDER IS LOAD-BEARING: every literal path is registered before any
+ * parameterised one that could swallow it — `/stock/add` before `/stock`
+ * would be wrong here only if `/stock` took a parameter, but `/meals/$mealId`
+ * genuinely can shadow a literal `/meals/...`, so the params go last.
  */
 export const routeTree = rootRoute.addChildren([
-  // The product, in the order a new cook meets it.
+  // Public
   landingRoute,
   registerRoute,
   loginRoute,
+
+  // First run
   onboardingRoute,
+
+  // The app, literals first
   kitchenRoute,
+  addStockRoute,
+  stockRoute,
+  marketRoute,
+  suggestionsRoute,
+  favouritesRoute,
+  chatRoute,
+  weekRoute,
+  settingsRoute,
+
+  // Parameterised last.
+  mealRoute,
+  cookRoute,
+  stockItemRoute,
 
   // Design-system surfaces, not product screens.
   previewRoute,

@@ -4,6 +4,7 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 
 import { Loader2 } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
+import { ProductTour } from '@shared/ui-shell/product-tour';
 
 function RouteFallback() {
   return (
@@ -42,6 +43,12 @@ export function AppEntrypoint() {
           <Outlet />
         </Suspense>
       </main>
+
+      {/* Lives HERE, not in app.tsx: the tour navigates, so it must sit inside
+          the router's context — and inside a single route's component it would
+          unmount the moment it walked to the next screen. It decides for
+          itself whether to show. */}
+      <ProductTour />
     </div>
   );
 }

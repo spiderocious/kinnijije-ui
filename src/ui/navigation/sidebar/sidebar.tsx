@@ -92,6 +92,8 @@ export function Sidebar({
                       <li key={item.id}>
                         <button
                           type="button"
+                          // Anchor for the product tour — see TabBar.
+                          data-tour={`nav-${item.id}`}
                           aria-current={active ? 'page' : undefined}
                           onClick={() => onValueChange(item.id)}
                           className={cn(

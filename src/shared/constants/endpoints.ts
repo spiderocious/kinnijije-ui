@@ -39,8 +39,65 @@ export const EP = {
     CONFIRM: (fileId: string) => `${V1}/files/${fileId}/confirm`,
   },
 
+  STOCK: {
+    LIST: `${V1}/stock`,
+    ADD: `${V1}/stock`,
+    DASHBOARD: `${V1}/stock/dashboard`,
+    SUGGEST: `${V1}/stock/suggest`,
+    HISTORY: `${V1}/stock/history`,
+    UNITS: `${V1}/stock/units`,
+    UNIT: (unitId: string) => `${V1}/stock/units/${unitId}`,
+    DETAIL: (stockId: string) => `${V1}/stock/${stockId}`,
+  },
+
+  MARKET: {
+    LIST: `${V1}/market`,
+    ADD: `${V1}/market`,
+    CLEAR_BOUGHT: `${V1}/market/bought`,
+    BOUGHT: (marketId: string) => `${V1}/market/${marketId}/bought`,
+    DETAIL: (marketId: string) => `${V1}/market/${marketId}`,
+  },
+
+  MEALS: {
+    LIST: `${V1}/meals`,
+    SUGGEST: `${V1}/meals/suggest`,
+    /** Turns a name the assistant invented into a meal we really have. */
+    GENERATE: `${V1}/meals/generate`,
+    FAVOURITES: `${V1}/meals/favourites`,
+    DETAIL: (mealId: string) => `${V1}/meals/${mealId}`,
+    FAVOURITE: (mealId: string) => `${V1}/meals/${mealId}/favourite`,
+    COOKED: (mealId: string) => `${V1}/meals/${mealId}/cooked`,
+  },
+
+  CHAT: {
+    HISTORY: `${V1}/chat`,
+    ASK: `${V1}/chat`,
+    CLEAR: `${V1}/chat`,
+  },
+
+  EXTRACTION: {
+    CHECK: `${V1}/extraction/check`,
+    PHOTOS: `${V1}/extraction/photos`,
+    RECEIPT: `${V1}/extraction/receipt`,
+  },
+
+  JOBS: {
+    LIST: `${V1}/jobs`,
+    DETAIL: (jobId: string) => `${V1}/jobs/${jobId}`,
+    STREAM: (jobId: string) => `${V1}/jobs/${jobId}/stream`,
+    CANCEL: (jobId: string) => `${V1}/jobs/${jobId}/cancel`,
+    RETRY: (jobId: string) => `${V1}/jobs/${jobId}/retry`,
+  },
+
+  WEEK: {
+    SUMMARY: `${V1}/week`,
+    REFRESH_READING: `${V1}/week/reading`,
+  },
+
   USERS: {
     ME: `${V1}/users/me`,
+    SETTINGS: `${V1}/users/me/settings`,
+    DELETE_ME: `${V1}/users/me`,
     LIST: `${V1}/users`,
     DETAIL: (userId: string) => `${V1}/users/${userId}`,
     STATUS: (userId: string) => `${V1}/users/${userId}/status`,

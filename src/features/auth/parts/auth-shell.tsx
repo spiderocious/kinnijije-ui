@@ -5,6 +5,8 @@ import { Link } from '@tanstack/react-router';
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 
+import { AuthArt } from './auth-art';
+
 interface AuthShellProps {
   readonly title: string;
   readonly subtitle: string;
@@ -15,15 +17,18 @@ interface AuthShellProps {
 /**
  * The frame both auth screens share.
  *
- * Centred and width-capped rather than stretched: a form is easier to read in a
- * column, so the desktop layout gives it more air, not more width.
+ * Phone: one centred column. Desktop: the form takes the LEFT half and the
+ * illustration the right — a form centred in a wide viewport leaves the eye
+ * nowhere to rest, and stretching it to fill instead makes it harder to read.
+ *
+ * The form column stays width-capped inside its half for exactly that reason.
  */
 export function AuthShell({ title, subtitle, children, footer }: AuthShellProps) {
   return (
-    <div className="min-h-dvh bg-ground">
-      <div className="grid min-h-dvh place-items-center px-5 py-10 sm:px-6">
+    <div className="min-h-dvh bg-ground lg:grid lg:grid-cols-2">
+      <div className="grid min-h-dvh place-items-center px-5 py-10 sm:px-6 lg:min-h-0 lg:px-10">
         <div className="w-full max-w-[400px]">
-          <header className="mb-7 text-center">
+          <header className="mb-7 text-center lg:text-left">
             <Link to={ROUTES.ENTRY} aria-label="KinniJije home">
               <KoboyoIcon name="cookingPot" size={40} className="text-sky" alone />
             </Link>
@@ -35,9 +40,11 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
 
           {children}
 
-          <footer className="mt-6 text-center text-sm text-ink-2">{footer}</footer>
+          <footer className="mt-6 text-center text-sm text-ink-2 lg:text-left">{footer}</footer>
         </div>
       </div>
+
+      <AuthArt />
     </div>
   );
 }

@@ -57,6 +57,9 @@ export function TabBar({ items, value, onValueChange, className }: TabBarProps) 
             <button
               key={item.id}
               type="button"
+              // Lets the product tour point at ONE destination rather than the
+              // whole bar. Purely an anchor — nothing styles off it.
+              data-tour={`nav-${item.id}`}
               aria-current={active ? 'page' : undefined}
               disabled={gated}
               onClick={() => onValueChange(item.id)}
