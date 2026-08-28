@@ -213,7 +213,7 @@ export function BreadcrumbSkeleton({
         <li>
           <span
             aria-hidden="true"
-            className="block h-[14px] w-28 animate-shimmer rounded-[3px] bg-paper-2"
+            className="block h-[14px] w-28 animate-shimmer rounded-[3px] bg-skeleton"
           />
         </li>
       </ol>

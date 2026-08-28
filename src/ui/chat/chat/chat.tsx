@@ -123,9 +123,9 @@ function ChatUser({ text, status = 'sent', onRetry }: ChatUserProps) {
 function ChatAiSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col gap-2 py-2">
-      <span className="block h-[13px] w-[88%] animate-shimmer rounded-[3px] bg-paper-2" />
-      <span className="block h-[13px] w-[76%] animate-shimmer rounded-[3px] bg-paper-2" />
-      <span className="block h-[13px] w-[54%] animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-[88%] animate-shimmer rounded-[3px] bg-skeleton" />
+      <span className="block h-[13px] w-[76%] animate-shimmer rounded-[3px] bg-skeleton" />
+      <span className="block h-[13px] w-[54%] animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }
@@ -135,7 +135,7 @@ function ChatCitationSkeleton() {
   return (
     <span
       aria-hidden="true"
-      className="mt-2 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-paper-2"
+      className="mt-2 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-skeleton"
     />
   );
 }

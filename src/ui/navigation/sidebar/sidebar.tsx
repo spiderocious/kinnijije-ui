@@ -112,7 +112,7 @@ export function Sidebar({
                           <Show when={item.countLoading === true}>
                             <span
                               aria-hidden="true"
-                              className="block h-[18px] w-6 animate-shimmer rounded-pill bg-paper-2"
+                              className="block h-[18px] w-6 animate-shimmer rounded-pill bg-skeleton"
                             />
                           </Show>
                           <Show

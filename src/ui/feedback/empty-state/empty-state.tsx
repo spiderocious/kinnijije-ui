@@ -129,9 +129,9 @@ export function EmptyStateChecking({ className }: { readonly className?: string 
       aria-hidden="true"
       className={cn('flex flex-col items-center gap-3 px-6 py-10 text-center', className)}
     >
-      <span className="block h-[56px] w-[56px] animate-shimmer rounded-round bg-paper-2" />
-      <span className="block h-[16px] w-44 animate-shimmer rounded-[3px] bg-paper-2" />
-      <span className="block h-[13px] w-64 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[56px] w-[56px] animate-shimmer rounded-round bg-skeleton" />
+      <span className="block h-[16px] w-44 animate-shimmer rounded-[3px] bg-skeleton" />
+      <span className="block h-[13px] w-64 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }

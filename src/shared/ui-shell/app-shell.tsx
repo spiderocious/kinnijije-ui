@@ -60,7 +60,7 @@ function buildDesktopNav(counts: { market: number; attention: number }): Sidebar
     {
       items: [
         { id: 'kitchen', label: 'Kitchen', icon: 'cookingPot' },
-        { id: 'stock', label: 'Stock', icon: 'foodBankShelf', ...(counts.attention > 0 && { count: counts.attention }) },
+        { id: 'stock', label: 'Stock', icon: 'stockAsRawIngredients', ...(counts.attention > 0 && { count: counts.attention }) },
         { id: 'market', label: 'Market list', icon: 'shoppingBasket', ...(counts.market > 0 && { count: counts.market }) },
         { id: 'ai', label: 'Ask AI', icon: 'robotForAi' },
         { id: 'saved', label: 'Saved', icon: 'bookmark' },
@@ -173,25 +173,26 @@ export function AppShell({
 
         <main className="flex-1 overflow-x-hidden px-8 py-8">
           <div className={`mx-auto w-full ${maxWidth}`}>
+            {/* Back sits on its OWN line, above the title — beside it, the
+                two compete for the same reading position and the title stops
+                being the first thing seen. Arrow only: the word "Back" adds
+                nothing an arrow does not already say. */}
+            <Show when={onBack !== undefined}>
+              <button
+                type="button"
+                onClick={onBack}
+                aria-label={backLabel ?? 'Back'}
+                title={backLabel ?? 'Back'}
+                className="mb-3 grid h-10 w-10 place-items-center rounded-blade-xs border border-line bg-white text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_var(--sky-glow)]"
+              >
+                <KoboyoIcon name="arrowRight" size={16} className="rotate-180" alone />
+              </button>
+            </Show>
+
             <div className="mb-6 flex items-center justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
-                {/* Desktop had NO back control at all — the browser button was
-                    the only way out of a flow, which is not something to make
-                    somebody guess. */}
-                <Show when={onBack !== undefined}>
-                  <button
-                    type="button"
-                    onClick={onBack}
-                    className="flex shrink-0 items-center gap-1.5 rounded-blade-xs border border-line bg-white px-3 py-2 text-sm font-extrabold text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_var(--sky-glow)]"
-                  >
-                    <KoboyoIcon name="arrowRight" size={15} className="rotate-180" alone />
-                    {backLabel ?? 'Back'}
-                  </button>
-                </Show>
-                <h1 className="min-w-0 truncate font-display text-3xl font-extrabold tracking-display">
-                  {title}
-                </h1>
-              </div>
+              <h1 className="min-w-0 truncate font-display text-3xl font-extrabold tracking-display">
+                {title}
+              </h1>
               <Show when={actions !== undefined}>{actions}</Show>
             </div>
             {children}

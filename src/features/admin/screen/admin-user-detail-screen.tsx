@@ -48,7 +48,7 @@ export default function AdminUserDetailScreen() {
       }
     >
       <Show when={isLoading}>
-        <div aria-hidden="true" className="h-64 animate-shimmer rounded-blade bg-paper-2" />
+        <div aria-hidden="true" className="h-64 animate-shimmer rounded-blade bg-skeleton" />
       </Show>
 
       <Show when={setStatus.error !== null || setRole.error !== null}>

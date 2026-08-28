@@ -278,12 +278,12 @@ function RowMarket({ name, quantity, ticked, onToggle, icon = 'shoppingBasket', 
 function RowSkeleton({ withAvatar = true }: { readonly withAvatar?: boolean }) {
   return (
     <li aria-hidden="true" className="flex items-center gap-3 px-pad py-row-y">
-      {withAvatar && <span className="h-11 w-11 shrink-0 animate-shimmer rounded-blade-xs bg-paper-2" />}
+      {withAvatar && <span className="h-11 w-11 shrink-0 animate-shimmer rounded-blade-xs bg-skeleton" />}
       <span className="flex min-w-0 flex-1 flex-col gap-2">
-        <span className="h-[16px] w-1/2 animate-shimmer rounded-[4px] bg-paper-2" />
-        <span className="h-[13px] w-1/3 animate-shimmer rounded-[4px] bg-paper-2" />
+        <span className="h-[16px] w-1/2 animate-shimmer rounded-[4px] bg-skeleton" />
+        <span className="h-[13px] w-1/3 animate-shimmer rounded-[4px] bg-skeleton" />
       </span>
-      <span className="h-[22px] w-[72px] shrink-0 animate-shimmer rounded-blade-xs bg-paper-2" />
+      <span className="h-[22px] w-[72px] shrink-0 animate-shimmer rounded-blade-xs bg-skeleton" />
     </li>
   );
 }

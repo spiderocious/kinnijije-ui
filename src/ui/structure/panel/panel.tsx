@@ -99,11 +99,11 @@ export function PanelSkeleton({
       aria-hidden="true"
       className={cn('rounded-blade-lg border-hair border-line-2 p-pad', className)}
     >
-      <span className="mb-3 block h-[15px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="mb-3 block h-[15px] w-32 animate-shimmer rounded-[3px] bg-skeleton" />
       {Array.from({ length: lines }, (_, i) => (
         <span
           key={i}
-          className="mt-2 block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+          className="mt-2 block h-[13px] animate-shimmer rounded-[3px] bg-skeleton"
           style={{ width: widths[i % widths.length] }}
         />
       ))}

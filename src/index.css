@@ -24,6 +24,11 @@
   --paper: #f7fafc; /* the canvas */
   --paper-2: #eef4f8; /* recessed */
   --paper-3: #e7eef4; /* sunken */
+  /* Skeleton fill. Its OWN token: --paper-2 was doing this job, and at
+     #EEF4F8 on an #F7FAFC page that is about four percent of contrast —
+     invisible, and the opacity animation took it further down. A recessed
+     panel and a loading bar should not be forced to the same colour. */
+  --skeleton: #dbe6ef;
   --line: #e3ecf2; /* quiet divider */
   --line-2: #cfdde7; /* firmer edge */
   --scrim: rgba(19, 36, 48, 0.46);
@@ -279,7 +284,7 @@
 @keyframes kj-shimmer {
   0%,
   100% {
-    opacity: 0.55;
+    opacity: 0.65;
   }
   50% {
     opacity: 1;

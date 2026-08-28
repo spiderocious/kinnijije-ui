@@ -93,7 +93,7 @@ export function AppBarSessionSkeleton({ className }: { readonly className?: stri
   return (
     <span
       aria-hidden="true"
-      className={cn('block h-8 w-8 animate-shimmer rounded-round bg-paper-2', className)}
+      className={cn('block h-8 w-8 animate-shimmer rounded-round bg-skeleton', className)}
     />
   );
 }

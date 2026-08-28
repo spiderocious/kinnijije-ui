@@ -216,9 +216,9 @@ export function NutritionBalanceSkeleton({ className }: { readonly className?: s
       aria-hidden="true"
       className={cn('rounded-blade border border-line-2 bg-white p-4', className)}
     >
-      <span className="block h-[12px] w-28 animate-shimmer rounded-[3px] bg-paper-2" />
-      <span className="mt-3 block h-4 w-full animate-shimmer rounded-pill bg-paper-2" />
-      <span className="mt-3 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[12px] w-28 animate-shimmer rounded-[3px] bg-skeleton" />
+      <span className="mt-3 block h-4 w-full animate-shimmer rounded-pill bg-skeleton" />
+      <span className="mt-3 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }

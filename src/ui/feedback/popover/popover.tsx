@@ -225,7 +225,7 @@ export function PopoverLoading({ lines = 3 }: { readonly lines?: number }) {
       {Array.from({ length: lines }, (_, i) => (
         <span
           key={i}
-          className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+          className="block h-[13px] animate-shimmer rounded-[3px] bg-skeleton"
           style={{ width: widths[i % widths.length] }}
         />
       ))}

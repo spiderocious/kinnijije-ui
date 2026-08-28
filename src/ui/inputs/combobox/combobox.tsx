@@ -158,7 +158,7 @@ export function Combobox({
           <Show when={initialising}>
             <ul aria-hidden="true" className="flex flex-col gap-1 p-1">
               <Repeat times={4}>
-                {() => <li className="h-9 animate-shimmer rounded-blade-xs bg-paper-2" />}
+                {() => <li className="h-9 animate-shimmer rounded-blade-xs bg-skeleton" />}
               </Repeat>
             </ul>
           </Show>

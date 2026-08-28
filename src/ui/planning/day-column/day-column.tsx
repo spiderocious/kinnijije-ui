@@ -136,9 +136,9 @@ export function DayColumnSkeleton({
 }) {
   return (
     <div aria-hidden="true" className={cn('flex min-w-0 flex-col gap-2', className)}>
-      <span className="block h-[13px] w-10 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[13px] w-10 animate-shimmer rounded-[3px] bg-skeleton" />
       {Array.from({ length: slots }, (_, i) => (
-        <span key={i} className="block h-[64px] w-full animate-shimmer rounded-blade-sm bg-paper-2" />
+        <span key={i} className="block h-[64px] w-full animate-shimmer rounded-blade-sm bg-skeleton" />
       ))}
     </div>
   );

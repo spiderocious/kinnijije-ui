@@ -87,7 +87,7 @@ export function CardSkeleton({
         {Array.from({ length: lines }, (_, index) => (
           <div
             key={index}
-            className="h-[16px] animate-shimmer rounded-[4px] bg-paper-2"
+            className="h-[16px] animate-shimmer rounded-[4px] bg-skeleton"
             style={{ width: index === lines - 1 ? '55%' : '100%' }}
           />
         ))}

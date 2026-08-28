@@ -14,6 +14,8 @@ export default {
       colors: {
         /* Ground */
         white: 'var(--white)',
+        /* The skeleton fill, on purpose distinct from the recessed paper. */
+        skeleton: 'var(--skeleton)',
         paper: {
           DEFAULT: 'var(--paper)',
           2: 'var(--paper-2)',

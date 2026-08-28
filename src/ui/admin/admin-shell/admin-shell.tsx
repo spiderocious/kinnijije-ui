@@ -129,7 +129,7 @@ export function BackLink({ label, onNavigate, className }: BackLinkProps) {
       {resolving ? (
         <span
           aria-hidden="true"
-          className="block h-[13px] w-20 animate-shimmer rounded-[3px] bg-paper-2"
+          className="block h-[13px] w-20 animate-shimmer rounded-[3px] bg-skeleton"
         />
       ) : (
         label

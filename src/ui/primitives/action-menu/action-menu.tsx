@@ -135,8 +135,8 @@ export function ActionMenu({
               The menu still OPENS — silently doing nothing on press is worse. */}
           <Show when={loading}>
             <li role="none" aria-hidden="true" className="flex flex-col gap-2 px-3 py-2">
-              <span className="block h-[13px] w-28 animate-shimmer rounded-[3px] bg-paper-2" />
-              <span className="block h-[13px] w-20 animate-shimmer rounded-[3px] bg-paper-2" />
+              <span className="block h-[13px] w-28 animate-shimmer rounded-[3px] bg-skeleton" />
+              <span className="block h-[13px] w-20 animate-shimmer rounded-[3px] bg-skeleton" />
             </li>
           </Show>
 

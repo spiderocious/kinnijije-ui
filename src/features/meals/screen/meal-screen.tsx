@@ -7,6 +7,7 @@ import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { searchValue } from '@shared/utils/search-value';
 import { cn } from '@shared/utils/cn';
+import { ScreenError } from '@shared/ui-shell/screen-states';
 import { Callout } from '@ui/feedback';
 import { AppBar } from '@ui/navigation';
 import { Button, Dock, IconButton } from '@ui/primitives';
@@ -48,7 +49,7 @@ export default function MealScreen() {
   const wantedName = searchValue(search.meal);
 
   const generate = useGenerateMeal();
-  const { data, isLoading } = useMealDetail(isGenerated ? null : mealId);
+  const { data, isLoading, error, refetch } = useMealDetail(isGenerated ? null : mealId);
   const toggleFavourite = useToggleFavourite();
 
   const { mutate: runGenerate } = generate;
@@ -78,15 +79,40 @@ export default function MealScreen() {
     );
   }
 
+  // A meal that does not exist is an ERROR, not a slow load. Waiting on
+  // `data === undefined` alone meant a bad id sat on the skeleton forever.
+  if (!isLoading && (error !== null || data === undefined)) {
+    return (
+      <div className="min-h-dvh bg-ground">
+        <AppBar
+          title="Recipe"
+          onBack={() => {
+            void navigate({ to: ROUTES.SUGGESTIONS });
+          }}
+          backLabel="Back"
+        />
+        <div className="mx-auto w-full max-w-[720px] px-5 py-8">
+          <ScreenError
+            error={error}
+            what="this recipe"
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading || data === undefined) {
     // Shaped like the page it becomes, so nothing jumps when the data lands.
     return (
       <div className="min-h-dvh bg-ground px-5 py-6">
         <div className="mx-auto flex w-full max-w-[720px] flex-col gap-4">
-          <div aria-hidden="true" className="h-14 w-2/3 animate-shimmer rounded-blade bg-paper-2" />
-          <div aria-hidden="true" className="h-20 animate-shimmer rounded-blade bg-paper-2" />
-          <div aria-hidden="true" className="h-32 animate-shimmer rounded-blade bg-paper-2" />
-          <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-paper-2" />
+          <div aria-hidden="true" className="h-14 w-2/3 animate-shimmer rounded-blade bg-skeleton" />
+          <div aria-hidden="true" className="h-20 animate-shimmer rounded-blade bg-skeleton" />
+          <div aria-hidden="true" className="h-32 animate-shimmer rounded-blade bg-skeleton" />
+          <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-skeleton" />
         </div>
       </div>
     );
@@ -267,9 +293,9 @@ function GeneratingScreen({
 
           {/* Shaped like the recipe it becomes. */}
           <div className="mt-5 flex flex-col gap-4">
-            <div aria-hidden="true" className="h-20 animate-shimmer rounded-blade bg-paper-2" />
-            <div aria-hidden="true" className="h-32 animate-shimmer rounded-blade bg-paper-2" />
-            <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-paper-2" />
+            <div aria-hidden="true" className="h-20 animate-shimmer rounded-blade bg-skeleton" />
+            <div aria-hidden="true" className="h-32 animate-shimmer rounded-blade bg-skeleton" />
+            <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-skeleton" />
           </div>
         </Show>
 

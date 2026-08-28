@@ -117,9 +117,9 @@ export function CheckboxGroupSkeleton({
     <div aria-hidden="true" className={cn('flex flex-col gap-2.5', className)}>
       {Array.from({ length: options }, (_, i) => (
         <span key={i} className="flex items-center gap-2.5">
-          <span className="block h-[18px] w-[18px] shrink-0 animate-shimmer rounded-[3px] bg-paper-2" />
+          <span className="block h-[18px] w-[18px] shrink-0 animate-shimmer rounded-[3px] bg-skeleton" />
           <span
-            className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+            className="block h-[13px] animate-shimmer rounded-[3px] bg-skeleton"
             style={{ width: widths[i % widths.length] }}
           />
         </span>

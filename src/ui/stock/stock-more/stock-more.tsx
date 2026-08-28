@@ -78,8 +78,8 @@ export function StockCount({
 export function StockCountSkeleton({ className }: { readonly className?: string }) {
   return (
     <div aria-hidden="true" className={cn('flex items-center gap-3', className)}>
-      <span className="block h-ctrl w-[128px] animate-shimmer rounded-blade-sm bg-paper-2" />
-      <span className="block h-[14px] w-10 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-ctrl w-[128px] animate-shimmer rounded-blade-sm bg-skeleton" />
+      <span className="block h-[14px] w-10 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }

@@ -123,7 +123,7 @@ export default function AdminSetupScreen() {
         </Show>
 
         <Show when={setup.isLoading}>
-          <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-paper-2" />
+          <div aria-hidden="true" className="h-48 animate-shimmer rounded-blade bg-skeleton" />
         </Show>
       </div>
     </div>

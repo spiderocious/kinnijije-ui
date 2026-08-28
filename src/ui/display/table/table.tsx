@@ -182,7 +182,7 @@ export function TableSkeleton({
             <Repeat each={[...columns]}>
               {(column: { key: string }) => (
                 <td key={column.key} className="py-row-y pr-3">
-                  <span className="block h-[18px] animate-shimmer rounded-[4px] bg-paper-2" />
+                  <span className="block h-[18px] animate-shimmer rounded-[4px] bg-skeleton" />
                 </td>
               )}
             </Repeat>

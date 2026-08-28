@@ -147,13 +147,13 @@ export function InsightSkeleton() {
   return (
     <div aria-hidden="true" className="rounded-blade-lg border border-line-2 bg-white p-5">
       <div className="flex gap-3">
-        <span className="h-10 w-10 shrink-0 animate-shimmer rounded-blade-xs bg-paper-2" />
+        <span className="h-10 w-10 shrink-0 animate-shimmer rounded-blade-xs bg-skeleton" />
         <div className="flex-1">
-          <div className="h-[18px] w-4/5 animate-shimmer rounded-[4px] bg-paper-2" />
-          <div className="mt-2 h-[14px] w-3/5 animate-shimmer rounded-[4px] bg-paper-2" />
+          <div className="h-[18px] w-4/5 animate-shimmer rounded-[4px] bg-skeleton" />
+          <div className="mt-2 h-[14px] w-3/5 animate-shimmer rounded-[4px] bg-skeleton" />
         </div>
       </div>
-      <div className="mt-3 h-[13px] w-2/5 animate-shimmer rounded-[3px] bg-paper-2" />
+      <div className="mt-3 h-[13px] w-2/5 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }

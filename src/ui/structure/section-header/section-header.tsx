@@ -164,8 +164,8 @@ export function Avatar({ name, size = 36, label, sublabel, className }: AvatarPr
 export function SectionHeaderSkeleton({ className }: { readonly className?: string }) {
   return (
     <div aria-hidden="true" className={cn('flex items-center justify-between gap-3', className)}>
-      <span className="block h-[17px] w-40 animate-shimmer rounded-[3px] bg-paper-2" />
-      <span className="block h-[13px] w-16 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="block h-[17px] w-40 animate-shimmer rounded-[3px] bg-skeleton" />
+      <span className="block h-[13px] w-16 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }
@@ -191,13 +191,13 @@ export function AvatarSkeleton({
   return (
     <span aria-hidden="true" className={cn('flex items-center gap-2.5', className)}>
       <span
-        className="block shrink-0 animate-shimmer rounded-round bg-paper-2"
+        className="block shrink-0 animate-shimmer rounded-round bg-skeleton"
         style={{ width: size, height: size }}
       />
       {withLabel && (
         <span className="flex flex-col gap-1">
-          <span className="block h-[13px] w-24 animate-shimmer rounded-[3px] bg-paper-2" />
-          <span className="block h-[11px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
+          <span className="block h-[13px] w-24 animate-shimmer rounded-[3px] bg-skeleton" />
+          <span className="block h-[11px] w-32 animate-shimmer rounded-[3px] bg-skeleton" />
         </span>
       )}
     </span>

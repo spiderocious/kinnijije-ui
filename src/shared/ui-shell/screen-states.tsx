@@ -60,7 +60,7 @@ export function CardListSkeleton({ count = 3, height = 'h-32' }: { readonly coun
           <div
             key={index}
             aria-hidden="true"
-            className={`${height} animate-shimmer rounded-blade bg-paper-2`}
+            className={`${height} animate-shimmer rounded-blade bg-skeleton`}
           />
         )}
       </Repeat>

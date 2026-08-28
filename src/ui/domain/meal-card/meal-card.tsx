@@ -214,10 +214,10 @@ export function MealCardSkeleton({ compact = false }: { readonly compact?: boole
         aria-hidden="true"
         className="flex overflow-hidden rounded-blade border-bold border-line-2 bg-white"
       >
-        <div className="h-[92px] w-[92px] shrink-0 animate-shimmer bg-paper-2" />
+        <div className="h-[92px] w-[92px] shrink-0 animate-shimmer bg-skeleton" />
         <div className="flex flex-1 flex-col justify-center gap-2 p-3">
-          <div className="h-[18px] w-3/4 animate-shimmer rounded-[4px] bg-paper-2" />
-          <div className="h-[20px] w-1/2 animate-shimmer rounded-[4px] bg-paper-2" />
+          <div className="h-[18px] w-3/4 animate-shimmer rounded-[4px] bg-skeleton" />
+          <div className="h-[20px] w-1/2 animate-shimmer rounded-[4px] bg-skeleton" />
         </div>
       </div>
     );
@@ -228,14 +228,14 @@ export function MealCardSkeleton({ compact = false }: { readonly compact?: boole
       aria-hidden="true"
       className="flex flex-col overflow-hidden rounded-blade-lg border-bold border-line-2 bg-white"
     >
-      <div className="h-[168px] animate-shimmer bg-paper-2" />
+      <div className="h-[168px] animate-shimmer bg-skeleton" />
       <div className="flex flex-col gap-3 p-4">
-        <div className="h-[24px] w-4/5 animate-shimmer rounded-[4px] bg-paper-2" />
+        <div className="h-[24px] w-4/5 animate-shimmer rounded-[4px] bg-skeleton" />
         <div className="flex gap-2">
-          <div className="h-[26px] w-[104px] animate-shimmer rounded-blade-xs bg-paper-2" />
-          <div className="h-[26px] w-[70px] animate-shimmer rounded-blade-xs bg-paper-2" />
+          <div className="h-[26px] w-[104px] animate-shimmer rounded-blade-xs bg-skeleton" />
+          <div className="h-[26px] w-[70px] animate-shimmer rounded-blade-xs bg-skeleton" />
         </div>
-        <div className="h-ctrl w-full animate-shimmer rounded-blade-lg bg-paper-2" />
+        <div className="h-ctrl w-full animate-shimmer rounded-blade-lg bg-skeleton" />
       </div>
     </div>
   );

@@ -166,7 +166,7 @@ export function HeadingSkeleton({
   return (
     <span
       aria-hidden="true"
-      className="block animate-shimmer rounded-[4px] bg-paper-2"
+      className="block animate-shimmer rounded-[4px] bg-skeleton"
       style={{ width, height: heights[level] }}
     />
   );
@@ -180,7 +180,7 @@ export function TextSkeleton({ lines = 3 }: { readonly lines?: number }) {
       {Array.from({ length: lines }, (_, i) => (
         <span
           key={i}
-          className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+          className="block h-[13px] animate-shimmer rounded-[3px] bg-skeleton"
           style={{ width: i === lines - 1 ? '54%' : widths[i % widths.length] }}
         />
       ))}

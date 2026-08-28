@@ -4,7 +4,7 @@ import { Repeat, Show } from 'meemaw';
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { AppShell } from '@shared/ui-shell/app-shell';
-import { CardListSkeleton } from '@shared/ui-shell/screen-states';
+import { CardListSkeleton, ScreenError } from '@shared/ui-shell/screen-states';
 import { EmptyState } from '@ui/feedback';
 import { Card } from '@ui/structure';
 
@@ -13,7 +13,7 @@ import type { Meal } from '../services/meals.api';
 
 export default function FavouritesScreen() {
   const navigate = useNavigate();
-  const { data: meals = [], isLoading } = useFavourites();
+  const { data: meals = [], isLoading, error, refetch } = useFavourites();
 
   return (
     <AppShell title="Saved" active="saved">
@@ -23,7 +23,17 @@ export default function FavouritesScreen() {
           <CardListSkeleton count={4} height="h-20" />
         </Show>
 
-        <Show when={!isLoading && meals.length === 0}>
+        <Show when={!isLoading && error !== null}>
+          <ScreenError
+            error={error}
+            what="what you have saved"
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Show>
+
+        <Show when={!isLoading && error === null && meals.length === 0}>
           <EmptyState
             art="bookmark"
             title="Nothing saved yet"

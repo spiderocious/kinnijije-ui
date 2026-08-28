@@ -116,9 +116,9 @@ export default function OnboardingScreen() {
     return (
       <div className="grid min-h-dvh place-items-center bg-ground p-5">
         <div className="flex w-full max-w-[560px] flex-col items-center gap-4">
-          <div aria-hidden="true" className="h-16 w-16 animate-shimmer rounded-blade bg-paper-2" />
-          <div aria-hidden="true" className="h-8 w-2/3 animate-shimmer rounded bg-paper-2" />
-          <div aria-hidden="true" className="h-20 w-full animate-shimmer rounded-blade bg-paper-2" />
+          <div aria-hidden="true" className="h-16 w-16 animate-shimmer rounded-blade bg-skeleton" />
+          <div aria-hidden="true" className="h-8 w-2/3 animate-shimmer rounded bg-skeleton" />
+          <div aria-hidden="true" className="h-20 w-full animate-shimmer rounded-blade bg-skeleton" />
         </div>
       </div>
     );
@@ -133,11 +133,20 @@ export default function OnboardingScreen() {
       total={TOTAL_STEPS}
       {...(step > 1 && { onBack: goBack })}
       onNext={step === KITCHEN_STEP ? finish : saveAndAdvance}
-      nextLabel={step === KITCHEN_STEP ? 'Open my kitchen' : 'Continue'}
+      nextLabel={
+        step === KITCHEN_STEP
+          ? items.length > 0
+            ? 'Open my kitchen'
+            : 'Skip for now'
+          : 'Continue'
+      }
       nextLoading={save.isPending || complete.isPending}
       // The kitchen step needs at least one thing, or the first suggestion has
       // nothing to work from.
-      nextDisabled={step === KITCHEN_STEP && items.length === 0}
+      // Nothing is required here. Blocking on an empty kitchen made the first
+      // thing the product ever asks of somebody a demand, before they have
+      // seen what it is for.
+      nextDisabled={false}
       secondary={
         <Show when={step === TASTE_STEP}>
           {/* Skippable because the defaults are a real answer, not a blank. */}

@@ -40,8 +40,8 @@ export default function AdminDashboardScreen() {
     <ConsoleShell active="dashboard" title="Dashboard">
       <Show when={isLoading}>
         <div className="flex flex-col gap-4">
-          <div aria-hidden="true" className="h-24 animate-shimmer rounded-blade bg-paper-2" />
-          <div aria-hidden="true" className="h-64 animate-shimmer rounded-blade bg-paper-2" />
+          <div aria-hidden="true" className="h-24 animate-shimmer rounded-blade bg-skeleton" />
+          <div aria-hidden="true" className="h-64 animate-shimmer rounded-blade bg-skeleton" />
         </div>
       </Show>
 

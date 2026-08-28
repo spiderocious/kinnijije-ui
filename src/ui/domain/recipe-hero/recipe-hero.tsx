@@ -110,13 +110,13 @@ export function RecipeHeroSkeleton({ size = 'compact' }: { readonly size?: 'comp
       className="overflow-hidden rounded-blade-lg border-bold border-line-2"
     >
       <div
-        className={cn('animate-shimmer bg-paper-2', size === 'compact' ? 'h-[200px]' : 'h-[280px]')}
+        className={cn('animate-shimmer bg-skeleton', size === 'compact' ? 'h-[200px]' : 'h-[280px]')}
       />
       <div className="bg-white p-4">
-        <div className="h-[28px] w-4/5 animate-shimmer rounded-[4px] bg-paper-2" />
+        <div className="h-[28px] w-4/5 animate-shimmer rounded-[4px] bg-skeleton" />
         <div className="mt-3 flex gap-3">
-          <div className="h-[22px] w-[70px] animate-shimmer rounded-[4px] bg-paper-2" />
-          <div className="h-[22px] w-[80px] animate-shimmer rounded-[4px] bg-paper-2" />
+          <div className="h-[22px] w-[70px] animate-shimmer rounded-[4px] bg-skeleton" />
+          <div className="h-[22px] w-[80px] animate-shimmer rounded-[4px] bg-skeleton" />
         </div>
       </div>
     </div>

@@ -289,7 +289,7 @@ export function ChartSkeleton({
         {Array.from({ length: bars }, (_, i) => (
           <span
             key={i}
-            className="flex-1 animate-shimmer rounded-t-blade-xs bg-paper-2"
+            className="flex-1 animate-shimmer rounded-t-blade-xs bg-skeleton"
             style={{ height: `${(steps[i % steps.length] ?? 0.5) * 100}%` }}
           />
         ))}

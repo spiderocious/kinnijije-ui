@@ -117,16 +117,16 @@ export interface FieldSkeletonProps {
 export function FieldSkeleton({ withHint = false, rows = 1, className }: FieldSkeletonProps) {
   return (
     <div aria-hidden="true" className={cn('block', className)}>
-      <span className="mb-1.5 block h-[13px] w-24 animate-shimmer rounded-[3px] bg-paper-2" />
+      <span className="mb-1.5 block h-[13px] w-24 animate-shimmer rounded-[3px] bg-skeleton" />
       <span
         className={cn(
-          'block w-full animate-shimmer rounded-blade-sm bg-paper-2',
+          'block w-full animate-shimmer rounded-blade-sm bg-skeleton',
           rows === 1 && 'h-ctrl',
         )}
         style={rows > 1 ? { height: `calc(var(--h-md) * ${rows})` } : undefined}
       />
       {withHint && (
-        <span className="mt-1.5 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span className="mt-1.5 block h-[12px] w-40 animate-shimmer rounded-[3px] bg-skeleton" />
       )}
     </div>
   );

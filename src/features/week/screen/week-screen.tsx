@@ -3,7 +3,7 @@ import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
 import { AppShell } from '@shared/ui-shell/app-shell';
-import { PanelListSkeleton, StatsSkeleton } from '@shared/ui-shell/screen-states';
+import { PanelListSkeleton, ScreenError, StatsSkeleton } from '@shared/ui-shell/screen-states';
 import { cn } from '@shared/utils/cn';
 import { EmptyState } from '@ui/feedback';
 import { Stat } from '@ui/display';
@@ -26,8 +26,22 @@ const TONE_STYLES: Record<string, string> = {
  */
 export default function WeekScreen() {
   const navigate = useNavigate();
-  const { data, isLoading } = useWeek();
+  const { data, isLoading, error, refetch } = useWeek();
   const refresh = useRefreshReading();
+
+  if (!isLoading && (error !== null || data === undefined)) {
+    return (
+      <AppShell title="Your week" active="week">
+        <ScreenError
+          error={error}
+          what="your week"
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </AppShell>
+    );
+  }
 
   if (isLoading || data === undefined) {
     return (
@@ -35,7 +49,7 @@ export default function WeekScreen() {
         <StatsSkeleton />
         <div className="mt-6 grid grid-cols-7 gap-2">
           {Array.from({ length: 7 }, (_, index) => (
-            <div key={index} aria-hidden="true" className="h-16 animate-shimmer rounded-blade-sm bg-paper-2" />
+            <div key={index} aria-hidden="true" className="h-16 animate-shimmer rounded-blade-sm bg-skeleton" />
           ))}
         </div>
         <div className="mt-6">

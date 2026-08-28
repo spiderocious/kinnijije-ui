@@ -133,7 +133,7 @@ export function ChatSuggestion({
         {[132, 108, 156].map((width) => (
           <span
             key={width}
-            className="block h-ctrl-sm animate-shimmer rounded-pill bg-paper-2"
+            className="block h-ctrl-sm animate-shimmer rounded-pill bg-skeleton"
             style={{ width }}
           />
         ))}

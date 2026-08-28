@@ -102,7 +102,7 @@ export function FigureSkeleton({
   return (
     <span
       aria-hidden="true"
-      className={cn('inline-block animate-shimmer rounded-[4px] bg-paper-2', heights[size])}
+      className={cn('inline-block animate-shimmer rounded-[4px] bg-skeleton', heights[size])}
       style={{ width }}
     />
   );

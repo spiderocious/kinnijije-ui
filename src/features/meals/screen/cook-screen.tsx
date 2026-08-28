@@ -4,6 +4,7 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
+import { ScreenError } from '@shared/ui-shell/screen-states';
 import { AppBar } from '@ui/navigation';
 import { Button } from '@ui/primitives';
 import { CookStep, StepTimer } from '@ui/domain';
@@ -23,11 +24,27 @@ export default function CookScreen() {
   const [step, setStep] = useState(1);
   const [exiting, setExiting] = useState(false);
 
-  const { data, isLoading } = useMealDetail(mealId);
+  const { data, isLoading, error, refetch } = useMealDetail(mealId);
   const markCooked = useMarkCooked();
 
   // Held for the whole cook, not just while a timer runs.
   useWakeLock(!isLoading);
+
+  if (!isLoading && (error !== null || data === undefined)) {
+    return (
+      <div className="min-h-dvh bg-ink px-5 py-8">
+        <div className="mx-auto w-full max-w-[720px] rounded-blade bg-white p-5">
+          <ScreenError
+            error={error}
+            what="this recipe"
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading || data === undefined) {
     // Dark, because cook mode is — a light skeleton would flash white at

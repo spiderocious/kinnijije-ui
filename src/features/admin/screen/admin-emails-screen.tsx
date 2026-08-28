@@ -50,7 +50,7 @@ function EmailSwitches() {
   return (
     <InfoCard title="What gets sent">
       <Show when={settings.isLoading}>
-        <div aria-hidden="true" className="h-40 animate-shimmer rounded-blade bg-paper-2" />
+        <div aria-hidden="true" className="h-40 animate-shimmer rounded-blade bg-skeleton" />
       </Show>
 
       <div className="grid gap-4 sm:grid-cols-2">

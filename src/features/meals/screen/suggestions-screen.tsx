@@ -4,6 +4,7 @@ import { Repeat, Show } from 'meemaw';
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { AppShell } from '@shared/ui-shell/app-shell';
+import { CardListSkeleton, ScreenError } from '@shared/ui-shell/screen-states';
 import { cn } from '@shared/utils/cn';
 import { EmptyState } from '@ui/feedback';
 import { Button } from '@ui/primitives';
@@ -20,21 +21,26 @@ import type { MealSuggestion } from '../services/meals.api';
  */
 export default function SuggestionsScreen() {
   const navigate = useNavigate();
-  const { data: suggestions = [], isLoading, refetch, isFetching } = useSuggestions();
+  const { data: suggestions = [], isLoading, error, refetch, isFetching } = useSuggestions();
 
   return (
     <AppShell title="What you could cook" active="kitchen">
         <Show when={isLoading}>
-          <div className="flex flex-col gap-4">
-            {[0, 1, 2].map((index) => (
-              // Skeletons that mirror the cards they become, so the layout does
-              // not jump when the real ones arrive.
-              <div key={index} className="h-32 animate-pulse rounded-blade bg-white" />
-            ))}
-          </div>
+          {/* Mirrors the cards these become, so the layout does not jump. */}
+          <CardListSkeleton count={3} />
         </Show>
 
-        <Show when={!isLoading && suggestions.length === 0}>
+        <Show when={!isLoading && error !== null}>
+          <ScreenError
+            error={error}
+            what="what you could cook"
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Show>
+
+        <Show when={!isLoading && error === null && suggestions.length === 0}>
           <EmptyState
             art="searchSlash"
             title="Nothing close enough yet"

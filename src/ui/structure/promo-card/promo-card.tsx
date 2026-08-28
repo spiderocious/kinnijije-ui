@@ -86,7 +86,7 @@ export function PromoCardSkeleton({ className }: { readonly className?: string }
   return (
     <div
       aria-hidden="true"
-      className={cn('h-[70px] w-full animate-shimmer rounded-blade-lg bg-paper-2', className)}
+      className={cn('h-[70px] w-full animate-shimmer rounded-blade-lg bg-skeleton', className)}
     />
   );
 }

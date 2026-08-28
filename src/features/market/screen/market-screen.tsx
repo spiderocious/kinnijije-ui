@@ -7,7 +7,7 @@ import { IngredientTypeahead } from '@features/stock/parts/ingredient-typeahead'
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { AppShell } from '@shared/ui-shell/app-shell';
-import { PanelListSkeleton } from '@shared/ui-shell/screen-states';
+import { PanelListSkeleton, ScreenError } from '@shared/ui-shell/screen-states';
 import { Callout, EmptyState } from '@ui/feedback';
 import { Button } from '@ui/primitives';
 import { Panel } from '@ui/structure';
@@ -31,7 +31,7 @@ export default function MarketScreen() {
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
 
-  const { data, isLoading } = useMarket();
+  const { data, isLoading, error, refetch } = useMarket();
   const addItem = useAddMarketItem();
   const setBought = useSetBought();
   const removeItem = useRemoveMarketItem();
@@ -147,7 +147,17 @@ export default function MarketScreen() {
         <PanelListSkeleton count={1} lines={5} />
       </Show>
 
-      <Show when={!isLoading && items.length === 0}>
+      <Show when={!isLoading && error !== null}>
+        <ScreenError
+          error={error}
+          what="your market list"
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </Show>
+
+      <Show when={!isLoading && error === null && items.length === 0}>
         {/* An empty market list is the GOOD outcome — nothing to buy. So it
             deliberately offers no call to action. */}
         <EmptyState

@@ -231,11 +231,11 @@ export function KeyValueSkeleton({
       {label !== undefined ? (
         <span className="text-sm text-ink-3">{label}</span>
       ) : (
-        <span aria-hidden="true" className="h-[13px] w-20 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span aria-hidden="true" className="h-[13px] w-20 animate-shimmer rounded-[3px] bg-skeleton" />
       )}
       <span
         aria-hidden="true"
-        className="h-[15px] animate-shimmer rounded-[3px] bg-paper-2"
+        className="h-[15px] animate-shimmer rounded-[3px] bg-skeleton"
         style={{ width }}
       />
     </div>

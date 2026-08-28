@@ -122,10 +122,10 @@ export function HaveNeedSkeleton() {
     <div aria-hidden="true" className="flex gap-4">
       {[0, 1].map((column) => (
         <div key={column} className="flex-1">
-          <div className="mb-2 h-[13px] w-1/2 animate-shimmer rounded-[3px] bg-paper-2" />
+          <div className="mb-2 h-[13px] w-1/2 animate-shimmer rounded-[3px] bg-skeleton" />
           <div className="flex flex-col gap-[6px]">
             {[0, 1, 2].map((row) => (
-              <div key={row} className="h-[32px] animate-shimmer rounded-blade-xs bg-paper-2" />
+              <div key={row} className="h-[32px] animate-shimmer rounded-blade-xs bg-skeleton" />
             ))}
           </div>
         </div>

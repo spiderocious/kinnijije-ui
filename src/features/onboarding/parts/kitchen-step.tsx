@@ -14,12 +14,12 @@ interface KitchenStepProps {
 }
 
 /**
- * The last step: what is actually in the kitchen right now.
+ * The last step: EXPLAINING the kitchen, and offering a head start on it.
  *
- * Typing is the primary path and always works. Photo and voice are shown as
- * what is coming rather than hidden, because the product's whole promise is
- * "three ways in" and pretending otherwise would misrepresent it — but they are
- * plainly marked as not ready, never as a button that silently does nothing.
+ * This used to demand a list before it would let anybody through, which is
+ * backwards — somebody who has not seen the product yet does not know what
+ * they are filling in or why. So it explains what the kitchen is FOR, offers a
+ * few taps as a shortcut, and lets them past either way.
  */
 export function KitchenStep({ items, onAdd, onRemove }: KitchenStepProps) {
   // `source` is required: the design tracks where every chip came from, and
@@ -31,11 +31,16 @@ export function KitchenStep({ items, onAdd, onRemove }: KitchenStepProps) {
     <div className="flex flex-col gap-6">
       <header>
         <h1 className="font-display text-2xl font-extrabold leading-tight tracking-display sm:text-3xl">
-          What is in your kitchen?
+          Your kitchen is how this works
         </h1>
         <p className="mt-2 text-md text-ink-2">
-          Whatever is there right now. You are not making a list to keep — you will be asked
-          again next time.
+          Everything here starts from what you actually have. Once your kitchen knows a few
+          things, it can tell you what you could cook tonight — and it keeps itself current as
+          you cook and shop, so you are never counting anything.
+        </p>
+        <p className="mt-3 text-md text-ink-2">
+          You can add things any time from the <b>Stock</b> page — by typing, by photographing a
+          shelf, or from a market receipt. If you want a head start, drop a few in now.
         </p>
       </header>
 
@@ -69,23 +74,24 @@ export function KitchenStep({ items, onAdd, onRemove }: KitchenStepProps) {
         </section>
       </Show>
 
-      {/* Shown, not hidden — but honest that it is not wired yet. A button
-          that looks live and does nothing is worse than one that says so. */}
+      {/* This said photo and voice were "coming" — photo and receipts have
+          shipped since, and telling somebody a working feature does not exist
+          is the one kind of wrong a first-run screen cannot afford. */}
       <Callout
         tone="neutral"
-        title="Photo and voice are coming"
-        body="Soon you will be able to photograph a shelf or a receipt, or just say what you have, and have it read for you. For now, typing is the way in."
+        title="Nothing to fill in now"
+        body="Skip this if you like. The Stock page takes typing, a photo of a shelf, or a market receipt — whichever is easiest when you get to it."
       />
 
       <div className="flex items-center justify-center gap-6 text-ink-3">
         <span className="flex items-center gap-1.5 text-xs">
-          <KoboyoIcon name="takingPhotoCamera" size={16} alone /> Photo
+          <KoboyoIcon name="takingPhotoCamera" size={16} alone /> Photograph a shelf
         </span>
         <span className="flex items-center gap-1.5 text-xs">
-          <KoboyoIcon name="mic" size={16} alone /> Voice
+          <KoboyoIcon name="receipt" size={16} alone /> Read a receipt
         </span>
-        <span className="flex items-center gap-1.5 text-xs font-extrabold text-sky">
-          <KoboyoIcon name="editPencil" size={16} alone /> Typing
+        <span className="flex items-center gap-1.5 text-xs">
+          <KoboyoIcon name="editPencil" size={16} alone /> Type it
         </span>
       </div>
     </div>

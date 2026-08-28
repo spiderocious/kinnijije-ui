@@ -389,10 +389,10 @@ export function ProgressContentSkeleton({ className }: { readonly className?: st
       className={cn('rounded-blade border border-line-2 bg-white p-4', className)}
     >
       <div className="mb-2 flex items-baseline justify-between gap-3">
-        <span className="block h-[14px] w-32 animate-shimmer rounded-[3px] bg-paper-2" />
-        <span className="block h-[13px] w-9 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span className="block h-[14px] w-32 animate-shimmer rounded-[3px] bg-skeleton" />
+        <span className="block h-[13px] w-9 animate-shimmer rounded-[3px] bg-skeleton" />
       </div>
-      <span className="block h-2 w-full animate-shimmer rounded-pill bg-paper-2" />
+      <span className="block h-2 w-full animate-shimmer rounded-pill bg-skeleton" />
     </div>
   );
 }

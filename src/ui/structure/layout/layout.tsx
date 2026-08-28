@@ -119,9 +119,9 @@ export function ListSkeleton({
       <Repeat each={Array.from({ length: rows }, (_, i) => i)}>
         {(i: number) => (
           <div key={i} className="flex items-center gap-3 px-1" style={{ height }}>
-            <span className="h-9 w-9 shrink-0 animate-shimmer rounded-blade-xs bg-paper-2" />
+            <span className="h-9 w-9 shrink-0 animate-shimmer rounded-blade-xs bg-skeleton" />
             <span
-              className="h-[14px] animate-shimmer rounded-[3px] bg-paper-2"
+              className="h-[14px] animate-shimmer rounded-[3px] bg-skeleton"
               style={{ width: widths[i % widths.length] }}
             />
           </div>

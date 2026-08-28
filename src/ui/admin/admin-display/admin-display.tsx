@@ -434,8 +434,8 @@ export function CellSkeleton({
   if (shape === 'avatar') {
     return (
       <span aria-hidden="true" className="flex items-center gap-2.5">
-        <span className="block h-[26px] w-[26px] shrink-0 animate-shimmer rounded-round bg-paper-2" />
-        <span className="block h-[13px] w-28 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span className="block h-[26px] w-[26px] shrink-0 animate-shimmer rounded-round bg-skeleton" />
+        <span className="block h-[13px] w-28 animate-shimmer rounded-[3px] bg-skeleton" />
       </span>
     );
   }
@@ -444,7 +444,7 @@ export function CellSkeleton({
   return (
     <span aria-hidden="true" className={cn('block', alignRight && 'ml-auto')}>
       <span
-        className="block h-[13px] animate-shimmer rounded-[3px] bg-paper-2"
+        className="block h-[13px] animate-shimmer rounded-[3px] bg-skeleton"
         style={{ width: widths[shape] }}
       />
     </span>

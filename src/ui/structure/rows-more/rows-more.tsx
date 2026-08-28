@@ -466,10 +466,10 @@ export function RowSavedSkeleton({ className }: { readonly className?: string })
       aria-hidden="true"
       className={cn('flex items-center gap-3 py-row-y', className)}
     >
-      <span className="h-[52px] w-[52px] shrink-0 animate-shimmer rounded-blade-sm bg-paper-2" />
+      <span className="h-[52px] w-[52px] shrink-0 animate-shimmer rounded-blade-sm bg-skeleton" />
       <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <span className="block h-[15px] w-2/3 animate-shimmer rounded-[3px] bg-paper-2" />
-        <span className="block h-[12px] w-1/3 animate-shimmer rounded-[3px] bg-paper-2" />
+        <span className="block h-[15px] w-2/3 animate-shimmer rounded-[3px] bg-skeleton" />
+        <span className="block h-[12px] w-1/3 animate-shimmer rounded-[3px] bg-skeleton" />
       </span>
     </div>
   );

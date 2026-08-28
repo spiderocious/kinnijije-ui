@@ -292,7 +292,7 @@ export function MoodPickerSkeleton({
   return (
     <div aria-hidden="true" className={cn('grid grid-cols-3 gap-2', className)}>
       {Array.from({ length: count }, (_, i) => (
-        <span key={i} className="block h-[64px] animate-shimmer rounded-blade-sm bg-paper-2" />
+        <span key={i} className="block h-[64px] animate-shimmer rounded-blade-sm bg-skeleton" />
       ))}
     </div>
   );

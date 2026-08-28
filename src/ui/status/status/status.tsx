@@ -110,7 +110,7 @@ export function StatusSkeleton({ size = 'md' }: { readonly size?: 'sm' | 'md' })
     <span
       aria-hidden="true"
       className={cn(
-        'inline-block animate-shimmer rounded-blade-xs bg-paper-2',
+        'inline-block animate-shimmer rounded-blade-xs bg-skeleton',
         size === 'sm' ? 'h-[20px] w-[62px]' : 'h-[26px] w-[78px]',
       )}
     />

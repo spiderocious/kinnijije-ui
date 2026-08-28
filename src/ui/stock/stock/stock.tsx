@@ -292,12 +292,12 @@ export function RestockSuggestion({ name, reason, onAdd }: RestockSuggestionProp
 export function StockItemSkeleton() {
   return (
     <li aria-hidden="true" className="flex items-center gap-3 px-pad py-row-y">
-      <span className="h-11 w-11 shrink-0 animate-shimmer rounded-blade-xs bg-paper-2" />
+      <span className="h-11 w-11 shrink-0 animate-shimmer rounded-blade-xs bg-skeleton" />
       <span className="flex min-w-0 flex-1 flex-col gap-2">
-        <span className="h-[16px] w-1/2 animate-shimmer rounded-[4px] bg-paper-2" />
-        <span className="h-[6px] w-[160px] animate-shimmer rounded-pill bg-paper-2" />
+        <span className="h-[16px] w-1/2 animate-shimmer rounded-[4px] bg-skeleton" />
+        <span className="h-[6px] w-[160px] animate-shimmer rounded-pill bg-skeleton" />
       </span>
-      <span className="h-[26px] w-[64px] shrink-0 animate-shimmer rounded-[4px] bg-paper-2" />
+      <span className="h-[26px] w-[64px] shrink-0 animate-shimmer rounded-[4px] bg-skeleton" />
     </li>
   );
 }

@@ -300,14 +300,14 @@ function BoardRowSkeleton({
     <tr aria-hidden="true" className="border-b border-line">
       <td className="w-[40px] py-row-y pl-3">
         <Show when={selectable}>
-          <span className="block h-4 w-4 animate-shimmer rounded-[3px] bg-paper-2" />
+          <span className="block h-4 w-4 animate-shimmer rounded-[3px] bg-skeleton" />
         </Show>
       </td>
       <Repeat each={[...columns]}>
         {(width: number, index: number) => (
           <td key={index} className="py-row-y pr-3">
             <span
-              className="block h-[14px] animate-shimmer rounded-[3px] bg-paper-2"
+              className="block h-[14px] animate-shimmer rounded-[3px] bg-skeleton"
               style={{ width: `${width}%` }}
             />
           </td>

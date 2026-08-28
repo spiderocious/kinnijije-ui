@@ -65,7 +65,7 @@ export function DataTable<T>({
                       <td key={column.key} className="px-3 py-2.5">
                         <span
                           aria-hidden="true"
-                          className="block h-3 w-full animate-shimmer rounded-full bg-paper-2"
+                          className="block h-3 w-full animate-shimmer rounded-full bg-skeleton"
                         />
                       </td>
                     )}

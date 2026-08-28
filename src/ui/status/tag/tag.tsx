@@ -64,7 +64,7 @@ export function TagSkeleton({ width = 72 }: { readonly width?: number }) {
   return (
     <span
       aria-hidden="true"
-      className="inline-block h-[26px] animate-shimmer rounded-blade-xs bg-paper-2"
+      className="inline-block h-[26px] animate-shimmer rounded-blade-xs bg-skeleton"
       style={{ width }}
     />
   );

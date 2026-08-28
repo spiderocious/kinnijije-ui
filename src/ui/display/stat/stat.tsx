@@ -134,9 +134,9 @@ export function StatSkeleton({ weight = 'standard' }: { readonly weight?: StatWe
         compact ? 'p-3' : 'p-4',
       )}
     >
-      <div className="h-[12px] w-1/2 animate-shimmer rounded-[3px] bg-paper-2" />
+      <div className="h-[12px] w-1/2 animate-shimmer rounded-[3px] bg-skeleton" />
       <FigureSkeleton size={compact ? 'lg' : '2xl'} width={92} />
-      <div className="h-[12px] w-2/5 animate-shimmer rounded-[3px] bg-paper-2" />
+      <div className="h-[12px] w-2/5 animate-shimmer rounded-[3px] bg-skeleton" />
     </div>
   );
 }
