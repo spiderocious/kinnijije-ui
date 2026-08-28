@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
+import { formatDateTime } from '@shared/utils/format-date';
 import { Input } from '@ui/inputs';
 import { Button } from '@ui/primitives';
 import { InfoCard } from '@ui/admin';
@@ -122,7 +123,7 @@ const COLUMNS: Column<EmailLogRow>[] = [
     header: 'When',
     render: (row) => (
       <span className="font-mono text-xs text-ink-3">
-        {new Date(row.created_at).toLocaleString()}
+        {formatDateTime(row.created_at)}
       </span>
     ),
   },

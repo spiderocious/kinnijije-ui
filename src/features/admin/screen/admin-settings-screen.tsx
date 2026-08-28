@@ -1,4 +1,5 @@
 import { Repeat, Show } from 'meemaw';
+import { formatDateTime } from '@shared/utils/format-date';
 
 import { InfoCard } from '@ui/admin';
 import { Callout } from '@ui/feedback';
@@ -62,7 +63,7 @@ export default function AdminSettingsScreen() {
                       Off for everybody
                       {flag.updated_at === null
                         ? ''
-                        : ` — since ${new Date(flag.updated_at).toLocaleString()}`}
+                        : ` — since ${formatDateTime(flag.updated_at)}`}
                     </p>
                   </Show>
 

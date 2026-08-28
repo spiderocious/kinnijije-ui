@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
+import { formatDateTime } from '@shared/utils/format-date';
 import { Tag } from '@ui/status';
 
 import { useAdminJobs, useJobTypes } from '../hooks/use-admin';
@@ -77,7 +78,7 @@ const COLUMNS: Column<AdminJobRow>[] = [
     header: 'Created',
     render: (row) => (
       <span className="font-mono text-xs text-ink-3">
-        {new Date(row.created_at).toLocaleString()}
+        {formatDateTime(row.created_at)}
       </span>
     ),
   },

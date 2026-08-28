@@ -23,6 +23,7 @@ import {
   resetPasswordRoute,
 } from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
+import { heroRoute } from '@features/hero/hero.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
 import { landingRoute } from '@features/landing/landing.routes';
 import { marketRoute } from '@features/market/market.routes';
@@ -47,6 +48,7 @@ import { rootRoute } from './app.root-route';
 export const routeTree = rootRoute.addChildren([
   // Public
   landingRoute,
+  heroRoute,
   registerRoute,
   loginRoute,
   forgotPasswordRoute,

@@ -5,6 +5,8 @@
 export const ROUTES = {
   ROOT: '/',
   ENTRY: '/',
+  /** The social-OG render — one full-screen hero, no scroll, no chrome. */
+  HERO: '/hero',
 
   // Auth
   LOGIN: '/login',

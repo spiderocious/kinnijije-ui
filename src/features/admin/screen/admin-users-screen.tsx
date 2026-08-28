@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
+import { formatDate } from '@shared/utils/format-date';
 import { Input } from '@ui/inputs';
 import { Tag } from '@ui/status';
 
@@ -58,7 +59,7 @@ const COLUMNS: Column<AdminUserRow>[] = [
     header: 'Joined',
     render: (row) => (
       <span className="font-mono text-xs text-ink-3">
-        {new Date(row.created_at).toLocaleDateString()}
+        {formatDate(row.created_at)}
       </span>
     ),
   },
