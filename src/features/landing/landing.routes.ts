@@ -6,5 +6,5 @@ import { rootRoute } from '@app/app.root-route';
 export const landingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ENTRY,
-  component: lazyRouteComponent(() => import('./screen/landing-screen')),
+  component: lazyRouteComponent(() => import('../hero/screen/hero-screen')),
 });

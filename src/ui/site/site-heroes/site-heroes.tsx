@@ -18,9 +18,9 @@ import { SiteSection } from '../site-sections';
  */
 
 /** The one promise. Shared by every variant, by construction. */
-export const HERO_HEADLINE = 'Stop staring at the fridge.';
+export const HERO_HEADLINE = 'Your whole kitchen, planned.';
 export const HERO_BODY =
-  'Tell it what is in your kitchen and it will tell you what to cook tonight — Nigerian and West African food, first.';
+  'Breakfast, lunch and dinner from what you already have, Nigerian and West African food, first.';
 
 /* ---------- Header — 6 variants ---------- */
 

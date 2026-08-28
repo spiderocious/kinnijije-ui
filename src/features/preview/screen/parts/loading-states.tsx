@@ -41,7 +41,7 @@ export function TypographyPart() {
       <Section label="HEADING — SIX SIZES">
         <Demo>
           <Stack>
-            <Heading level={1}>Stop staring at the fridge</Heading>
+            <Heading level={1}>Your whole kitchen, planned</Heading>
             <Heading level={3}>What is in your kitchen?</Heading>
             <Heading level={5}>Tonight</Heading>
           </Stack>

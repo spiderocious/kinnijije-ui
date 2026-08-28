@@ -134,7 +134,7 @@ export interface SiteHeroProps {
 }
 
 /** The one promise, in the same words, at five levels of evidence. */
-const HEADLINE = "Stop staring at the fridge.";
+const HEADLINE = "Your whole kitchen, planned.";
 const BODY =
   "Tell it what is in your kitchen and it will tell you what to cook tonight — Nigerian and West African food, first.";
 

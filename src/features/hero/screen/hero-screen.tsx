@@ -53,10 +53,9 @@ export default function HeroScreen() {
         tl.from('[data-hero-body]', { y: 24, autoAlpha: 0, duration: 0.5 }, 0.9);
         tl.from('[data-hero-cta]', { y: 26, autoAlpha: 0, scale: 0.92, duration: 0.5, ease: 'back.out(1.8)' }, 1.05);
 
-        // The pot rises from below the fold; its court assembles around it.
-        tl.from('[data-pot-rig]', { y: 300, duration: 0.9, ease: 'power4.out' }, 0.55);
-        tl.from('[data-pot-lid]', { y: -90, rotate: 60, autoAlpha: 0, duration: 0.7, ease: 'back.out(1.4)' }, 1.1);
-        tl.from('[data-pot-blob]', { y: 80, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' }, 1.35);
+        // The groceries arrive around the blob.
+        tl.from('[data-pot-rig]', { y: 120, autoAlpha: 0, duration: 0.9, ease: 'power4.out' }, 0.55);
+        tl.from('[data-pot-blob]', { scale: 0, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' }, 1.0);
         tl.from(
           '[data-pot-ingredient]',
           { scale: 0, autoAlpha: 0, duration: 0.5, stagger: { each: 0.07, from: 'random' }, ease: 'back.out(2.2)' },
@@ -82,44 +81,8 @@ export default function HeroScreen() {
           });
         });
 
-        // Steam: rise, thin, vanish, again — each plume on its own clock.
-        gsap.utils.toArray<HTMLElement>('[data-pot-steam]').forEach((el, i) => {
-          gsap.set(el, { y: 24, autoAlpha: 0, scaleY: 0.7 });
-          gsap.to(el, {
-            keyframes: [
-              { y: -44, autoAlpha: 0.8, scaleY: 1, duration: 1.2, ease: 'sine.out' },
-              { y: -128, autoAlpha: 0, scaleY: 1.3, duration: 1.5, ease: 'sine.in' },
-            ],
-            delay: 1.7 + i * 0.9,
-            repeat: -1,
-            repeatDelay: 0.25,
-          });
-        });
-
-        // The boil, gently.
-        gsap.to('[data-pot-body]', {
-          rotate: 1.1,
-          duration: 1.6,
-          delay: IDLE,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-        gsap.utils.toArray<HTMLElement>('[data-pot-bubble]').forEach((el, i) => {
-          gsap.to(el, {
-            y: -9,
-            scale: 1.25,
-            autoAlpha: 0.4,
-            duration: 0.9 + (i % 3) * 0.25,
-            delay: IDLE + i * 0.3,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-          });
-        });
-
-        // The lid settles and resettles; the blob bobs; the groceries hover.
-        gsap.to('[data-pot-lid]', { rotate: 9, duration: 2.4, delay: IDLE, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        // The blob bobs; the groceries hover. The pot's own loops — steam,
+        // boil, bubbles, lid — went with the pot.
         gsap.to('[data-pot-blob]', { y: -7, duration: 2.1, delay: IDLE, repeat: -1, yoyo: true, ease: 'sine.inOut' });
         gsap.utils.toArray<HTMLElement>('[data-pot-ingredient]').forEach((el, i) => {
           gsap.to(el, {
@@ -153,15 +116,17 @@ export default function HeroScreen() {
         className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10"
       >
         <span className="inline-flex items-center gap-2.5">
-          <span className="grid h-11 w-11 place-items-center rounded-blade-sm border-bold border-ink bg-white text-sky shadow-drop-sm">
-            <KoboyoIcon name="cookingPot" size={24} />
+          <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-blade-xs bg-sky text-white">
+            {/* Lighter than the nav marks — it sits on solid sky, where a
+                    thinner line holds up and a heavy one fills in. */}
+            <KoboyoIcon name="utensilsCrossed" size={15} weight={0.75} alone />
           </span>
           <span className="font-display text-2xl font-extrabold tracking-display">kinnijije</span>
         </span>
 
         <span className="inline-flex items-center gap-2 rounded-pill border-bold border-ink bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-overline shadow-drop-sm">
           <KoboyoIcon name="marketStall" size={15} className="text-sky" />
-          Made for Naija kitchens
+          Made for Nigerian kitchens
         </span>
       </header>
 
@@ -178,10 +143,16 @@ export default function HeroScreen() {
         <h1 className="mt-5 max-w-[14ch] font-display text-5xl font-extrabold leading-[1.04] tracking-display sm:text-6xl md:text-[clamp(3.5rem,7vw,6rem)]">
           <Repeat each={HERO_HEADLINE.split(' ')}>
             {(word: string, i: number) => (
-              <span key={`${word}-${i}`} className="inline-block overflow-visible">
-                <span data-hero-word className="inline-block will-change-transform">
-                  {word}
-                </span>{' '}
+              // The word gap is a margin, not a space character: trailing
+              // whitespace inside an inline-block is collapsed by CSS, which is
+              // how the words ended up welded together. `em` so it scales with
+              // the clamp()ed font size.
+              <span
+                key={`${word}-${i}`}
+                data-hero-word
+                className="mr-[0.26em] inline-block will-change-transform last:mr-0"
+              >
+                {word}
               </span>
             )}
           </Repeat>
