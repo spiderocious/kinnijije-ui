@@ -18,6 +18,16 @@ import { Badge } from '@ui/status';
  * gets misused.
  */
 
+/**
+ * Navigation icons run LIGHTER than the default 1.2.
+ *
+ * A nav rail shows seven or eight marks stacked in a narrow column, and at that
+ * density the default weight turns the busier icons — the stock shelf
+ * especially — into dark blobs with no internal detail. 0.8 keeps every one of
+ * them structured while still reading as one family.
+ */
+const NAV_ICON_WEIGHT = 0.8;
+
 export interface TabBarItem {
   readonly id: string;
   readonly label: string;
@@ -72,7 +82,7 @@ export function TabBar({ items, value, onValueChange, className }: TabBarProps) 
               )}
             >
               <span className="relative">
-                <KoboyoIcon name={item.icon} size={22} />
+                <KoboyoIcon name={item.icon} size={22} weight={NAV_ICON_WEIGHT} />
                 {item.count !== undefined && item.count > 0 && (
                   <span className="absolute -right-2 -top-1">
                     <Badge count={item.count} />

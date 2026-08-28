@@ -144,10 +144,14 @@ export function AppShell({
           onValueChange={goTo}
           header={
             <div className="flex items-center gap-2 px-1">
-              {/* The real logo mark, not the pot icon — Kitchen wears the pot
-                  now, and the same drawing twice in one column reads as a
-                  mistake. This one is the tile, which is the brand. */}
-              <img src="/favicon.svg" alt="" width={26} height={26} className="rounded-blade-xs" />
+              {/* Crossed utensils, not the pot — Kitchen wears the pot in the
+                  nav below, and the same drawing twice in one column reads as
+                  a mistake. */}
+              <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-blade-xs bg-sky text-white">
+                {/* Lighter than the nav marks — it sits on solid sky, where a
+                    thinner line holds up and a heavy one fills in. */}
+                <KoboyoIcon name="utensilsCrossed" size={15} weight={0.75} alone />
+              </span>
               <span className="font-display text-lg font-extrabold tracking-display">
                 Kinni<span className="text-sky-on">Jije</span>
               </span>

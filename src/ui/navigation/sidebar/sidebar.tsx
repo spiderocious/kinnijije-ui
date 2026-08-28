@@ -16,6 +16,16 @@ import { Badge } from '@ui/status';
  * Like the tab bar, it shows **destinations, never actions**.
  */
 
+/**
+ * Navigation icons run LIGHTER than the default 1.2.
+ *
+ * A nav rail shows seven or eight marks stacked in a narrow column, and at that
+ * density the default weight turns the busier icons — the stock shelf
+ * especially — into dark blobs with no internal detail. 0.8 keeps every one of
+ * them structured while still reading as one family.
+ */
+const NAV_ICON_WEIGHT = 0.8;
+
 export interface SidebarItem {
   readonly id: string;
   readonly label: string;
@@ -105,7 +115,12 @@ export function Sidebar({
                               : 'font-semibold text-ink-2 hover:bg-paper-2 hover:text-ink',
                           )}
                         >
-                          <KoboyoIcon name={item.icon} size={18} className="shrink-0" />
+                          <KoboyoIcon
+                            name={item.icon}
+                            size={18}
+                            weight={NAV_ICON_WEIGHT}
+                            className="shrink-0"
+                          />
                           <span className="min-w-0 flex-1 truncate">{item.label}</span>
                           {/* Counts resolving — the badge's space is held so the
                               labels do not shift when the numbers land. */}
