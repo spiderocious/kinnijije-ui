@@ -22,6 +22,7 @@ const CONSOLE_NAV: SidebarGroup[] = [
     items: [
       { id: 'ai', label: 'AI audit', icon: 'robotForAi' },
       { id: 'jobs', label: 'Jobs', icon: 'cycle' },
+      { id: 'emails', label: 'Email', icon: 'envelope' },
     ],
   },
 ];
@@ -32,6 +33,7 @@ const DESTINATIONS: Record<string, string> = {
   users: ROUTES.ADMIN_USERS,
   ai: ROUTES.ADMIN_AI,
   jobs: ROUTES.ADMIN_JOBS,
+  emails: ROUTES.ADMIN_EMAILS,
 };
 
 /**

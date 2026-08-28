@@ -68,6 +68,17 @@ export default function LoginScreen() {
           })}
         />
 
+        {/* Without this the reset flow has no way in from the one screen
+            where somebody discovers they need it. */}
+        <div className="-mt-1 text-right">
+          <Link
+            to={ROUTES.FORGOT_PASSWORD}
+            className="text-sm text-ink-3 underline-offset-2 hover:underline"
+          >
+            Forgot your password?
+          </Link>
+        </div>
+
         <Button
           type="submit"
           size="lg"

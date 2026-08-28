@@ -188,6 +188,36 @@ export interface AdminJobDetail extends AdminJobRow {
   lease_expires_at: string | null;
 }
 
+// ── Email ────────────────────────────────────────────────────────────
+export type EmailAudience =
+  | 'selected'
+  | 'all'
+  | 'active'
+  | 'pending'
+  | 'onboarded'
+  | 'not_onboarded';
+
+export interface EmailLogRow {
+  id: string;
+  kind: string;
+  to: string;
+  owner_id: string | null;
+  subject: string;
+  status: 'sent' | 'failed' | 'suppressed';
+  provider_id: string | null;
+  error: string | null;
+  /** Set when an operator sent it by hand. */
+  sent_by: string | null;
+  /** Points at the original when this send is a repeat. */
+  resend_of: string | null;
+  created_at: string;
+}
+
+export interface EmailLogDetail extends EmailLogRow {
+  html: string;
+  text: string;
+}
+
 export interface Paged<T> {
   items: T[];
   total: number;
@@ -234,6 +264,25 @@ export const adminApi = {
     apiClient.get<Paged<AiLogRow>>(`${EP.ADMIN.AI}${qs(params)}`),
   aiLog: (logId: string): Promise<AiLogDetail> => apiClient.get<AiLogDetail>(EP.ADMIN.AI_LOG(logId)),
   aiPromptIds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.AI_PROMPT_IDS),
+
+  emails: (params: Record<string, string | number | undefined>): Promise<Paged<EmailLogRow>> =>
+    apiClient.get<Paged<EmailLogRow>>(`${EP.ADMIN.EMAILS}${qs(params)}`),
+  email: (emailId: string): Promise<EmailLogDetail> =>
+    apiClient.get<EmailLogDetail>(EP.ADMIN.EMAIL(emailId)),
+  emailKinds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.EMAIL_KINDS),
+  previewAudience: (
+    audience: EmailAudience,
+    userIds?: string[],
+  ): Promise<{ count: number; sample: string[] }> =>
+    apiClient.post(EP.ADMIN.EMAIL_PREVIEW, { audience, user_ids: userIds }),
+  sendEmail: (input: {
+    audience: EmailAudience;
+    user_ids?: string[];
+    subject: string;
+    body: string;
+  }): Promise<{ sent: number; failed: number }> => apiClient.post(EP.ADMIN.EMAIL_SEND, input),
+  resendEmail: (emailId: string): Promise<{ id: string; delivered: boolean }> =>
+    apiClient.post(EP.ADMIN.EMAIL_RESEND(emailId)),
 
   jobs: (params: Record<string, string | number | undefined>): Promise<Paged<AdminJobRow>> =>
     apiClient.get<Paged<AdminJobRow>>(`${EP.ADMIN.JOBS}${qs(params)}`),

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { JOB_LIST_POLL_MS } from '@shared/constants/polling';
 import type { ApiError } from '@shared/services/api-client';
 
-import { adminApi, type RecipeInput } from '../services/admin.api';
+import { adminApi, type EmailAudience, type RecipeInput } from '../services/admin.api';
 
 const ADMIN_KEY = ['admin'] as const;
 
@@ -135,6 +135,53 @@ export function useAiLog(logId: string | null) {
 
 export function useAiPromptIds() {
   return useQuery({ queryKey: [...ADMIN_KEY, 'prompt-ids'], queryFn: adminApi.aiPromptIds });
+}
+
+// ── Email ────────────────────────────────────────────────────────────
+export function useAdminEmails(params: Record<string, string | number | undefined>) {
+  return useQuery({
+    queryKey: [...ADMIN_KEY, 'emails', params],
+    queryFn: () => adminApi.emails(params),
+  });
+}
+
+export function useAdminEmail(emailId: string | null) {
+  return useQuery({
+    queryKey: [...ADMIN_KEY, 'email', emailId],
+    queryFn: () => adminApi.email(emailId ?? ''),
+    enabled: emailId !== null,
+  });
+}
+
+export function useEmailKinds() {
+  return useQuery({ queryKey: [...ADMIN_KEY, 'email-kinds'], queryFn: adminApi.emailKinds });
+}
+
+export function usePreviewAudience() {
+  return useMutation({
+    mutationFn: ({ audience, userIds }: { audience: EmailAudience; userIds?: string[] }) =>
+      adminApi.previewAudience(audience, userIds),
+  });
+}
+
+export function useSendEmail() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: adminApi.sendEmail,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
+export function useResendEmail() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: adminApi.resendEmail,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
 }
 
 // ── Jobs ─────────────────────────────────────────────────────────────

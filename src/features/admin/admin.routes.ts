@@ -58,6 +58,18 @@ export const adminAiRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-ai-route')),
 });
 
+export const adminEmailNewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_EMAIL_NEW,
+  component: lazyRouteComponent(() => import('./screen/admin-email-new-route')),
+});
+
+export const adminEmailsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_EMAILS,
+  component: lazyRouteComponent(() => import('./screen/admin-emails-route')),
+});
+
 export const adminJobsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ADMIN_JOBS,
@@ -87,4 +99,10 @@ export const adminJobRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/jobs/$jobId',
   component: lazyRouteComponent(() => import('./screen/admin-job-detail-route')),
+});
+
+export const adminEmailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/emails/$emailId',
+  component: lazyRouteComponent(() => import('./screen/admin-email-detail-route')),
 });

@@ -2,6 +2,9 @@ import {
   adminAiLogRoute,
   adminAiRoute,
   adminDashboardRoute,
+  adminEmailRoute,
+  adminEmailNewRoute,
+  adminEmailsRoute,
   adminJobRoute,
   adminJobsRoute,
   adminLoginRoute,
@@ -12,7 +15,12 @@ import {
   adminUserRoute,
   adminUsersRoute,
 } from '@features/admin/admin.routes';
-import { loginRoute, registerRoute } from '@features/auth/auth.routes';
+import {
+  forgotPasswordRoute,
+  loginRoute,
+  registerRoute,
+  resetPasswordRoute,
+} from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
 import { landingRoute } from '@features/landing/landing.routes';
@@ -40,6 +48,8 @@ export const routeTree = rootRoute.addChildren([
   landingRoute,
   registerRoute,
   loginRoute,
+  forgotPasswordRoute,
+  resetPasswordRoute,
 
   // First run
   onboardingRoute,
@@ -68,10 +78,13 @@ export const routeTree = rootRoute.addChildren([
   adminRecipesRoute,
   adminUsersRoute,
   adminAiRoute,
+  adminEmailNewRoute,
+  adminEmailsRoute,
   adminJobsRoute,
   adminRecipeRoute,
   adminUserRoute,
   adminAiLogRoute,
+  adminEmailRoute,
   adminJobRoute,
 
   // Design-system surfaces, not product screens.

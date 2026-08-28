@@ -57,3 +57,17 @@ export function useSignOut() {
     void navigate({ to: ROUTES.ENTRY });
   };
 }
+
+/** Asking for a reset link. Succeeds whatever the address — see the api. */
+export function useForgotPassword() {
+  return useMutation<void, ApiError, string>({
+    mutationFn: authApi.forgotPassword,
+  });
+}
+
+/** Spending a reset link. Every session is revoked, so they sign in fresh. */
+export function useResetPassword() {
+  return useMutation<void, ApiError, { token: string; newPassword: string }>({
+    mutationFn: ({ token, newPassword }) => authApi.resetPassword(token, newPassword),
+  });
+}

@@ -19,4 +19,16 @@ export const authApi = {
 
   logout: (refreshToken: string): Promise<void> =>
     apiClient.post<void>(EP.AUTH.LOGOUT, { refresh_token: refreshToken }),
+
+  /**
+   * Asks for a reset link.
+   *
+   * Succeeds whatever the address — the server will not say whether an account
+   * exists, and neither does this.
+   */
+  forgotPassword: (email: string): Promise<void> =>
+    apiClient.post<void>(EP.AUTH.FORGOT_PASSWORD, { email }),
+
+  resetPassword: (token: string, newPassword: string): Promise<void> =>
+    apiClient.post<void>(EP.AUTH.RESET_PASSWORD, { token, new_password: newPassword }),
 };

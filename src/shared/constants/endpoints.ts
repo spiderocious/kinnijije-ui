@@ -19,6 +19,8 @@ export const EP = {
     REFRESH: `${V1}/auth/refresh`,
     LOGOUT: `${V1}/auth/logout`,
     CHANGE_PASSWORD: `${V1}/auth/change-password`,
+    FORGOT_PASSWORD: `${V1}/auth/forgot-password`,
+    RESET_PASSWORD: `${V1}/auth/reset-password`,
   },
 
   ONBOARDING: {
@@ -84,6 +86,12 @@ export const EP = {
     AI: `${V1}/admin/ai`,
     AI_PROMPT_IDS: `${V1}/admin/ai/prompt-ids`,
     AI_LOG: (logId: string) => `${V1}/admin/ai/${logId}`,
+    EMAILS: `${V1}/admin/emails`,
+    EMAIL_KINDS: `${V1}/admin/emails/kinds`,
+    EMAIL_PREVIEW: `${V1}/admin/emails/preview`,
+    EMAIL_SEND: `${V1}/admin/emails/send`,
+    EMAIL: (emailId: string) => `${V1}/admin/emails/${emailId}`,
+    EMAIL_RESEND: (emailId: string) => `${V1}/admin/emails/${emailId}/resend`,
     JOBS: `${V1}/admin/jobs`,
     JOB_TYPES: `${V1}/admin/jobs/types`,
     JOB: (jobId: string) => `${V1}/admin/jobs/${jobId}`,
