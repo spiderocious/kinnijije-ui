@@ -13,15 +13,21 @@ import {
   useSaveOnboarding,
 } from '../hooks/use-onboarding';
 import { ExplainerStep } from '../parts/explainer-step';
-import { KitchenStep } from '../parts/kitchen-step';
 import { OnboardingShell } from '../parts/onboarding-shell';
 import { TasteStep } from '../parts/taste-step';
 
 /** Three explainer slides, then taste, then the kitchen. */
 const EXPLAINER_COUNT = EXPLAINER_SLIDES.length;
 const TASTE_STEP = EXPLAINER_COUNT + 1;
-const KITCHEN_STEP = EXPLAINER_COUNT + 2;
-const TOTAL_STEPS = KITCHEN_STEP;
+/**
+ * Onboarding ENDS on taste.
+ *
+ * There used to be a kitchen step here asking for ingredients before anybody
+ * had seen what the product does with them. Filling a kitchen belongs on the
+ * Stock page, where it can be done by photo or receipt and revisited — not as
+ * a toll gate on the way in.
+ */
+const TOTAL_STEPS = TASTE_STEP;
 
 export default function OnboardingScreen() {
   const { data: state, isLoading } = useOnboardingState();
@@ -32,7 +38,9 @@ export default function OnboardingScreen() {
    * The step lives in the URL, so BACK walks back through onboarding rather
    * than dropping the person out of it, and a refresh keeps their place.
    */
-  const STEP_VALUES = ['1', '2', '3', '4', '5'] as const;
+  // Only the steps that exist. Leaving a spare value in here let somebody
+  // reach `?step=5` by hand and land on a screen that renders nothing.
+  const STEP_VALUES = ['1', '2', '3', '4'] as const;
   const { stage, go } = useStepParam<(typeof STEP_VALUES)[number]>({
     key: 'step',
     stages: STEP_VALUES,
@@ -46,7 +54,6 @@ export default function OnboardingScreen() {
   // against the query cache would fire a save on every keystroke.
   const [cuisines, setCuisines] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'anything'>('anything');
-  const [items, setItems] = useState<string[]>([]);
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
@@ -55,7 +62,6 @@ export default function OnboardingScreen() {
     if (state === undefined || seeded) return;
     setCuisines(state.cuisines);
     setDifficulty(state.difficulty);
-    setItems(state.kitchen_items);
     setSeeded(true);
   }, [state, seeded]);
 
@@ -63,22 +69,6 @@ export default function OnboardingScreen() {
     setCuisines((current) =>
       current.includes(cuisine) ? current.filter((c) => c !== cuisine) : [...current, cuisine],
     );
-  };
-
-  const addItem = (label: string) => {
-    const trimmed = label.trim();
-    if (trimmed.length === 0) return;
-    setItems((current) =>
-      // Case-insensitive, matching what the server does, so the list the person
-      // sees is the list that gets stored.
-      current.some((item) => item.toLowerCase() === trimmed.toLowerCase())
-        ? current
-        : [...current, trimmed],
-    );
-  };
-
-  const removeItem = (label: string) => {
-    setItems((current) => current.filter((item) => item !== label));
   };
 
   const goBack = () => {
@@ -90,20 +80,15 @@ export default function OnboardingScreen() {
     setStep(step + 1);
   };
 
-  /** Saves this step's answers, then advances. A failed save keeps you here. */
-  const saveAndAdvance = () => {
-    if (step === TASTE_STEP) {
-      save.mutate({ cuisines, difficulty }, { onSuccess: advance });
-      return;
-    }
-    advance();
-  };
-
+  /**
+   * The last step: save what they picked, then mark onboarding done.
+   *
+   * In sequence, not in parallel — completing first would let a failed save
+   * leave somebody onboarded with no preferences stored.
+   */
   const finish = () => {
-    // Saved and completed in sequence rather than in parallel: completing
-    // first would let a failed save leave someone onboarded with no kitchen.
     save.mutate(
-      { kitchen_items: items },
+      { cuisines, difficulty },
       {
         onSuccess: () => {
           complete.mutate();
@@ -132,25 +117,16 @@ export default function OnboardingScreen() {
       step={step}
       total={TOTAL_STEPS}
       {...(step > 1 && { onBack: goBack })}
-      onNext={step === KITCHEN_STEP ? finish : saveAndAdvance}
-      nextLabel={
-        step === KITCHEN_STEP
-          ? items.length > 0
-            ? 'Open my kitchen'
-            : 'Skip for now'
-          : 'Continue'
-      }
+      onNext={step === TASTE_STEP ? finish : advance}
+      nextLabel={step === TASTE_STEP ? 'Open my kitchen' : 'Continue'}
       nextLoading={save.isPending || complete.isPending}
-      // The kitchen step needs at least one thing, or the first suggestion has
-      // nothing to work from.
-      // Nothing is required here. Blocking on an empty kitchen made the first
-      // thing the product ever asks of somebody a demand, before they have
-      // seen what it is for.
+      // Nothing here is required. The defaults are a real answer.
       nextDisabled={false}
       secondary={
         <Show when={step === TASTE_STEP}>
-          {/* Skippable because the defaults are a real answer, not a blank. */}
-          <Button variant="tertiary" size="lg" onClick={advance}>
+          {/* Skipping still completes onboarding — it just keeps the
+              defaults, which the suggestions already read. */}
+          <Button variant="tertiary" size="lg" onClick={finish}>
             Skip
           </Button>
         </Show>
@@ -171,10 +147,6 @@ export default function OnboardingScreen() {
           difficulty={difficulty}
           onDifficultyChange={setDifficulty}
         />
-      </Show>
-
-      <Show when={step === KITCHEN_STEP}>
-        <KitchenStep items={items} onAdd={addItem} onRemove={removeItem} />
       </Show>
     </OnboardingShell>
   );

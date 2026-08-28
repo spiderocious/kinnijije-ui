@@ -37,26 +37,3 @@ export const DIFFICULTY_OPTIONS = [
   { value: 'medium', label: 'Somewhere in between', body: 'Most weeknight cooking.' },
   { value: 'anything', label: 'Anything', body: 'Show me everything, including the long ones.' },
 ] as const;
-
-/**
- * Suggestions offered on the kitchen step, so nobody faces an empty box.
- * Nigerian staples lead, matching what the product is built around.
- */
-export const COMMON_INGREDIENTS: readonly string[] = [
-  'Rice',
-  'Tomatoes',
-  'Red onions',
-  'Scotch bonnet',
-  'Palm oil',
-  'Groundnut oil',
-  'Chicken',
-  'Beef',
-  'Eggs',
-  'Plantain',
-  'Yam',
-  'Beans',
-  'Spinach',
-  'Ugu leaves',
-  'Crayfish',
-  'Stock cubes',
-];
