@@ -57,7 +57,10 @@ export function HeroPot() {
   return (
     <div
       data-pot-rig
-      className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-[34vh] min-h-[240px] w-[min(92vw,660px)] will-change-transform"
+      // The mobile shift is a `bottom` offset, NOT a translate — GSAP owns this
+      // element's transform (entrance rise + loops), and a Tailwind translate
+      // on the same axis would be silently wiped by the first tween.
+      className="pointer-events-none absolute inset-x-0 -bottom-16 mx-auto h-[34vh] min-h-[240px] w-[min(92vw,660px)] will-change-transform sm:bottom-0"
     >
       {/*
         The pot is gone.
@@ -84,13 +87,16 @@ export function HeroPot() {
             key={item.id}
             data-pot-ingredient
             className={cn(
-              'absolute z-30 inline-flex items-center gap-1.5 rounded-blade-xs border border-ink px-2.5 py-1.5',
-              'text-xs font-extrabold text-ink shadow-drop-sm will-change-transform',
+              // Scaled down by padding and type on mobile, not `scale-*`: the
+              // inline rotate and GSAP's pop/hover both own `transform` here.
+              'absolute z-30 inline-flex items-center gap-1 rounded-blade-xs border border-ink px-2 py-1',
+              'text-[10px] font-extrabold text-ink shadow-drop-sm will-change-transform',
+              'sm:gap-1.5 sm:px-2.5 sm:py-1.5 sm:text-xs',
               TINT[item.tint],
             )}
             style={{ left: `${item.x}%`, top: `${item.y}%`, transform: `rotate(${item.rotate}deg)` }}
           >
-            <KoboyoIcon name={item.icon} size={15} />
+            <KoboyoIcon name={item.icon} size={13} />
             <span className="text-ink">{item.label}</span>
           </span>
         )}

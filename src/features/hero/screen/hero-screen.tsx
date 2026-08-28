@@ -124,7 +124,8 @@ export default function HeroScreen() {
           <span className="font-display text-2xl font-extrabold tracking-display">kinnijije</span>
         </span>
 
-        <span className="inline-flex items-center gap-2 rounded-pill border-bold border-ink bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-overline shadow-drop-sm">
+        {/* On a phone the wordmark is the whole row — the pill would crowd it. */}
+        <span className="hidden items-center gap-2 rounded-pill border-bold border-ink bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-overline shadow-drop-sm sm:inline-flex">
           <KoboyoIcon name="marketStall" size={15} className="text-sky" />
           Made for Nigerian kitchens
         </span>
