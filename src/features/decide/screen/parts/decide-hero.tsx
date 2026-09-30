@@ -54,10 +54,11 @@ export function DecideHero({
         'mx-auto flex w-full max-w-[520px] flex-col gap-4 bg-paper px-5 pb-8',
         // Both variants must claim a height, or the `flex-1` on the middle
         // block has nothing to distribute and the whole hero collapses to the
-        // top of the screen. The member sits inside the shell, under an app bar
-        // and above the nav, so it subtracts both rather than filling the
-        // viewport the way the standalone guest page does.
-        signedIn ? 'min-h-[calc(100dvh-8.5rem)] pt-2' : 'min-h-dvh pt-4',
+        // top of the screen. The member sits inside the shell, so it subtracts
+        // that chrome instead of filling the viewport the way the standalone
+        // guest page does: ~3.5rem of sticky app bar, the wrapper's 1rem top
+        // padding, and the 6rem it already reserves for the fixed bottom nav.
+        signedIn ? 'min-h-[calc(100dvh-10.5rem)] pt-2' : 'min-h-dvh pt-4',
       ].join(' ')}
     >
       {!signedIn && (
