@@ -13,8 +13,9 @@ import { router } from '@app/app.router';
  * somebody adds a route.
  */
 const TRACKED: Record<string, string> = {
-  // `/` is deliberately absent: it redirects before rendering, so it could
-  // only ever report a view nobody actually saw.
+  // `/` and `/decide` render the same screen, so both report the same event
+  // rather than one of them going uncounted.
+  [ROUTES.ENTRY]: 'Decide Viewed',
   [ROUTES.DECIDE]: 'Decide Viewed',
   [ROUTES.WHY]: 'Landing Viewed',
 };

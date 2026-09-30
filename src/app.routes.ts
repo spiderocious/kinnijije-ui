@@ -23,10 +23,10 @@ import {
   resetPasswordRoute,
 } from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
-import { decideRoute } from '@features/decide/decide.routes';
+import { decideAliasRoute, decideRoute } from '@features/decide/decide.routes';
 import { heroRoute } from '@features/hero/hero.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
-import { landingRoute, whyRoute } from '@features/landing/landing.routes';
+import { whyRoute } from '@features/landing/landing.routes';
 import { marketRoute } from '@features/market/market.routes';
 import { cookRoute, favouritesRoute, mealRoute, suggestionsRoute } from '@features/meals/meals.routes';
 import { onboardingRoute } from '@features/onboarding/onboarding.routes';
@@ -47,11 +47,11 @@ import { rootRoute } from './app.root-route';
  * genuinely can shadow a literal `/meals/...`, so the params go last.
  */
 export const routeTree = rootRoute.addChildren([
-  // Public. `/` redirects to the decide flow, which is the real front door;
-  // the marketing page keeps its own URL at /why.
-  landingRoute,
-  whyRoute,
+  // Public. The decide flow IS the front door: it renders at "/" and stays
+  // reachable at /decide. The marketing page keeps its own URL at /why.
   decideRoute,
+  decideAliasRoute,
+  whyRoute,
   heroRoute,
   registerRoute,
   loginRoute,

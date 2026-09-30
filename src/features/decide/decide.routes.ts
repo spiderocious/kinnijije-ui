@@ -39,17 +39,32 @@ function validateSearch(search: Record<string, unknown>): DecideSearch {
   return step === undefined || step === 'hero' ? {} : { step };
 }
 
+/** One component, mounted at both paths. */
+const screen = lazyRouteComponent(() => import('./screen/decide-screen'));
+
 /**
- * The decide flow, at `/decide`.
+ * The front door.
  *
- * `/` still serves the marketing page while this is tested in production. When
- * the flow is ready to be the front door, change this `path` to `ROUTES.ENTRY`
- * and move `landingRoute` to `ROUTES.WHY` — the two lines are deliberately
- * symmetrical so the swap is obvious and reversible.
+ * `/` renders the flow itself rather than redirecting to it, so landing on the
+ * site costs no extra navigation and the URL people type stays the URL they
+ * are on.
  */
 export const decideRoute = createRoute({
   getParentRoute: () => rootRoute,
+  path: ROUTES.ENTRY,
+  component: screen,
+  validateSearch,
+});
+
+/**
+ * The same screen at `/decide`.
+ *
+ * Kept working so links shared while the flow lived only there still resolve,
+ * and so the path stays nameable. `/` is the canonical one — see index.html.
+ */
+export const decideAliasRoute = createRoute({
+  getParentRoute: () => rootRoute,
   path: ROUTES.DECIDE,
-  component: lazyRouteComponent(() => import('./screen/decide-screen')),
+  component: screen,
   validateSearch,
 });

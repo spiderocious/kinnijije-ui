@@ -13,8 +13,11 @@ export const DECIDE_COPY = {
      * names the feeling rather than the mechanism, which the button and the
      * counters already cover.
      */
-    title: 'What are you',
-    titleAccent: 'eating today?',
+    // Split so the accent colour lands on the second line. "want to eat" over
+    // "are you eating": it asks about appetite rather than a plan, which is the
+    // thing somebody standing around undecided actually has.
+    title: 'What do you want',
+    titleAccent: 'to eat today?',
     sub: 'Stop being hungry and indecisive. Tell us what you have at home and KinniJije picks the meal, gives you the recipe, and says what you still need to buy.',
     cta: 'Show me what to eat',
 
