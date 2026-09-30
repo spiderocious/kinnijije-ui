@@ -225,7 +225,7 @@ export interface OfferView {
     image_url: string | null;
     more_count: number;
   };
-  go_path: string;
+  store_url: string;
 }
 
 export interface CacheDetail extends Omit<CacheRow, 'vendor_count'> {

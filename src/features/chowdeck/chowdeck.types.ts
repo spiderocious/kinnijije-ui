@@ -43,8 +43,8 @@ export interface ChowdeckOffer {
     image_url: string | null;
     more_count: number;
   };
-  /** Relative to the API root. The browser adds meal, place, position and mode. */
-  go_path: string;
+  /** The restaurant's page on Chowdeck. Built by our server from its own cache. */
+  store_url: string;
 }
 
 /**

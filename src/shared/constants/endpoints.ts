@@ -32,13 +32,12 @@ export const EP = {
 
   /**
    * Public, like decide. Only OFFERS can ever make the server call Chowdeck;
-   * PLACES is our own table and GO is a lookup and a redirect.
+   * PLACES is our own table and CLICKS records a tap.
    */
   CHOWDECK: {
     PLACES: `${V1}/places`,
     OFFERS: `${V1}/partners/chowdeck/offers`,
-    /** Prefixed onto an offer's `go_path`, which already starts `/go/chowdeck/...`. */
-    GO_BASE: V1,
+    CLICKS: `${V1}/partners/chowdeck/clicks`,
   },
 
   ONBOARDING: {

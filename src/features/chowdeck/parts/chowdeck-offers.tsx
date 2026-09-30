@@ -3,7 +3,7 @@ import { ArrowUpRight, Bike, Clock, Star, Store } from 'lucide-react';
 
 import { EVENTS, analytics } from '@shared/services/analytics';
 
-import { goHref } from '../chowdeck.api';
+import { reportClick } from '../chowdeck.api';
 import { ago, deliveryWindow, naira } from '../chowdeck.format';
 import type { ChowdeckOffer, ChowdeckOffers as OffersData } from '../chowdeck.types';
 import { useChowdeckOffers } from '../use-chowdeck';
@@ -91,7 +91,6 @@ export function ChowdeckOffers({
 
   const open = data.offers.slice(0, ordering ? MAX_LIST : MAX_ROW);
   const later = data.later.slice(0, ordering ? 3 : 2);
-  const context = { meal: mealSlug, place: placeId, mode };
 
   return (
     <Frame ordering={ordering} fetchedAt={data.fetched_at}>
@@ -108,7 +107,7 @@ export function ChowdeckOffers({
             <OfferCard
               key={offer.id}
               offer={offer}
-              href={goHref(offer.go_path, { ...context, position: i })}
+              href={offer.store_url}
               layout={ordering ? (i === 0 ? 'lead' : 'list') : 'row'}
               onOpen={() => { trackClick(offer, i, mode, mealSlug, placeId, false); }}
             />
@@ -123,7 +122,7 @@ export function ChowdeckOffers({
           {later.map((offer, i) => (
             <li key={offer.id}>
               <a
-                href={goHref(offer.go_path, { ...context, position: open.length + i })}
+                href={offer.store_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => { trackClick(offer, open.length + i, mode, mealSlug, placeId, true); }}
@@ -319,6 +318,14 @@ function Skeleton({ ordering }: { ordering: boolean }) {
 
 // ── Analytics ──────────────────────────────────────────────────────────────
 
+/**
+ * Two records of one tap, on purpose.
+ *
+ * `reportClick` goes to OUR server — the count shown in the console and the
+ * one that goes in front of Chowdeck, which an ad blocker cannot stop. The
+ * analytics event carries what only the page knows, for the product funnel.
+ * Neither delays the link: both are fire-and-forget beside the navigation.
+ */
 function trackClick(
   offer: ChowdeckOffer,
   position: number,
@@ -327,6 +334,15 @@ function trackClick(
   placeId: string,
   opensLater: boolean,
 ): void {
+  reportClick({
+    vendorId: offer.vendor.id,
+    productId: offer.product.id,
+    meal: mealSlug,
+    place: placeId,
+    position,
+    mode,
+  });
+
   analytics.track(EVENTS.CHOWDECK_OFFER_CLICKED, {
     meal_slug: mealSlug,
     place_id: placeId,
