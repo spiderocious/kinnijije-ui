@@ -14,6 +14,12 @@ export interface BootstrapResult {
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────
+/** One point on a sparkline. `date` is `YYYY-MM-DD`, UTC. */
+export interface DailyCount {
+  date: string;
+  count: number;
+}
+
 export interface AdminOverview {
   users: {
     total: number;
@@ -21,14 +27,25 @@ export interface AdminOverview {
     by_role: Record<string, number>;
     onboarded: number;
     new_this_week: number;
+    /** Percent change on the previous seven days. Null when there is no base. */
+    trend: number | null;
+    daily: DailyCount[];
   };
-  meals: { total: number; published: number; draft: number; seed: number; ai: number };
+  meals: {
+    total: number;
+    published: number;
+    draft: number;
+    seed: number;
+    ai: number;
+    with_photo: number;
+  };
   activity: {
     cooked_all_time: number;
     cooked_this_week: number;
     favourites: number;
     chat_messages: number;
     chat_mocked: number;
+    cooked_trend: number | null;
   };
   kitchen: { stock_items: number; market_items: number; market_unbought: number; files: number };
   jobs: { total: number; by_status: Record<string, number>; failed_last_day: number };
@@ -38,6 +55,14 @@ export interface AdminOverview {
     distinct_visitors: number;
     empty_verdicts: number;
     ai_framed: number;
+    empty_today: number;
+    empty_yesterday: number;
+    this_week: number;
+    previous_week: number;
+    rejected: number;
+    daily: DailyCount[];
+    trend: number | null;
+    saved: number;
   };
   ai: {
     calls: number;
@@ -45,6 +70,10 @@ export interface AdminOverview {
     calls_last_day: number;
     total_tokens: number;
     avg_duration_ms: number;
+    median_duration_ms: number;
+    p95_duration_ms: number;
+    tokens_last_day: number;
+    median_tokens: number;
     by_prompt: { prompt_id: string; calls: number; failed: number; tokens: number }[];
   };
 }
