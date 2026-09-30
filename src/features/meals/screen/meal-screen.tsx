@@ -4,6 +4,8 @@ import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
 import { KoboyoIcon } from '@icons';
+import { EVENTS } from '@shared/services/analytics';
+import { useTrackedView } from '@shared/hooks/use-tracked-view';
 import { ROUTES } from '@shared/constants/routes';
 import { searchValue } from '@shared/utils/search-value';
 import { cn } from '@shared/utils/cn';
@@ -33,7 +35,7 @@ const STATE_LABELS: Record<string, string> = {
 export default function MealScreen() {
   const navigate = useNavigate();
   const { mealId } = useParams({ strict: false }) as { mealId: string };
-  const search = useSearch({ strict: false }) as { meal?: string };
+  const search = useSearch({ strict: false }) as { meal?: string; from?: string };
   const [confirming, setConfirming] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
@@ -51,6 +53,28 @@ export default function MealScreen() {
   const generate = useGenerateMeal();
   const { data, isLoading, error, refetch } = useMealDetail(isGenerated ? null : mealId);
   const toggleFavourite = useToggleFavourite();
+
+  /**
+   * `source` is what lets you rank your own features: suggestions, decide,
+   * chat and favourites all lead here, and without it you cannot tell which
+   * surface actually drives cooking.
+   *
+   * Keyed by `mealId` so navigating between two meals reports both.
+   */
+  useTrackedView(
+    EVENTS.MEAL_VIEWED,
+    data !== undefined,
+    () => ({
+      meal_id: mealId,
+      meal_slug: data?.meal.slug ?? null,
+      source: searchValue(search.from) ?? 'direct',
+      is_generated: isGenerated,
+      match_score: data?.score ?? null,
+      missing_count: data?.missing.length ?? null,
+      is_favourite: data?.is_favourite ?? null,
+    }),
+    mealId,
+  );
 
   const { mutate: runGenerate } = generate;
   useEffect(() => {

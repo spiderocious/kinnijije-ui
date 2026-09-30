@@ -9,6 +9,7 @@ import {
   JOB_POLL_TIMEOUT_MS,
   jobPollInterval,
 } from '@shared/constants/polling';
+import { EVENTS, analytics } from '@shared/services/analytics';
 import type { ApiError } from '@shared/services/api-client';
 import { sessionStore } from '@shared/services/session-store';
 
@@ -125,8 +126,14 @@ export function useCancelJob() {
   const queryClient = useQueryClient();
   return useMutation<Job, ApiError, string>({
     mutationFn: jobsApi.cancel,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    onSuccess: (job) => {
+      // Users giving up on slow work — the patience budget, and it is shorter
+      // than you would guess.
+      analytics.track(EVENTS.JOB_CANCELLED, {
+        job_type: job.type,
+        progress_at_cancel: job.progress,
+      });
+      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
     },
   });
 }
@@ -135,8 +142,9 @@ export function useRetryJob() {
   const queryClient = useQueryClient();
   return useMutation<Job, ApiError, string>({
     mutationFn: jobsApi.retry,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    onSuccess: (job) => {
+      analytics.track(EVENTS.JOB_RETRIED, { job_type: job.type, attempts: job.attempts });
+      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
     },
   });
 }

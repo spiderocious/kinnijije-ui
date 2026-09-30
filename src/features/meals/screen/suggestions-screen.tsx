@@ -2,6 +2,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
 import { KoboyoIcon } from '@icons';
+import { EVENTS } from '@shared/services/analytics';
+import { useTrackedView } from '@shared/hooks/use-tracked-view';
 import { ROUTES } from '@shared/constants/routes';
 import { AppShell } from '@shared/ui-shell/app-shell';
 import { CardListSkeleton, ScreenError } from '@shared/ui-shell/screen-states';
@@ -22,6 +24,13 @@ import type { MealSuggestion } from '../services/meals.api';
 export default function SuggestionsScreen() {
   const navigate = useNavigate();
   const { data: suggestions = [], isLoading, error, refetch, isFetching } = useSuggestions();
+
+  // `result_count` of zero with healthy stock is a ranker bug; with an empty
+  // kitchen it is simply expected. The property tells the two apart.
+  useTrackedView(EVENTS.SUGGESTIONS_VIEWED, !isLoading && error === null, () => ({
+    result_count: suggestions.length,
+    top_match_score: suggestions[0]?.score ?? null,
+  }));
 
   return (
     <AppShell title="What you could cook" active="kitchen">

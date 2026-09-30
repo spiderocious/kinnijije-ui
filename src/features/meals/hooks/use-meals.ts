@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { DASHBOARD_KEY, STOCK_KEY } from '@features/stock/hooks/use-stock';
+import { EVENTS, analytics } from '@shared/services/analytics';
 import type { ApiError } from '@shared/services/api-client';
 
 import { mealsApi, type Meal, type MealDetail, type MealSuggestion } from '../services/meals.api';
@@ -33,7 +34,11 @@ export function useGenerateMeal() {
   const queryClient = useQueryClient();
   return useMutation<{ meal_id: string }, ApiError, string>({
     mutationFn: mealsApi.generate,
-    onSuccess: async () => {
+    onSuccess: async (result) => {
+      // A recipe the assistant named but the catalogue did not have. Volume
+      // here IS the catalogue gap, and each one costs a generation call.
+      analytics.track(EVENTS.MEAL_GENERATED, { meal_id: result.meal_id });
+
       // A new meal changes what can be suggested and what the assistant knows.
       await queryClient.invalidateQueries({ queryKey: ['meals'] });
     },
@@ -50,7 +55,13 @@ export function useToggleFavourite() {
   return useMutation<void, ApiError, { mealId: string; favourite: boolean }>({
     mutationFn: ({ mealId, favourite }) =>
       favourite ? mealsApi.favourite(mealId) : mealsApi.unfavourite(mealId),
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      // Cheap positive signal, available long before a cook.
+      analytics.track(EVENTS.MEAL_FAVOURITED, {
+        meal_id: variables.mealId,
+        favourite: variables.favourite,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ['meals'] });
     },
   });

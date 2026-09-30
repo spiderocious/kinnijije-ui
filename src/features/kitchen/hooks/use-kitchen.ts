@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { EVENTS, analytics } from '@shared/services/analytics';
 import type { ApiError } from '@shared/services/api-client';
 
 import { kitchenApi } from '../services/kitchen.api';
@@ -31,6 +32,11 @@ export function useKitchen() {
   const save = useMutation<KitchenState, ApiError, string[]>({
     mutationFn: (next) => kitchenApi.save({ items: next }),
     onSuccess: (state) => {
+      // Whether people curate their kitchen after onboarding, or set it once
+      // and never return.
+      analytics.track(EVENTS.KITCHEN_SAVED, { item_count: state.items.length });
+      analytics.setProfile({ stock_item_count: state.items.length });
+
       // Keep the server's recents, but do NOT overwrite `items` — the person
       // may have typed something else while the save was in flight.
       queryClient.setQueryData(KITCHEN_KEY, state);

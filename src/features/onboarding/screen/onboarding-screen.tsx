@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+
+import { EVENTS, analytics } from '@shared/services/analytics';
 
 import { Show } from 'meemaw';
 
@@ -56,6 +58,36 @@ export default function OnboardingScreen() {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'anything'>('anything');
   const [seeded, setSeeded] = useState(false);
 
+  /** Read by the unmount effect, which must see the LAST step, not the first. */
+  const stepRef = useRef(step);
+  stepRef.current = step;
+  const startedAt = useRef(Date.now());
+  const completedRef = useRef(false);
+
+  useEffect(() => {
+    if (isLoading || state === undefined) return;
+    // Answers are saved server-side, so `is_resumed` catches somebody who left
+    // and came back — a distinct and more committed group.
+    analytics.track(EVENTS.ONBOARDING_STARTED, {
+      is_resumed: state.cuisines.length > 0 || state.kitchen_items.length > 0,
+    });
+    // Once, when the state first lands.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, state === undefined]);
+
+  useEffect(() => {
+    const begun = startedAt.current;
+    return () => {
+      if (completedRef.current) return;
+      // Names the step that loses people. Derivable from the step funnel, but
+      // an explicit event survives the flow being redesigned.
+      analytics.track(EVENTS.ONBOARDING_ABANDONED, {
+        last_step: stepRef.current,
+        ms_in_flow: Date.now() - begun,
+      });
+    };
+  }, []);
+
   useEffect(() => {
     // Seed once. Re-seeding on every response would overwrite what the person
     // is in the middle of typing each time a save resolves.
@@ -91,6 +123,9 @@ export default function OnboardingScreen() {
       { cuisines, difficulty },
       {
         onSuccess: () => {
+          // Set BEFORE the navigation that unmounts this screen, or a finished
+          // onboarding would also report itself as abandoned.
+          completedRef.current = true;
           complete.mutate();
         },
       },

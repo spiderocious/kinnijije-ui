@@ -52,6 +52,18 @@ export const adminUsersRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-users-route')),
 });
 
+export const adminDecideRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_DECIDE,
+  component: lazyRouteComponent(() => import('./screen/admin-decide-route')),
+});
+
+export const adminDecideLogRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_DECIDE_LOG('$logId'),
+  component: lazyRouteComponent(() => import('./screen/admin-decide-detail-route')),
+});
+
 export const adminAiRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ADMIN_AI,

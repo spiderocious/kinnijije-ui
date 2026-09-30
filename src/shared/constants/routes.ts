@@ -62,6 +62,9 @@ export const ROUTES = {
   ADMIN_RECIPE_NEW: '/admin/recipes/new',
   ADMIN_USERS: '/admin/users',
   ADMIN_USER: (userId: string) => `/admin/users/${userId}`,
+  /** Visibility into the anonymous decide flow. */
+  ADMIN_DECIDE: '/admin/decide',
+  ADMIN_DECIDE_LOG: (logId: string) => `/admin/decide/${logId}`,
   ADMIN_AI: '/admin/ai',
   ADMIN_AI_LOG: (logId: string) => `/admin/ai/${logId}`,
   ADMIN_SETTINGS: '/admin/settings',

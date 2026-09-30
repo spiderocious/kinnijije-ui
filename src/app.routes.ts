@@ -1,5 +1,7 @@
 import {
   adminAiLogRoute,
+  adminDecideLogRoute,
+  adminDecideRoute,
   adminAiRoute,
   adminDashboardRoute,
   adminEmailRoute,
@@ -85,6 +87,7 @@ export const routeTree = rootRoute.addChildren([
   adminRecipesRoute,
   adminUsersRoute,
   adminAiRoute,
+  adminDecideRoute,
   adminEmailNewRoute,
   adminEmailsRoute,
   adminJobsRoute,
@@ -92,6 +95,7 @@ export const routeTree = rootRoute.addChildren([
   adminRecipeRoute,
   adminUserRoute,
   adminAiLogRoute,
+  adminDecideLogRoute,
   adminEmailRoute,
   adminJobRoute,
 

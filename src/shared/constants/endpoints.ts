@@ -87,6 +87,11 @@ export const EP = {
   ADMIN: {
     SETUP: `${V1}/admin/setup`,
     OVERVIEW: `${V1}/admin/overview`,
+    /** Visibility into the anonymous decide flow. */
+    DECIDE_OVERVIEW: `${V1}/admin/decide/overview`,
+    DECIDE_LOGS: `${V1}/admin/decide/logs`,
+    DECIDE_LOG: (logId: string) => `${V1}/admin/decide/logs/${logId}`,
+
     RECIPES: `${V1}/admin/recipes`,
     RECIPES_BULK: `${V1}/admin/recipes/bulk`,
     RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
@@ -119,6 +124,8 @@ export const EP = {
     EMAIL_KINDS: `${V1}/admin/emails/kinds`,
     EMAIL_SETTINGS: `${V1}/admin/emails/settings`,
     EMAIL_SETTING: (kind: string) => `${V1}/admin/emails/settings/${kind}`,
+    EMAIL_PROVIDER: `${V1}/admin/emails/provider`,
+    EMAIL_PROVIDER_TEST: `${V1}/admin/emails/provider/test`,
     EMAIL_PREVIEW: `${V1}/admin/emails/preview`,
     EMAIL_SEND: `${V1}/admin/emails/send`,
     EMAIL: (emailId: string) => `${V1}/admin/emails/${emailId}`,

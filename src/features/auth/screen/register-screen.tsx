@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from 'react';
 
+import { EVENTS } from '@shared/services/analytics';
+import { useTrackedView } from '@shared/hooks/use-tracked-view';
+
 import { Link } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
@@ -43,6 +46,10 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
 
   const register = useRegister();
+
+  // Form abandonment is this minus `signed_up`. Always ready, so it fires on
+  // mount — there is no data to wait for.
+  useTrackedView(EVENTS.SIGNUP_STARTED, true, () => ({}));
   const next = useNextPath();
   const error = register.error ?? null;
 

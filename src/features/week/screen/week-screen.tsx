@@ -1,4 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
+
+import { EVENTS } from '@shared/services/analytics';
+import { useTrackedView } from '@shared/hooks/use-tracked-view';
 import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
@@ -28,6 +31,15 @@ export default function WeekScreen() {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useWeek();
   const refresh = useRefreshReading();
+
+  // Whether anyone looks back. `meals_cooked_this_week` here is a free
+  // engagement histogram across the whole user base.
+  useTrackedView(EVENTS.WEEK_VIEWED, !isLoading && data !== undefined, () => ({
+    meals_cooked_this_week: data?.total_meals ?? 0,
+    distinct_meals: data?.distinct_meals ?? 0,
+    has_reading: data?.reading != null,
+    too_early: data?.too_early ?? false,
+  }));
 
   if (!isLoading && (error !== null || data === undefined)) {
     return (

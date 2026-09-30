@@ -1,4 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
+
+import { EVENTS } from '@shared/services/analytics';
+import { useTrackedView } from '@shared/hooks/use-tracked-view';
 import { Repeat, Show } from 'meemaw';
 
 import { useMarket } from '@features/market/hooks/use-market';
@@ -36,6 +39,16 @@ export default function KitchenScreen() {
 
   const counts = dashboard.data?.counts;
   const isEmpty = !dashboard.isLoading && (counts?.things_in ?? 0) === 0;
+
+  // Whether the low/expiring signals are ever seen by somebody who could act
+  // on them. Declared before the early return below — hooks must not sit after
+  // a conditional return.
+  useTrackedView(EVENTS.STOCK_DASHBOARD_VIEWED, !dashboard.isLoading, () => ({
+    item_count: counts?.things_in ?? 0,
+    low_count: counts?.running_low ?? 0,
+    expiring_count: counts?.use_soon ?? 0,
+    is_empty: isEmpty,
+  }));
 
   if (isEmpty) return <KitchenEmpty />;
 

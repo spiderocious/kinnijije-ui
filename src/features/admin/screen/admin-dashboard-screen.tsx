@@ -1,7 +1,10 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
+import { ROUTES } from '@shared/constants/routes';
 import { InfoCard, KpiCell, KpiStrip, MetricTile } from '@ui/admin';
 import { Callout } from '@ui/feedback';
+import { Button } from '@ui/primitives';
 
 import { useOverview } from '../hooks/use-admin';
 import { ConsoleShell } from '../parts/console-shell';
@@ -34,6 +37,7 @@ function Breakdown({ counts }: { readonly counts: Record<string, number> }) {
  * exist.
  */
 export default function AdminDashboardScreen() {
+  const navigate = useNavigate();
   const { data, isLoading, error } = useOverview();
 
   return (
@@ -57,6 +61,11 @@ export default function AdminDashboardScreen() {
             <KpiCell label="New this week" value={data?.users.new_this_week ?? 0} />
             <KpiCell label="Recipes" value={data?.meals.published ?? 0} unit="published" />
             <KpiCell label="Cooked this week" value={data?.activity.cooked_this_week ?? 0} />
+            <KpiCell
+              label="Decisions"
+              value={data?.decide.decisions ?? 0}
+              unit={`${String(data?.decide.today ?? 0)} today`}
+            />
             <KpiCell
               label="AI calls"
               value={data?.ai.calls ?? 0}
@@ -147,6 +156,43 @@ export default function AdminDashboardScreen() {
                 by status
               </p>
               <Breakdown counts={data?.jobs.by_status ?? {}} />
+            </InfoCard>
+
+            {/* The anonymous flow. `empty_verdicts` is the number to drive to
+                zero: it counts people who asked and got nothing back. */}
+            <InfoCard
+              title="Decide flow"
+              tone={(data?.decide.empty_verdicts ?? 0) > 0 ? 'caution' : 'default'}
+              action={
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => {
+                    void navigate({ to: ROUTES.ADMIN_DECIDE });
+                  }}
+                >
+                  Open
+                </Button>
+              }
+            >
+              <div className="grid grid-cols-2 gap-2">
+                <MetricTile label="Decisions" value={data?.decide.decisions ?? 0} icon="chartBarBig" />
+                <MetricTile label="Today" value={data?.decide.today ?? 0} icon="alarmClock" />
+                <MetricTile
+                  label="Visitors"
+                  value={data?.decide.distinct_visitors ?? 0}
+                  icon="contact"
+                />
+                <MetricTile
+                  label="Nothing fit"
+                  value={data?.decide.empty_verdicts ?? 0}
+                  icon="alertDialog"
+                />
+              </div>
+              <p className="mt-3 text-xs text-ink-3">
+                {String(data?.decide.ai_framed ?? 0)} of {String(data?.decide.decisions ?? 0)}{' '}
+                used the model; the rest fell back to a templated line.
+              </p>
             </InfoCard>
 
             <InfoCard title="The model" tone={(data?.ai.failed ?? 0) > 0 ? 'caution' : 'default'}>

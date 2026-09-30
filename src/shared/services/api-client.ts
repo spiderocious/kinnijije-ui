@@ -64,6 +64,21 @@ const isAuthPath = (path: string): boolean => AUTH_PATHS.some((p) => path.includ
  */
 let refreshInFlight: Promise<boolean> | null = null;
 
+/**
+ * An involuntary logout.
+ *
+ * If this is high, token lifetimes are hurting retention: it reads as churn in
+ * every report and is really a bug. Imported lazily so this module, which sits
+ * under almost everything, does not pull the analytics graph in at load.
+ */
+function reportSessionExpired(reason: string): void {
+  void import('./analytics').then(({ EVENTS, analytics }) => {
+    analytics.track(EVENTS.SESSION_EXPIRED, { reason });
+  }).catch(() => {
+    // Analytics must never break a request path.
+  });
+}
+
 async function refreshSession(): Promise<boolean> {
   const stored = sessionStore.get();
   if (stored === null) return false;
@@ -77,6 +92,7 @@ async function refreshSession(): Promise<boolean> {
 
     if (!response.ok) {
       sessionStore.clear();
+      reportSessionExpired(String(response.status));
       return false;
     }
 
@@ -90,6 +106,7 @@ async function refreshSession(): Promise<boolean> {
     return true;
   } catch {
     sessionStore.clear();
+    reportSessionExpired('network');
     return false;
   }
 }

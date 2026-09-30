@@ -19,6 +19,7 @@ const CONSOLE_NAV: SidebarGroup[] = [
   {
     label: 'The model',
     items: [
+      { id: 'decide', label: 'Decide flow', icon: 'chartBarBig' },
       { id: 'ai', label: 'AI audit', icon: 'robotForAi' },
       { id: 'jobs', label: 'Jobs', icon: 'cycle' },
       { id: 'emails', label: 'Email', icon: 'envelope' },
@@ -33,6 +34,7 @@ const CONSOLE_NAV: SidebarGroup[] = [
 
 const DESTINATIONS: Record<string, string> = {
   dashboard: ROUTES.ADMIN_DASHBOARD,
+  decide: ROUTES.ADMIN_DECIDE,
   recipes: ROUTES.ADMIN_RECIPES,
   users: ROUTES.ADMIN_USERS,
   ai: ROUTES.ADMIN_AI,

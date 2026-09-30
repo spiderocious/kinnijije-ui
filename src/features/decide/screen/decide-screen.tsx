@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 
+import { EVENTS, analytics } from '@shared/services/analytics';
 import { ROUTES } from '@shared/constants/routes';
 import { Button } from '@ui/primitives';
 
@@ -13,6 +14,7 @@ import { StepKitchen } from './parts/step-kitchen';
 import { StepMood } from './parts/step-mood';
 import { StepTime } from './parts/step-time';
 import { StepWeight } from './parts/step-weight';
+import { DECIDE_STAGES } from '../types/decide.types';
 import type { DecideStage, Mood, TimeBudget, Weight } from '../types/decide.types';
 
 /**
@@ -37,6 +39,17 @@ export default function DecideScreen() {
   const stage: DecideStage = search.step ?? 'hero';
 
   /**
+   * When the current step was reached, for `ms_on_step`.
+   *
+   * A ref rather than state: it must not cause a render, and it is read only
+   * at the moment the step changes. A step people sit on is a step they do not
+   * understand — which is not visible in a drop-off rate alone.
+   */
+  const stageEnteredAt = useRef(Date.now());
+  /** True until the first step change, so `decide_started` fires exactly once. */
+  const startedRef = useRef(false);
+
+  /**
    * Moving between steps is a NAVIGATION, so Back is the browser's own Back.
    *
    * `replace` is passed when correcting the URL to a step the person did not
@@ -45,6 +58,15 @@ export default function DecideScreen() {
    */
   const setStage = useCallback(
     (next: DecideStage, replace = false) => {
+      // Leaving the hero is the honest top of the funnel: the gap between
+      // landing and this is the hero's own failure rate.
+      if (!startedRef.current && next !== 'hero') {
+        startedRef.current = true;
+        analytics.track(EVENTS.DECIDE_STARTED, { entry_stage: next });
+      }
+
+      stageEnteredAt.current = Date.now();
+
       void navigate({
         to: location.pathname,
         search: next === 'hero' ? {} : { step: next },
@@ -53,6 +75,36 @@ export default function DecideScreen() {
     },
     [navigate, location.pathname],
   );
+
+  /**
+   * One event for every answered step, with the step as a property.
+   *
+   * Deliberately not six separate events: one builds a funnel with a step
+   * breakdown and survives the flow being reordered, six must be rebuilt every
+   * time a question moves.
+   */
+  const trackStep = useCallback(
+    (step: DecideStage, value: string | number | null, itemCount?: number) => {
+      analytics.track(EVENTS.DECIDE_STEP_COMPLETED, {
+        step,
+        step_index: DECIDE_STAGES.indexOf(step),
+        value,
+        ...(itemCount !== undefined && { item_count: itemCount }),
+        ms_on_step: Date.now() - stageEnteredAt.current,
+      });
+    },
+    [],
+  );
+
+  const trackSkip = useCallback((step: DecideStage) => {
+    // A skip is a real answer ("I have nothing") but also friction. If most
+    // people skip the kitchen, the 400-tile picker is not earning its build.
+    analytics.track(EVENTS.DECIDE_STEP_SKIPPED, {
+      step,
+      step_index: DECIDE_STAGES.indexOf(step),
+      ms_on_step: Date.now() - stageEnteredAt.current,
+    });
+  }, []);
 
   const [rejectedName, setRejectedName] = useState<string | null>(null);
 
@@ -120,12 +172,31 @@ export default function DecideScreen() {
   const goCook = useCallback(
     (mealId: string) => {
       if (mealId !== '') decide.chooseAlternate(mealId);
+
+      // Intent to cook while still anonymous — the closest thing to the value
+      // moment before an account exists.
+      analytics.track(EVENTS.DECIDE_COOK_CLICKED, {
+        meal_id: mealId,
+        is_winner: decide.verdict?.verdict.meal_id === mealId,
+      });
+      // `source` is what says WHICH pitch converts: wanting to save this meal,
+      // or running into the hourly cap. Two different findings.
+      analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, {
+        source: 'save_meal',
+        meal_id: mealId,
+        stage: 'verdict',
+      });
+
       void navigate({ to: ROUTES.REGISTER });
     },
     [decide, navigate],
   );
 
   const goSignUp = useCallback(() => {
+    analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, {
+      source: 'rate_limit',
+      stage: 'verdict',
+    });
     void navigate({ to: ROUTES.REGISTER });
   }, [navigate]);
 
@@ -133,7 +204,10 @@ export default function DecideScreen() {
     return (
       <DecideHero
         onStart={() => { setStage('kitchen'); }}
-        onSignIn={() => { void navigate({ to: ROUTES.LOGIN }); }}
+        onSignIn={() => {
+          analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, { source: 'hero_signin', stage: 'hero' });
+          void navigate({ to: ROUTES.LOGIN });
+        }}
       />
     );
   }
@@ -144,9 +218,13 @@ export default function DecideScreen() {
         options={options}
         selected={decide.draft.kitchenItems}
         onChange={(items) => { decide.patch({ kitchenItems: items, kitchenSkipped: false }); }}
-        onContinue={() => { setStage('mood'); }}
+        onContinue={() => {
+          trackStep('kitchen', null, decide.draft.kitchenItems.length);
+          setStage('mood');
+        }}
         onSkip={() => {
           decide.patch({ kitchenItems: [], kitchenSkipped: true });
+          trackSkip('kitchen');
           setStage('mood');
         }}
         onBack={() => { setStage('hero'); }}
@@ -160,7 +238,10 @@ export default function DecideScreen() {
         options={options}
         value={decide.draft.mood}
         onChange={(mood: Mood) => { decide.patch({ mood }); }}
-        onContinue={() => { setStage('weight'); }}
+        onContinue={() => {
+          trackStep('mood', decide.draft.mood);
+          setStage('weight');
+        }}
         onBack={() => { setStage('kitchen'); }}
       />
     );
@@ -172,7 +253,10 @@ export default function DecideScreen() {
         options={options}
         value={decide.draft.weight}
         onChange={(weight: Weight) => { decide.patch({ weight }); }}
-        onContinue={() => { setStage('time'); }}
+        onContinue={() => {
+          trackStep('weight', decide.draft.weight);
+          setStage('time');
+        }}
         onBack={() => { setStage('mood'); }}
       />
     );
@@ -186,8 +270,14 @@ export default function DecideScreen() {
         city={decide.draft.city}
         onMinutes={(minutes: TimeBudget) => { decide.patch({ minutes }); }}
         onCity={(city) => { decide.patch({ city }); }}
-        onDecide={() => { void run(); }}
-        onSkip={() => { void run(); }}
+        onDecide={() => {
+          trackStep('time', decide.draft.minutes);
+          void run();
+        }}
+        onSkip={() => {
+          trackSkip('time');
+          void run();
+        }}
         onBack={() => { setStage('weight'); }}
         busy={decide.isDeciding}
       />
@@ -249,7 +339,13 @@ export default function DecideScreen() {
         title={DECIDE_COPY.empty.title}
         body={DECIDE_COPY.empty.body}
         tone="neutral"
-        primary={{ label: 'Change an answer', onClick: () => { setStage('time'); } }}
+        primary={{
+          label: 'Change an answer',
+          onClick: () => {
+            analytics.track(EVENTS.DECIDE_ANSWER_CHANGED, { from_stage: 'verdict', to_stage: 'time' });
+            setStage('time');
+          },
+        }}
         secondary={{
           label: 'Start again',
           onClick: () => { decide.reset(); setRequested(false); setStage('hero'); },

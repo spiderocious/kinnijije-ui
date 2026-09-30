@@ -89,6 +89,7 @@ export default function AdminEmailDetailScreen() {
             <Row label="to" value={data?.to ?? null} />
             <Row label="subject" value={data?.subject ?? null} />
             <Row label="owner" value={data?.owner_id ?? null} />
+            <Row label="sent via" value={data?.provider ?? null} />
             <Row label="provider id" value={data?.provider_id ?? null} />
             <Row label="sent by" value={data?.sent_by ?? null} />
             <Row label="resend of" value={data?.resend_of ?? null} />

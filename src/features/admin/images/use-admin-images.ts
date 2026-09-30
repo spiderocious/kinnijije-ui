@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { EVENTS, analytics } from '@shared/services/analytics';
+
 import { adminImagesApi, putToPresignedUrl } from './admin-images.api';
 
 const key = (mealId: string) => ['admin', 'recipe-images', mealId] as const;
@@ -51,6 +53,13 @@ export function useGenerateImage(mealId: string) {
   return useMutation({
     mutationFn: (promptOverride?: string) => adminImagesApi.generate(mealId, promptOverride),
     onSuccess: () => {
+      // Cost control: an image call is worth 10–40 text ones, so retries per
+      // finally-published image is the number that matters.
+      analytics.track(EVENTS.ADMIN_IMAGE_GENERATED, {
+        meal_id: mealId,
+        had_prompt_override: true,
+      });
+
       // The job writes the image, so the list is refetched when it lands
       // rather than optimistically.
       void client.invalidateQueries({ queryKey: key(mealId) });
@@ -64,13 +73,28 @@ export function useImageActions(mealId: string) {
 
   const publish = useMutation({
     mutationFn: (imageId: string) => adminImagesApi.publish(mealId, imageId),
-    onSuccess: () => { void refresh(); },
+    onSuccess: (_result, imageId) => {
+      // Generated-image acceptance rate: is the pipeline good enough to trust?
+      analytics.track(EVENTS.ADMIN_IMAGE_REVIEWED, {
+        meal_id: mealId,
+        image_id: imageId,
+        decision: 'published',
+      });
+      void refresh();
+    },
   });
 
   const reject = useMutation({
     mutationFn: (input: { imageId: string; reason: string }) =>
       adminImagesApi.reject(mealId, input.imageId, input.reason),
-    onSuccess: () => { void refresh(); },
+    onSuccess: (_result, input) => {
+      analytics.track(EVENTS.ADMIN_IMAGE_REVIEWED, {
+        meal_id: mealId,
+        image_id: input.imageId,
+        decision: 'rejected',
+      });
+      void refresh();
+    },
   });
 
   const setPrimary = useMutation({

@@ -32,6 +32,13 @@ export interface AdminOverview {
   };
   kitchen: { stock_items: number; market_items: number; market_unbought: number; files: number };
   jobs: { total: number; by_status: Record<string, number>; failed_last_day: number };
+  decide: {
+    decisions: number;
+    today: number;
+    distinct_visitors: number;
+    empty_verdicts: number;
+    ai_framed: number;
+  };
   ai: {
     calls: number;
     failed: number;
@@ -203,7 +210,9 @@ export interface EmailLogRow {
   to: string;
   owner_id: string | null;
   subject: string;
-  status: 'sent' | 'failed' | 'suppressed';
+  status: 'sent' | 'failed' | 'suppressed' | 'blocked';
+  /** Which provider handled it. Null for older rows and for blocked sends. */
+  provider: MailProvider | null;
   provider_id: string | null;
   error: string | null;
   /** Set when an operator sent it by hand. */
@@ -224,6 +233,21 @@ export interface FeatureFlagRow {
   /** What actually stops happening. Written next to the switch. */
   when_off: string;
   enabled: boolean;
+  updated_by: string | null;
+  reason: string | null;
+  updated_at: string | null;
+}
+
+export type MailProvider = 'resend' | 'cloudflare';
+
+export interface MailProviderState {
+  provider: MailProvider;
+  /** False when nobody has chosen and this is the server's default. */
+  chosen: boolean;
+  /** Which providers have credentials. The switch warns from this. */
+  configured: Record<MailProvider, boolean>;
+  /** Whether the ACTIVE provider can actually send. */
+  live: boolean;
   updated_by: string | null;
   reason: string | null;
   updated_at: string | null;
@@ -252,7 +276,63 @@ function qs(params: Record<string, string | number | undefined>): string {
   return out.length > 0 ? `?${out}` : '';
 }
 
+/** Aggregated view of the decide flow. Every figure is a count of real rows. */
+export interface DecideOverview {
+  totals: {
+    decisions: number;
+    today: number;
+    last_7_days: number;
+    distinct_visitors: number;
+    empty_verdicts: number;
+    ai_framed: number;
+    deterministic: number;
+    median_duration_ms: number;
+  };
+  moods: { value: string; count: number }[];
+  weights: { value: string; count: number }[];
+  minutes: { value: number; count: number }[];
+  top_ingredients: { name: string; count: number }[];
+  top_verdicts: { name: string; count: number }[];
+  top_rejected: { meal_id: string; name: string | null; count: number }[];
+  cities: { name: string; count: number }[];
+  daily: { date: string; count: number }[];
+  empty_kitchen_rate: number;
+}
+
+export interface DecideLogRow {
+  id: string;
+  request_id: string;
+  visitor: string;
+  kitchen_items: string[];
+  kitchen_skipped: boolean;
+  mood: string;
+  weight: string;
+  minutes: number;
+  city: string | null;
+  rejected: string[];
+  verdict_meal_id: string | null;
+  verdict_name: string | null;
+  verdict_score: number | null;
+  pool_size: number;
+  provenance: string;
+  why: string | null;
+  duration_ms: number;
+  ai_fallback_reason: string | null;
+  created_at: string | null;
+}
+
 export const adminApi = {
+  decideOverview: (days?: number): Promise<DecideOverview> =>
+    apiClient.get<DecideOverview>(
+      days === undefined ? EP.ADMIN.DECIDE_OVERVIEW : `${EP.ADMIN.DECIDE_OVERVIEW}?days=${String(days)}`,
+    ),
+
+  decideLogs: (params: Record<string, string | number | undefined>): Promise<Paged<DecideLogRow>> =>
+    apiClient.get<Paged<DecideLogRow>>(`${EP.ADMIN.DECIDE_LOGS}${qs(params)}`),
+
+  decideLog: (logId: string): Promise<DecideLogRow> =>
+    apiClient.get<DecideLogRow>(EP.ADMIN.DECIDE_LOG(logId)),
+
   setupState: (): Promise<SetupState> => apiClient.get<SetupState>(EP.ADMIN.SETUP),
   bootstrap: (): Promise<BootstrapResult> => apiClient.post<BootstrapResult>(EP.ADMIN.SETUP),
 
@@ -298,6 +378,18 @@ export const adminApi = {
     apiClient.get<EmailSetting[]>(EP.ADMIN.EMAIL_SETTINGS),
   setEmailKind: (kind: string, enabled: boolean, reason?: string): Promise<void> =>
     apiClient.patch<void>(EP.ADMIN.EMAIL_SETTING(kind), { enabled, reason }),
+  mailProvider: (): Promise<MailProviderState> =>
+    apiClient.get<MailProviderState>(EP.ADMIN.EMAIL_PROVIDER),
+  setMailProvider: (
+    provider: MailProvider,
+    reason?: string,
+  ): Promise<{ provider: MailProvider; live: boolean }> =>
+    apiClient.put(EP.ADMIN.EMAIL_PROVIDER, { provider, reason }),
+  testMailProvider: (
+    provider: MailProvider,
+    to: string,
+  ): Promise<{ id: string; delivered: boolean; error: string | null }> =>
+    apiClient.post(EP.ADMIN.EMAIL_PROVIDER_TEST, { provider, to }),
   previewAudience: (
     audience: EmailAudience,
     userIds?: string[],

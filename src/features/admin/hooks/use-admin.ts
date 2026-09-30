@@ -1,9 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { JOB_LIST_POLL_MS } from '@shared/constants/polling';
+import { EVENTS, analytics } from '@shared/services/analytics';
 import type { ApiError } from '@shared/services/api-client';
 
-import { adminApi, type EmailAudience, type RecipeInput } from '../services/admin.api';
+import {
+  adminApi,
+  type EmailAudience,
+  type MailProvider,
+  type RecipeInput,
+} from '../services/admin.api';
 
 const ADMIN_KEY = ['admin'] as const;
 
@@ -45,7 +51,14 @@ export function useCreateRecipe() {
   const queryClient = useQueryClient();
   return useMutation<{ id: string; matched: number; unmatched: string[] }, ApiError, RecipeInput>({
     mutationFn: adminApi.createRecipe,
-    onSuccess: async () => {
+    onSuccess: async (result) => {
+      analytics.track(EVENTS.ADMIN_RECIPE_CREATED, {
+        meal_id: result.id,
+        source: 'manual',
+        matched: result.matched,
+        unmatched_count: result.unmatched.length,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -56,6 +69,9 @@ export function useBulkRecipes() {
   return useMutation({
     mutationFn: adminApi.bulkRecipes,
     onSuccess: async () => {
+      // Catalogue growth, and whether bulk import is doing the real work.
+      analytics.track(EVENTS.ADMIN_RECIPE_CREATED, { source: 'bulk' });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -65,7 +81,13 @@ export function useSetRecipeStatus() {
   const queryClient = useQueryClient();
   return useMutation<void, ApiError, { mealId: string; status: 'draft' | 'published' }>({
     mutationFn: ({ mealId, status }) => adminApi.setRecipeStatus(mealId, status),
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      // Editorial throughput — how fast drafts reach published.
+      analytics.track(EVENTS.ADMIN_RECIPE_STATUS_CHANGED, {
+        meal_id: variables.mealId,
+        to_status: variables.status,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -75,7 +97,9 @@ export function useDeleteRecipe() {
   const queryClient = useQueryClient();
   return useMutation<void, ApiError, string>({
     mutationFn: adminApi.deleteRecipe,
-    onSuccess: async () => {
+    onSuccess: async (_result, mealId) => {
+      analytics.track(EVENTS.ADMIN_RECIPE_DELETED, { meal_id: mealId });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -101,7 +125,13 @@ export function useSetUserStatus() {
   const queryClient = useQueryClient();
   return useMutation<void, ApiError, { userId: string; status: string }>({
     mutationFn: ({ userId, status }) => adminApi.setUserStatus(userId, status),
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      // Moderation volume, audited.
+      analytics.track(EVENTS.ADMIN_USER_STATUS_CHANGED, {
+        target_user_id: variables.userId,
+        to_status: variables.status,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -189,6 +219,39 @@ export function useSetEmailKind() {
   });
 }
 
+/** Which provider is sending, and whether it can. */
+export function useMailProvider() {
+  return useQuery({ queryKey: [...ADMIN_KEY, 'mail-provider'], queryFn: adminApi.mailProvider });
+}
+
+export function useSetMailProvider() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ provider, reason }: { provider: MailProvider; reason?: string }) =>
+      adminApi.setMailProvider(provider, reason),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
+/**
+ * Send one real email through a provider without switching to it.
+ *
+ * Deliberately invalidates: the test lands in the log like any other send, and
+ * the operator wants to see it there.
+ */
+export function useTestMailProvider() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ provider, to }: { provider: MailProvider; to: string }) =>
+      adminApi.testMailProvider(provider, to),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
 export function useEmailKinds() {
   return useQuery({ queryKey: [...ADMIN_KEY, 'email-kinds'], queryFn: adminApi.emailKinds });
 }
@@ -262,5 +325,32 @@ export function useCancelJob() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
+  });
+}
+
+/** The decide flow, aggregated. Refetched on focus: it moves during the day. */
+export function useDecideOverview(days?: number) {
+  return useQuery({
+    queryKey: ['admin', 'decide', 'overview', days ?? 14],
+    queryFn: () => adminApi.decideOverview(days),
+    staleTime: 30_000,
+  });
+}
+
+/** The raw log: every submission and every answer. */
+export function useDecideLogs(params: Record<string, string | number | undefined>) {
+  return useQuery({
+    queryKey: ['admin', 'decide', 'logs', params],
+    queryFn: () => adminApi.decideLogs(params),
+    staleTime: 15_000,
+  });
+}
+
+/** One decision, in full. */
+export function useDecideLog(logId: string) {
+  return useQuery({
+    queryKey: ['admin', 'decide', 'log', logId],
+    queryFn: () => adminApi.decideLog(logId),
+    enabled: logId.length > 0,
   });
 }

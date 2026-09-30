@@ -1,4 +1,6 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+
+import { EVENTS, analytics } from '@shared/services/analytics';
 import { Plus, Search, X } from 'lucide-react';
 
 import { Button } from '@ui/primitives';
@@ -81,6 +83,31 @@ export function StepKitchen({
       .slice(0, MAX_RESULTS)
       .map((hit) => hit.item);
   }, [deferredQuery, groups]);
+
+  /**
+   * The catalogue-gap event.
+   *
+   * A search with `found: false` is somebody naming an ingredient we do not
+   * stock — which is the most direct product feedback in the app. NEVER the
+   * query text: send its length and whether it hit.
+   *
+   * Debounced to 600ms so a settled search is reported once, rather than one
+   * event per keystroke as somebody types "atarodo".
+   */
+  useEffect(() => {
+    const q = deferredQuery.trim();
+    if (q.length < 2) return;
+
+    const timer = setTimeout(() => {
+      analytics.track(EVENTS.DECIDE_INGREDIENT_SEARCHED, {
+        query_length: q.length,
+        result_count: results?.length ?? 0,
+        found: (results?.length ?? 0) > 0,
+      });
+    }, 600);
+
+    return () => { clearTimeout(timer); };
+  }, [deferredQuery, results]);
 
   const toggle = (label: string) => {
     onChange(

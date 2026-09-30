@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Repeat, Show } from 'meemaw';
 
+import { EVENTS, analytics } from '@shared/services/analytics';
 import { ROUTES } from '@shared/constants/routes';
 import { ScreenError } from '@shared/ui-shell/screen-states';
 import { AppBar } from '@ui/navigation';
@@ -29,6 +30,53 @@ export default function CookScreen() {
 
   // Held for the whole cook, not just while a timer runs.
   useWakeLock(!isLoading);
+
+  /**
+   * When this cook began, and whether it finished.
+   *
+   * Refs, so neither causes a render — and so the unmount effect below reads
+   * the final values rather than the ones captured when it was created.
+   */
+  const startedAt = useRef(Date.now());
+  const finished = useRef(false);
+  const lastStep = useRef(1);
+  lastStep.current = step;
+
+  const stepCount = data?.meal.steps.length ?? 0;
+
+  // Declared before the early returns below: hooks cannot live after a
+  // conditional return.
+  useEffect(() => {
+    if (isLoading || data === undefined) return;
+    analytics.track(EVENTS.COOK_STARTED, {
+      meal_id: mealId,
+      step_count: data.meal.steps.length,
+      cook_time_minutes: data.meal.cook_time_minutes,
+      missing_count: data.missing.length,
+    });
+    // Only when the meal first resolves — not on every step change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, data === undefined, mealId]);
+
+  useEffect(() => {
+    const begun = startedAt.current;
+    return () => {
+      if (finished.current || stepCount === 0) return;
+      /**
+       * Left without marking it cooked.
+       *
+       * `ms_in_cook` is what separates "closed the tab while it simmers" (long,
+       * late) from "gave up" (short, early). They are not the same event and
+       * must not be read as one.
+       */
+      analytics.track(EVENTS.COOK_ABANDONED, {
+        meal_id: mealId,
+        last_step_index: lastStep.current,
+        step_count: stepCount,
+        ms_in_cook: Date.now() - begun,
+      });
+    };
+  }, [mealId, stepCount]);
 
   if (!isLoading && (error !== null || data === undefined)) {
     return (
@@ -60,6 +108,17 @@ export default function CookScreen() {
     );
   }
 
+  const advance = (next: number): void => {
+    // A step with a long dwell followed by an exit is a badly written
+    // instruction — findable no other way.
+    analytics.track(EVENTS.COOK_STEP_ADVANCED, {
+      meal_id: mealId,
+      step_index: next,
+      step_count: data.meal.steps.length,
+    });
+    setStep(next);
+  };
+
   const steps = data.meal.steps;
   const total = steps.length;
   const current = steps[step - 1];
@@ -69,6 +128,28 @@ export default function CookScreen() {
     // Marking it cooked is what takes the ingredients out of the kitchen.
     markCooked.mutate(mealId, {
       onSuccess: () => {
+        finished.current = true;
+
+        /**
+         * The north star. The only event that means the app did the thing it
+         * exists to do.
+         *
+         * `is_first_meal` is the activation moment and the single best
+         * retention predictor available; `actual_ms` against the stated cook
+         * time says whether our times are honest.
+         */
+        const isFirst = data.history.times_cooked_recently === 0 && data.history.last_cooked_at === null;
+        analytics.track(EVENTS.MEAL_COOKED, {
+          meal_id: mealId,
+          meal_slug: data.meal.slug,
+          is_first_meal: isFirst,
+          cook_time_minutes: data.meal.cook_time_minutes,
+          step_count: total,
+          actual_ms: Date.now() - startedAt.current,
+          missing_count: data.missing.length,
+        });
+        analytics.incrementProfile('meals_cooked_total');
+
         void navigate({ to: ROUTES.KITCHEN });
       },
     });
@@ -155,7 +236,7 @@ export default function CookScreen() {
           size="lg"
           disabled={step === 1}
           onClick={() => {
-            setStep((s) => Math.max(1, s - 1));
+            advance(Math.max(1, step - 1));
           }}
         >
           Previous
@@ -169,7 +250,7 @@ export default function CookScreen() {
           loading={markCooked.isPending}
           onClick={() => {
             if (isLast) finish();
-            else setStep((s) => Math.min(total, s + 1));
+            else advance(Math.min(total, step + 1));
           }}
         >
           {isLast ? 'Done — I cooked this' : 'Next step'}

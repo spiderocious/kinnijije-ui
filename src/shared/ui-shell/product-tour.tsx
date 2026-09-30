@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { EVENTS, analytics } from '@shared/services/analytics';
+
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
@@ -242,8 +244,20 @@ export function ProductTour() {
   const forcedRef = useRef(false);
 
   const current = STEPS[step];
+  /** Read by `finish`, which must not take `step` as a dependency. */
+  const stepRef = useRef(step);
+  stepRef.current = step;
 
-  const finish = useCallback((): void => {
+  const finish = useCallback((completed = false): void => {
+    // The step people bail on. Early dismissal means the tour interrupts
+    // rather than helps.
+    analytics.track(EVENTS.PRODUCT_TOUR_DISMISSED, {
+      step: STEPS[stepRef.current]?.title ?? null,
+      step_index: stepRef.current,
+      step_count: STEPS.length,
+      completed,
+    });
+
     markSeen();
     setOpen(false);
     // Released so a LATER `?tour=true` can force it open again in this same
@@ -285,6 +299,11 @@ export function ProductTour() {
     if (forced) forcedRef.current = true;
     setStep(0);
     setOpen(true);
+    analytics.track(EVENTS.PRODUCT_TOUR_STEP_VIEWED, {
+      step: STEPS[0]?.title ?? null,
+      step_index: 0,
+      was_forced: forced,
+    });
   }, [open, pathname, search, features.onboarding_tour]);
 
   // Walk to the step's screen. Compared against the CURRENT url so re-running
@@ -387,7 +406,7 @@ export function ProductTour() {
         <button
           type="button"
           aria-label="Skip the tour"
-          onClick={finish}
+          onClick={() => { finish(false); }}
           className="absolute inset-0 h-full w-full cursor-default bg-ink/50 backdrop-blur-md"
         />
       </Show>
@@ -435,7 +454,7 @@ export function ProductTour() {
               <Show when={!isLast}>
                 <button
                   type="button"
-                  onClick={finish}
+                  onClick={() => { finish(false); }}
                   className="text-sm text-ink-3 underline-offset-2 hover:underline"
                 >
                   Skip
@@ -455,8 +474,17 @@ export function ProductTour() {
               <Button
                 size="sm"
                 onClick={() => {
-                  if (isLast) finish();
-                  else setStep((value) => value + 1);
+                  if (isLast) {
+                    finish(true);
+                    return;
+                  }
+                  const next = step + 1;
+                  analytics.track(EVENTS.PRODUCT_TOUR_STEP_VIEWED, {
+                    step: STEPS[next]?.title ?? null,
+                    step_index: next,
+                    was_forced: false,
+                  });
+                  setStep(next);
                 }}
               >
                 {isLast ? 'Start cooking' : 'Next'}
