@@ -12,6 +12,8 @@ import { useRegister } from '../hooks/use-auth-actions';
 import { fieldError } from '../hooks/use-field-errors';
 import { AuthShell } from '../parts/auth-shell';
 import { FormError } from '../parts/form-error';
+import { decideDraft } from '@features/decide/services/decide-draft';
+import { draftCity } from '@features/decide/services/decide-carryover';
 
 /**
  * Mirrors the server's policy so a person is told before submitting rather
@@ -31,7 +33,12 @@ function localPasswordProblem(password: string): string | undefined {
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
-  const [city, setCity] = useState('');
+  /**
+   * Pre-filled from the decide draft when a guest is converting: they already
+   * told us their city at step four, and asking twice is exactly the friction
+   * the carry-over exists to remove.
+   */
+  const [city, setCity] = useState(() => draftCity(decideDraft.get()) ?? '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

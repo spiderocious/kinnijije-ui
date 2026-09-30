@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { Outlet, useRouterState } from '@tanstack/react-router';
 
 import { Loader2 } from '@icons';
+import { usePageTracking } from '@shared/hooks/use-page-tracking';
 import { ROUTES } from '@shared/constants/routes';
 import { ProductTour } from '@shared/ui-shell/product-tour';
 
@@ -19,6 +20,10 @@ function RouteFallback() {
  * Layout shared by every route. Rendered by the root route.
  */
 export function AppEntrypoint() {
+  // Mounted by the root route, so this runs once for the whole app and keeps
+  // running across navigation — which is what a page-view subscription needs.
+  usePageTracking();
+
   // The viewer and the scenes own their whole chrome — a product header above
   // either would compete with the thing being reviewed, and a scene has to
   // render at the real viewport to be worth looking at.

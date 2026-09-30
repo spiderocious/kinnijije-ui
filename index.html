@@ -1,16 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-NG">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <title>KinniJije — your whole kitchen, planned</title>
+    <!-- ── Primary ─────────────────────────────────────────────────────
+         The title leads with the question people actually search, not with
+         the brand: nobody googles "KinniJije" before they know it exists. -->
+    <title>KinniJije: what should I cook today?</title>
     <meta
       name="description"
-      content="Breakfast, lunch and dinner planned from what is already in your kitchen. Nigerian and West African home cooking, no counting, no shopping list you did not ask for."
+      content="Tell KinniJije what you have at home and it picks tonight's Nigerian meal, with the recipe and a short list of what you still need. Breakfast, lunch and dinner planned from what you already have."
     />
+    <link rel="canonical" href="https://kinnijije.xyz/" />
 
-    <!-- SVG first for anything modern; the .ico is the fallback for older
+    <meta name="author" content="KinniJije" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <!-- Nigerian English, and the audience is Nigeria first. -->
+    <meta name="language" content="en-NG" />
+    <meta name="geo.region" content="NG" />
+
+    <!-- ── Icons and install ───────────────────────────────────────────
+         SVG first for anything modern; the .ico is the fallback for older
          browsers and for Windows, which still wants a real icon file. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
@@ -21,22 +32,145 @@
     <!-- Tints the browser chrome on Android, and the notch area on iOS. -->
     <meta name="theme-color" content="#38B6F0" />
     <meta name="apple-mobile-web-app-title" content="KinniJije" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
-    <meta property="og:title" content="KinniJije — your whole kitchen, planned" />
+    <!-- ── The hero illustration is the largest paint above the fold ──── -->
+    <link rel="preload" as="image" href="/illustrations/a-hero-pot.png" fetchpriority="high" />
+    <!-- The decide endpoints live on the API origin; warming the connection
+         saves a DNS + TLS round trip on the first real request. -->
+    <link rel="preconnect" href="https://api.kinnijije.xyz" crossorigin />
+    <link rel="dns-prefetch" href="https://api.kinnijije.xyz" />
+
+    <!-- ── Social ──────────────────────────────────────────────────────
+         og:title is deliberately shorter than <title>: a card truncates at
+         about sixty characters, and a cut-off headline reads as broken. -->
+    <meta property="og:title" content="What should I cook today?" />
     <meta
       property="og:description"
-      content="Breakfast, lunch and dinner from what you already have. Nigerian and West African food, first."
+      content="Tell KinniJije what you have at home. It picks the meal, gives you the recipe, and says what you still need to buy."
     />
     <meta property="og:image" content="https://kinnijije.xyz/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="KinniJije: a cooking pot with a question mark rising from it as steam."
+    />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:url" content="https://kinnijije.xyz/" />
     <meta property="og:site_name" content="KinniJije" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_NG" />
+
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="What should I cook today?" />
+    <meta
+      name="twitter:description"
+      content="Tell KinniJije what you have at home. It picks the meal, gives you the recipe, and says what you still need to buy."
+    />
+    <meta name="twitter:image" content="https://kinnijije.xyz/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="KinniJije: a cooking pot with a question mark rising from it as steam."
+    />
+
+    <!-- ── Structured data ─────────────────────────────────────────────
+         WebApplication rather than Organization: the thing being described
+         is the tool, and that is what earns a rich result for a "what
+         should I cook" query. The FAQ answers the questions people actually
+         type, which is what gets quoted in a snippet. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "@id": "https://kinnijije.xyz/#app",
+            "name": "KinniJije",
+            "url": "https://kinnijije.xyz/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Any",
+            "inLanguage": "en-NG",
+            "description": "Tell KinniJije what you have at home and it picks a Nigerian meal to cook, with the recipe and a list of what you still need.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "NGN",
+              "availability": "https://schema.org/InStock"
+            },
+            "featureList": [
+              "Decides what to cook from what you already have",
+              "Nigerian and West African home cooking",
+              "Full recipe and step by step method",
+              "Tells you what you still need to buy"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://kinnijije.xyz/#website",
+            "url": "https://kinnijije.xyz/",
+            "name": "KinniJije",
+            "inLanguage": "en-NG",
+            "publisher": { "@id": "https://kinnijije.xyz/#app" }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://kinnijije.xyz/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What should I cook today?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Tell KinniJije what you have at home, how much time you have, and what you feel like eating. It picks one Nigerian meal you can actually make, gives you the recipe, and lists anything you still need to buy."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need an account to use KinniJije?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can try the decide flow without signing up. An account is what remembers your preferences and gives you a fresh suggestion each day."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What kind of food does KinniJije suggest?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nigerian and West African home cooking: jollof rice, egusi, efo riro, ewa agoyin, pepper soup, amala and ewedu, moi moi, akara and more, across Yoruba, Igbo, Efik, Delta and Northern kitchens."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does it take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "About thirty seconds. Four quick questions and you have a meal, a recipe and a shopping list."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <!-- Seen only with JavaScript disabled, and by a crawler that does not
+         execute it. It states what the page is rather than scolding. -->
+    <noscript>
+      <div style="max-width: 34rem; margin: 3rem auto; padding: 0 1.25rem; font-family: system-ui, sans-serif; line-height: 1.6;">
+        <h1 style="font-size: 1.6rem;">KinniJije decides what you should cook</h1>
+        <p>
+          Tell KinniJije what you have at home and it picks a Nigerian meal you can
+          actually make, with the recipe and a short list of what you still need to
+          buy. Jollof rice, egusi, efo riro, ewa agoyin, pepper soup, amala and more.
+        </p>
+        <p>This page needs JavaScript switched on.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

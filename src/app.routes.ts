@@ -23,9 +23,10 @@ import {
   resetPasswordRoute,
 } from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
+import { decideRoute } from '@features/decide/decide.routes';
 import { heroRoute } from '@features/hero/hero.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
-import { landingRoute } from '@features/landing/landing.routes';
+import { landingRoute, whyRoute } from '@features/landing/landing.routes';
 import { marketRoute } from '@features/market/market.routes';
 import { cookRoute, favouritesRoute, mealRoute, suggestionsRoute } from '@features/meals/meals.routes';
 import { onboardingRoute } from '@features/onboarding/onboarding.routes';
@@ -46,8 +47,11 @@ import { rootRoute } from './app.root-route';
  * genuinely can shadow a literal `/meals/...`, so the params go last.
  */
 export const routeTree = rootRoute.addChildren([
-  // Public
+  // Public. `landingRoute` owns "/" for now; the decide flow is at /decide
+  // until it has been tested live.
   landingRoute,
+  whyRoute,
+  decideRoute,
   heroRoute,
   registerRoute,
   loginRoute,

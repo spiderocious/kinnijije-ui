@@ -8,6 +8,7 @@ import { Button } from '@ui/primitives';
 import { Tag } from '@ui/status';
 
 import { useAdminRecipe, useDeleteRecipe, useSetRecipeStatus } from '../hooks/use-admin';
+import { RecipeImagesPanel } from '../images/recipe-images-panel';
 import { ConsoleShell } from '../parts/console-shell';
 
 function Row({ label, value }: { readonly label: string; readonly value: string | number | null }) {
@@ -115,6 +116,12 @@ export default function AdminRecipeDetailScreen() {
             </InfoCard>
 
             <div className="flex min-w-0 flex-col gap-4">
+              {/* Imagery lives on the recipe it belongs to: an operator is
+                  already here when they notice one is missing. */}
+              <InfoCard title="Imagery">
+                <RecipeImagesPanel mealId={mealId} />
+              </InfoCard>
+
               <InfoCard title={`Ingredients (${String(data?.ingredients.length ?? 0)})`}>
                 <ul className="flex flex-col gap-1.5">
                   <Repeat each={data?.ingredients ?? []}>

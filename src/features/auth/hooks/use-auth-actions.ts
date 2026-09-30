@@ -4,6 +4,9 @@ import { useMutation } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import type { ApiError } from '@shared/services/api-client';
 
+import { carryOverDraft } from '@features/decide/services/decide-carryover';
+import { decideDraft } from '@features/decide/services/decide-draft';
+
 import { useNextPath } from './use-next-path';
 import { authApi } from '../services/auth.api';
 import type { AuthSession, LoginPayload, RegisterPayload } from '../types/auth.types';
@@ -28,6 +31,27 @@ export function useRegister() {
     mutationFn: authApi.register,
     onSuccess: (session) => {
       signIn(session);
+
+      /**
+       * A guest converting from the decide flow has already answered every
+       * question onboarding asks, so replaying their draft lets the new
+       * account skip onboarding entirely and land on the meal they chose.
+       *
+       * Deliberately not awaited before navigating: the account exists and the
+       * session is live, so making somebody watch a spinner for two writes
+       * that cannot fail visibly would be worse than landing them immediately.
+       * A failure leaves the draft in place to be retried.
+       */
+      const draft = decideDraft.get();
+      if (draft !== null && draft.verdict !== null) {
+        void carryOverDraft(draft).then((result) => {
+          void navigate({
+            to: result.mealId !== null ? ROUTES.MEAL(result.mealId) : landingRouteFor(session),
+          });
+        });
+        return;
+      }
+
       // A brand-new account has never onboarded, so this is always onboarding —
       // but it is read off the response rather than assumed, so the rule stays
       // true if registration ever pre-completes it.

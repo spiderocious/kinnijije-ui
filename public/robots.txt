@@ -1,0 +1,9 @@
+# Everything is public and worth indexing except the console and the
+# design-system surfaces, which are internal tooling rather than pages.
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /preview
+Disallow: /scenes
+
+Sitemap: https://kinnijije.xyz/sitemap.xml

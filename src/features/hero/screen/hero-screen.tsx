@@ -14,23 +14,6 @@ import { HeroPot } from './parts/hero-pot';
 
 gsap.registerPlugin(useGSAP);
 
-/**
- * `/hero` — the social-OG image, rendered live. One viewport, no scroll, no
- * app chrome: a poster that happens to breathe.
- *
- * The layout is the reference page's shape — wordmark row, giant centred
- * display headline, one CTA, the subject cropped by the bottom edge — spoken
- * in this system's voice: sky ground instead of pink, the blade instead of
- * pillow corners, a pot of stew instead of parcel boxes.
- *
- * The headline and body come from `@ui/site` because every hero states the
- * same promise in the same words — a poster is not exempt from that contract.
- *
- * Motion is an entrance (once) plus idle loops, all inside a reduced-motion
- * `matchMedia`. The authored CSS is the *finished* frame: with motion off, or
- * before GSAP wakes, the page is a complete still poster — which is exactly
- * what an OG render has to be.
- */
 export default function HeroScreen() {
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -61,10 +44,6 @@ export default function HeroScreen() {
           { scale: 0, autoAlpha: 0, duration: 0.5, stagger: { each: 0.07, from: 'random' }, ease: 'back.out(2.2)' },
           1.15,
         );
-
-        /* ── The idle loops — begin after the entrance owns nothing. ──
-           Every loop is delayed past the entrance so no two tweens ever
-           fight over the same property on the same element. */
         const IDLE = 2.3;
 
         // The backdrop drifts, barely.
@@ -80,9 +59,6 @@ export default function HeroScreen() {
             ease: 'sine.inOut',
           });
         });
-
-        // The blob bobs; the groceries hover. The pot's own loops — steam,
-        // boil, bubbles, lid — went with the pot.
         gsap.to('[data-pot-blob]', { y: -7, duration: 2.1, delay: IDLE, repeat: -1, yoyo: true, ease: 'sine.inOut' });
         gsap.utils.toArray<HTMLElement>('[data-pot-ingredient]').forEach((el, i) => {
           gsap.to(el, {
@@ -117,8 +93,6 @@ export default function HeroScreen() {
       >
         <span className="inline-flex items-center gap-2.5">
           <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-blade-xs bg-sky text-white">
-            {/* Lighter than the nav marks — it sits on solid sky, where a
-                    thinner line holds up and a heavy one fills in. */}
             <KoboyoIcon name="utensilsCrossed" size={15} weight={0.75} alone />
           </span>
           <span className="font-display text-2xl font-extrabold tracking-display">kinnijije</span>
@@ -144,10 +118,6 @@ export default function HeroScreen() {
         <h1 className="mt-5 max-w-[14ch] font-display text-5xl font-extrabold leading-[1.04] tracking-display sm:text-6xl md:text-[clamp(3.5rem,7vw,6rem)]">
           <Repeat each={HERO_HEADLINE.split(' ')}>
             {(word: string, i: number) => (
-              // The word gap is a margin, not a space character: trailing
-              // whitespace inside an inline-block is collapsed by CSS, which is
-              // how the words ended up welded together. `em` so it scales with
-              // the clamp()ed font size.
               <span
                 key={`${word}-${i}`}
                 data-hero-word

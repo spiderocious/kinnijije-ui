@@ -23,6 +23,13 @@ export const EP = {
     RESET_PASSWORD: `${V1}/auth/reset-password`,
   },
 
+  /** Public and unauthenticated — the decide-first flow. */
+  DECIDE: {
+    OPTIONS: `${V1}/decide/options`,
+    STATS: `${V1}/decide/stats`,
+    DECIDE: `${V1}/decide`,
+  },
+
   ONBOARDING: {
     GET: `${V1}/onboarding`,
     SAVE: `${V1}/onboarding`,
@@ -84,6 +91,21 @@ export const EP = {
     RECIPES_BULK: `${V1}/admin/recipes/bulk`,
     RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
     RECIPE_STATUS: (mealId: string) => `${V1}/admin/recipes/${mealId}/status`,
+
+    /** Recipe imagery. Literals before the :imageId routes, as on the server. */
+    RECIPE_IMAGES: (mealId: string) => `${V1}/admin/recipes/${mealId}/images`,
+    RECIPE_IMAGE_PROMPT: (mealId: string) => `${V1}/admin/recipes/${mealId}/images/prompt`,
+    RECIPE_IMAGE_UPLOAD_URL: (mealId: string) => `${V1}/admin/recipes/${mealId}/images/upload-url`,
+    RECIPE_IMAGE_GENERATE: (mealId: string) => `${V1}/admin/recipes/${mealId}/images/generate`,
+    RECIPE_IMAGE_PRIMARY: (mealId: string) => `${V1}/admin/recipes/${mealId}/images/primary`,
+    RECIPE_IMAGE_CONFIRM: (mealId: string, imageId: string) =>
+      `${V1}/admin/recipes/${mealId}/images/${imageId}/confirm`,
+    RECIPE_IMAGE_PUBLISH: (mealId: string, imageId: string) =>
+      `${V1}/admin/recipes/${mealId}/images/${imageId}/publish`,
+    RECIPE_IMAGE_REJECT: (mealId: string, imageId: string) =>
+      `${V1}/admin/recipes/${mealId}/images/${imageId}/reject`,
+    RECIPE_IMAGE: (mealId: string, imageId: string) =>
+      `${V1}/admin/recipes/${mealId}/images/${imageId}`,
     USERS: `${V1}/admin/users`,
     USER: (userId: string) => `${V1}/admin/users/${userId}`,
     USER_STATUS: (userId: string) => `${V1}/admin/users/${userId}/status`,

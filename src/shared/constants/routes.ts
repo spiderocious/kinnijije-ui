@@ -7,6 +7,16 @@ export const ROUTES = {
   ENTRY: '/',
   /** The social-OG render — one full-screen hero, no scroll, no chrome. */
   HERO: '/hero',
+  /** The decide-first flow: land, four taps, a meal. No account needed. */
+  DECIDE: '/decide',
+  /**
+   * The old marketing landing — pricing, FAQ, trust.
+   *
+   * Kept, not deleted: it is genuinely useful to somebody who wants to read
+   * before deciding, and moving it here means `/` can be the flow without
+   * losing any of it.
+   */
+  WHY: '/why',
 
   // Auth
   LOGIN: '/login',
