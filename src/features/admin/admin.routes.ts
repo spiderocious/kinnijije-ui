@@ -94,7 +94,56 @@ export const adminJobsRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-jobs-route')),
 });
 
+// Chowdeck. Every section is a literal; the two detail routes come later.
+export const adminChowdeckRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-route')),
+});
+
+export const adminChowdeckRequestsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK_REQUESTS,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-requests-route')),
+});
+
+export const adminChowdeckCacheRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK_CACHE,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-cache-route')),
+});
+
+export const adminChowdeckCoverageRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK_COVERAGE,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-coverage-route')),
+});
+
+export const adminChowdeckPlacesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK_PLACES,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-places-route')),
+});
+
+export const adminChowdeckClicksRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CHOWDECK_CLICKS,
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-clicks-route')),
+});
+
 // Parameterised last.
+export const adminChowdeckRequestRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/chowdeck/requests/$callId',
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-request-detail-route')),
+});
+
+export const adminChowdeckCacheEntryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/chowdeck/cache/$entryId',
+  component: lazyRouteComponent(() => import('./screen/admin-chowdeck-cache-detail-route')),
+});
+
 export const adminRecipeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/recipes/$mealId',

@@ -14,7 +14,7 @@ import {
   storeVerdict,
 } from '../services/decide-draft';
 import { promote, rejectAndPromote } from '../services/decide-rerank';
-import type { DecideDraft, DecideVerdict } from '../types/decide.types';
+import type { DecideDraft, DecideMode, DecideVerdict } from '../types/decide.types';
 
 /**
  * The tiles.
@@ -75,8 +75,14 @@ export interface UseDecideResult {
   /** Seconds to wait, when the IP bucket refused. Drives the signup pitch. */
   retryAfterSeconds: number | null;
   error: string | null;
-  /** Spends one of the 8/hour. The only call that does. */
-  decide: () => Promise<void>;
+  /**
+   * Spends one of the 8/hour. The only call that does.
+   *
+   * `mode` is what the SCREEN says is in effect, which can differ from the
+   * draft: a draft left in order mode after Chowdeck was switched off is sent
+   * as a cooking decision rather than asking for restaurants nobody can show.
+   */
+  decide: (options?: { mode?: DecideMode }) => Promise<void>;
   /** Free. Local re-rank. */
   chooseAlternate: (mealId: string) => void;
   /** Free. Local re-rank + the refusal is remembered for the next real call. */
@@ -102,8 +108,9 @@ export function useDecide(): UseDecideResult {
     setDraft(decideDraft.patch(changes));
   }, []);
 
-  const decide = useCallback(async () => {
-    const current = decideDraft.ensure();
+  const decide = useCallback(async (options: { mode?: DecideMode } = {}) => {
+    const stored = decideDraft.ensure();
+    const current = options.mode === undefined ? stored : { ...stored, mode: options.mode };
     if (!isDecidable(current)) return;
 
     setError(null);
@@ -119,6 +126,8 @@ export function useDecide(): UseDecideResult {
       weight: current.weight,
       minutes: current.minutes,
       city: current.city,
+      mode: current.mode,
+      place_id: current.place?.id ?? null,
       rejected_count: current.rejected.length,
       is_retry: current.rejected.length > 0,
     });

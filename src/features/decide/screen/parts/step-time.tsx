@@ -1,7 +1,9 @@
 import { MapPin } from 'lucide-react';
 
+import { PlacePicker } from '@features/chowdeck/parts/place-picker';
+
 import { DECIDE_COPY } from '../../content/decide.content';
-import type { DecideOptions, TimeBudget } from '../../types/decide.types';
+import type { DecideOptions, DecidePlace, TimeBudget } from '../../types/decide.types';
 import { DecideShell } from './decide-shell';
 import { StepNav } from './step-nav';
 
@@ -24,6 +26,15 @@ interface StepTimeProps {
   readonly onSkip: () => void;
   readonly onBack: () => void;
   readonly busy: boolean;
+  /**
+   * Present while Chowdeck is on. The free-text city becomes a saved area:
+   * it still reads the weather (through the area's city), and it is what lets
+   * the verdict show where the dish could be bought instead.
+   */
+  readonly placePicker?: {
+    readonly value: DecidePlace | null;
+    readonly onChange: (place: DecidePlace | null) => void;
+  } | undefined;
 }
 
 function Pill({
@@ -65,6 +76,7 @@ export function StepTime({
   onSkip,
   onBack,
   busy,
+  placePicker,
 }: StepTimeProps) {
   const budgets = options?.minutes ?? [];
   const cities = options?.cities ?? [];
@@ -102,27 +114,35 @@ export function StepTime({
         <h2 className="font-display text-[19px] font-extrabold text-ink">
           {DECIDE_COPY.time.cityTitle}
         </h2>
-        <p className="mt-0.5 text-[13.5px] text-ink-3">{DECIDE_COPY.time.citySub}</p>
+        <p className="mt-0.5 text-[13.5px] text-ink-3">
+          {placePicker !== undefined ? DECIDE_COPY.time.placeSub : DECIDE_COPY.time.citySub}
+        </p>
       </div>
 
-      <label className="flex min-h-ctrl items-center gap-2 rounded-blade-xs border-2 border-line-2 bg-white px-3 focus-within:border-sky focus-within:shadow-drop-sm">
-        <MapPin size={17} strokeWidth={2.2} className="shrink-0 text-ink-4" />
-        <input
-          value={city ?? ''}
-          onChange={(e) => { onCity(e.target.value); }}
-          placeholder={DECIDE_COPY.time.cityPlaceholder}
-          aria-label="City"
-          className="w-full border-0 bg-transparent font-sans text-base text-ink outline-none placeholder:text-ink-4"
-        />
-      </label>
+      {placePicker !== undefined ? (
+        <PlacePicker value={placePicker.value} onChange={placePicker.onChange} />
+      ) : (
+        <>
+          <label className="flex min-h-ctrl items-center gap-2 rounded-blade-xs border-2 border-line-2 bg-white px-3 focus-within:border-sky focus-within:shadow-drop-sm">
+            <MapPin size={17} strokeWidth={2.2} className="shrink-0 text-ink-4" />
+            <input
+              value={city ?? ''}
+              onChange={(e) => { onCity(e.target.value); }}
+              placeholder={DECIDE_COPY.time.cityPlaceholder}
+              aria-label="City"
+              className="w-full border-0 bg-transparent font-sans text-base text-ink outline-none placeholder:text-ink-4"
+            />
+          </label>
 
-      <div className="flex flex-wrap gap-2">
-        {cities.map((name) => (
-          <Pill key={name} active={city === name} onClick={() => { onCity(name); }}>
-            {name}
-          </Pill>
-        ))}
-      </div>
+          <div className="flex flex-wrap gap-2">
+            {cities.map((name) => (
+              <Pill key={name} active={city === name} onClick={() => { onCity(name); }}>
+                {name}
+              </Pill>
+            ))}
+          </div>
+        </>
+      )}
     </DecideShell>
   );
 }

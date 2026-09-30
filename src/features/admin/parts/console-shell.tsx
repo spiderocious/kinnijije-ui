@@ -26,6 +26,10 @@ const CONSOLE_NAV: SidebarGroup[] = [
     ],
   },
   {
+    label: 'Partners',
+    items: [{ id: 'chowdeck', label: 'Chowdeck', icon: 'truck' }],
+  },
+  {
     items: [
       { id: 'settings', label: 'Settings', icon: 'settings' },
     ],
@@ -40,6 +44,7 @@ const DESTINATIONS: Record<string, string> = {
   ai: ROUTES.ADMIN_AI,
   jobs: ROUTES.ADMIN_JOBS,
   emails: ROUTES.ADMIN_EMAILS,
+  chowdeck: ROUTES.ADMIN_CHOWDECK,
   settings: ROUTES.ADMIN_SETTINGS,
 };
 

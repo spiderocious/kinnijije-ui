@@ -26,6 +26,8 @@ export function emptyDraft(): DecideDraft {
     weight: null,
     minutes: null,
     city: null,
+    mode: 'cook',
+    place: null,
     rejected: [],
     verdict: null,
   };
@@ -122,16 +124,28 @@ export function isDecidable(draft: DecideDraft): draft is DecideDraft & {
 export const DEFAULT_MINUTES: TimeBudget = 40;
 
 export function draftToPayload(draft: DecideDraft & { mood: Mood; weight: Weight }) {
-  const city = draft.city?.trim();
+  // A picked place carries its own city; a typed one only exists in cook mode
+  // with the Chowdeck flag off.
+  const city = (draft.place?.city ?? draft.city)?.trim();
+  const ordering = draft.mode === 'order';
   return {
-    kitchen_items: draft.kitchenItems,
-    kitchen_skipped: draft.kitchenSkipped,
+    // Ordering sends an empty kitchen: the server ignores it in that mode, and
+    // sending the taps anyway would log a kitchen the person set aside.
+    kitchen_items: ordering ? [] : draft.kitchenItems,
+    kitchen_skipped: ordering ? true : draft.kitchenSkipped,
     mood: draft.mood,
     weight: draft.weight,
     minutes: draft.minutes ?? DEFAULT_MINUTES,
     ...(city !== undefined && city.length > 0 && { city }),
+    mode: draft.mode,
+    ...(draft.place !== null && { place_id: draft.place.id }),
     rejected: draft.rejected,
   };
+}
+
+/** Order mode cannot decide without a place: there is nowhere to look for restaurants. */
+export function isReadyToDecide(draft: DecideDraft): boolean {
+  return isDecidable(draft) && (draft.mode !== 'order' || draft.place !== null);
 }
 
 /** Records a refusal and drops the stale verdict in one write. */

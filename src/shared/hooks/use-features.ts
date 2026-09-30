@@ -11,6 +11,10 @@ export interface FeatureFlags {
   analytics_server: boolean;
   /** The signup invite inside the decide flow. An experiment; defaults off. */
   decide_invite: boolean;
+  /** Chowdeck cards, and "I'll order" in the decide flow. */
+  chowdeck_offers: boolean;
+  /** Whether the server calls Chowdeck. The app never reads it; listed so the shape matches. */
+  chowdeck_fetch: boolean;
 }
 
 /**
@@ -39,6 +43,10 @@ const ALL_ON: FeatureFlags = {
   // Off for the same reason: an unproven experiment that can cost completions
   // must not switch itself on because a read failed.
   decide_invite: false,
+  // Off until the server says so: another company's name on our screen, and
+  // an "I'll order" button that leads nowhere if the flag was really off.
+  chowdeck_offers: false,
+  chowdeck_fetch: false,
 };
 
 /**

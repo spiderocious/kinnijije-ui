@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { DECIDE_COPY } from '../../content/decide.content';
 import { ILLUSTRATION } from '../../content/decide.illustrations';
+import { QuoteTyper } from './quote-typer';
 
 /**
  * The wait.
@@ -104,6 +105,10 @@ export function DecideThinking({ candidates }: DecideThinkingProps) {
           {candidates} recipes → narrowing → 1
         </p>
       )}
+
+      {/* Something to read while the bar moves. Below the progress, never in
+          place of it: the estimate is the information, this is the company. */}
+      <QuoteTyper />
     </div>
   );
 }

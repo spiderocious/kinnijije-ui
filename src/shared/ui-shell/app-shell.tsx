@@ -239,7 +239,11 @@ export function AppShell({
           // Room for whichever fixed bars are actually present.
           dock !== undefined && inner && 'pb-[96px]',
           dock !== undefined && !inner && 'pb-[168px]',
-          dock === undefined && inner && 'pb-8',
+          // A bare-headed inner page draws its own full-height chrome, footer
+          // included, so there is no fixed bar to clear. The usual bottom
+          // padding would push that layout past the viewport and invent a
+          // scroll on a screen designed not to have one.
+          dock === undefined && inner && !bareHeader && 'pb-8',
           dock === undefined && !inner && 'pb-[96px]',
         )}
       >

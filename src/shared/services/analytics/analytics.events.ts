@@ -24,6 +24,15 @@ export const EVENTS = {
   DECIDE_RESTARTED: 'decide_restarted',
   DECIDE_SIGNUP_CLICKED: 'decide_signup_clicked',
   DECIDE_COOK_CLICKED: 'decide_cook_clicked',
+  /** "Don't worry, I'll order" on the kitchen step. */
+  DECIDE_ORDER_CHOSEN: 'decide_order_chosen',
+  DECIDE_PLACE_CHOSEN: 'decide_place_chosen',
+
+  // ── Chowdeck ───────────────────────────────────────────────────────────
+  // The server counts shows and clicks too (an ad blocker cannot stop those);
+  // these carry what only the browser knows — which card, and whether it was seen.
+  CHOWDECK_OFFERS_VIEWED: 'chowdeck_offers_viewed',
+  CHOWDECK_OFFER_CLICKED: 'chowdeck_offer_clicked',
 
   // ── Marketing ──────────────────────────────────────────────────────────
   WHY_PAGE_VIEWED: 'why_page_viewed',

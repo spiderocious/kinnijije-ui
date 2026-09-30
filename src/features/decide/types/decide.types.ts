@@ -4,8 +4,25 @@
  * Exported as a list because the URL carries the step, so an arriving value
  * has to be validated against something.
  */
-export const DECIDE_STAGES = ['hero', 'kitchen', 'mood', 'weight', 'time', 'verdict'] as const;
+export const DECIDE_STAGES = ['hero', 'kitchen', 'mood', 'weight', 'time', 'place', 'verdict'] as const;
 export type DecideStage = (typeof DECIDE_STAGES)[number];
+
+/**
+ * Cooking it, or having it brought. `order` is "don't worry, I'll order" on
+ * the kitchen step: the kitchen and the clock stop mattering, and the last
+ * question becomes where to deliver to instead of how long there is.
+ */
+export type DecideMode = 'cook' | 'order';
+
+/** A saved Chowdeck place, as the picker holds it. */
+export interface DecidePlace {
+  id: string;
+  name: string;
+  description: string;
+  city: string | null;
+  /** Absent in drafts saved before places were grouped by state. */
+  state?: string | null;
+}
 
 /**
  * The anonymous decision, client side.
@@ -14,7 +31,7 @@ export type DecideStage = (typeof DECIDE_STAGES)[number];
  * move in the same commit — a drifted shape here is a silent 422.
  */
 
-export type Mood = 'tired' | 'fast' | 'proper' | 'comfort';
+export type Mood = 'tired' | 'fast' | 'proper' | 'comfort' | 'surprise';
 export type Weight = 'solid' | 'light' | 'soupy' | 'swallow' | 'rice' | 'street';
 export type TimeBudget = 15 | 40 | 90;
 
@@ -105,6 +122,10 @@ export interface DecideDraft {
   weight: Weight | null;
   minutes: TimeBudget | null;
   city: string | null;
+  /** Absent in drafts from before order mode; `emptyDraft` fills it as `cook`. */
+  mode: DecideMode;
+  /** Where offers are looked up and delivery would go. Null until picked. */
+  place: DecidePlace | null;
   /** Meals refused this session. Sent back so they are never offered again. */
   rejected: string[];
   /** The answer, once given. Held so a reload costs no second model call. */
@@ -118,6 +139,8 @@ export interface DecidePayload {
   weight: Weight;
   minutes: TimeBudget;
   city?: string;
+  mode: DecideMode;
+  place_id?: string;
   rejected: string[];
 }
 

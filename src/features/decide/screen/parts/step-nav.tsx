@@ -20,7 +20,7 @@ interface StepNavProps {
   readonly continueLabel: string;
   readonly continueDisabled?: boolean;
   readonly loading?: boolean;
-  /** A second, quieter action under the pair, such as "I have nothing". */
+  /** A second, quieter action under the pair. */
   readonly secondary?: { label: string; onClick: () => void } | undefined;
   readonly backLabel?: string;
 }
@@ -39,7 +39,6 @@ export function StepNav({
       <div className="flex items-stretch gap-2">
         <Button
           variant="secondary"
-          size="lg"
           onClick={onBack}
           aria-label={backLabel}
           className="shrink-0 px-5"
@@ -49,7 +48,6 @@ export function StepNav({
         </Button>
 
         <Button
-          size="lg"
           fullWidth
           loading={loading}
           disabled={continueDisabled}

@@ -231,6 +231,7 @@ export interface FeatureFlagRow {
   key: string;
   label: string;
   /** What actually stops happening. Written next to the switch. */
+  when_on: string;
   when_off: string;
   enabled: boolean;
   updated_by: string | null;
@@ -267,7 +268,7 @@ export interface Paged<T> {
 }
 
 /** Only the params that are actually set reach the wire. */
-function qs(params: Record<string, string | number | undefined>): string {
+export function qs(params: Record<string, string | number | undefined>): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined && value !== '') search.set(key, String(value));

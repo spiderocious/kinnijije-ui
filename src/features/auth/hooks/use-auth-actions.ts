@@ -113,7 +113,15 @@ export function useRegister(options: { onDone?: () => void } = {}) {
   });
 }
 
-export function useLogin() {
+/**
+ * @param options.onDone replaces the navigation on success.
+ *
+ * Same reason as `useRegister`: somebody signing in from the invite sheet is
+ * in the middle of deciding. Navigating them to a landing route would throw
+ * away the step they were on, which is precisely the friction the sheet
+ * exists to remove.
+ */
+export function useLogin(options: { onDone?: () => void } = {}) {
   const { signIn } = useSession();
   const navigate = useNavigate();
   const next = useNextPath();
@@ -131,6 +139,19 @@ export function useLogin() {
         has_onboarded: session.user.has_onboarded,
       });
       analytics.track(EVENTS.LOGGED_IN, { method: 'password' });
+
+      /**
+       * Stay exactly where they are.
+       *
+       * No carry-over here, unlike registration: an existing account already
+       * has a kitchen and an onboarding state, and replaying a guest draft
+       * over it would overwrite settings they chose earlier. The draft stays
+       * in place and the flow continues from it.
+       */
+      if (options.onDone !== undefined) {
+        options.onDone();
+        return;
+      }
 
       // Back to whatever they were trying to reach — but ONLY once onboarding
       // is done. Somebody who has never set up a kitchen cannot use the page

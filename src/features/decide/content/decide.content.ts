@@ -65,7 +65,16 @@ export const DECIDE_COPY = {
     more: 'More groups',
     fewer: 'Fewer groups',
     continue: (n: number) => (n === 0 ? 'Continue' : `Continue · ${String(n)} picked`),
-    skip: "I have nothing, just decide for me",
+    /** Order mode. Only offered while the Chowdeck flag is on. */
+    order: "Don't worry, I'll order",
+  },
+
+  /** Order mode's last question, in place of the time step. */
+  place: {
+    title: 'Where should it come to?',
+    sub: 'We only show restaurants that deliver there.',
+    cta: 'Find it near me',
+    ctaNeedsPlace: 'Pick your area first',
   },
 
   /**
@@ -85,6 +94,38 @@ export const DECIDE_COPY = {
     cta: 'Save my spot',
     dismiss: 'Not now, keep deciding',
     footnote: 'Free. No card. Your answers so far are kept either way.',
+
+    /** The three-way choice, before either form is shown. */
+    choice: {
+      signUp: 'Create an account',
+      signUpHint: 'New here. Takes ten seconds.',
+      logIn: 'I already have one',
+      logInHint: 'Sign in and keep your answers.',
+      skip: 'Not now, keep deciding',
+    },
+
+    /** The two forms, once a path is picked. */
+    forms: {
+      back: 'Back',
+      signUp: {
+        title: 'Create your account',
+        sub: 'Three fields, then straight back to deciding.',
+        name: 'Your name',
+        namePlaceholder: 'Feranmi',
+        email: 'Email',
+        emailPlaceholder: 'you@example.com',
+        password: 'Password',
+        submit: 'Create account and continue',
+      },
+      logIn: {
+        title: 'Welcome back',
+        sub: 'Sign in and pick up exactly where you are.',
+        email: 'Email',
+        emailPlaceholder: 'you@example.com',
+        password: 'Password',
+        submit: 'Sign in and continue',
+      },
+    },
   },
 
   /** Shown to a signed-in cook in place of the kitchen step. */
@@ -115,6 +156,8 @@ export const DECIDE_COPY = {
     cityTitle: 'Where are you?',
     citySub: 'Optional. It lets us read the weather.',
     cityPlaceholder: 'Your city',
+    /** When Chowdeck is on, the city becomes an area — and it also unlocks "buy it instead". */
+    placeSub: 'Optional. It reads the weather, and shows where you could buy it instead.',
     cta: 'Decide what I eat',
     skip: 'Skip and decide without this',
   },
@@ -143,6 +186,10 @@ export const DECIDE_COPY = {
     /** Names the dish that was refused, so it reads as listening. */
     rejected: (name: string) => `Noted, not ${name.toLowerCase()}`,
     rejectedSub: "Here's the next one.",
+    /** Order mode: the recipe is the fallback, not the point. */
+    orderEyebrow: 'Tonight, delivered',
+    orderHook: 'No pots tonight.',
+    cookInstead: 'Or cook it yourself',
   },
 
   /**

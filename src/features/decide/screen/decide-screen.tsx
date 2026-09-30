@@ -9,6 +9,7 @@ import { DECIDE_COPY } from '../content/decide.content';
 import { useSession } from '@features/auth/hooks/use-session';
 import { AppShell } from '@shared/ui-shell/app-shell';
 import { useFeatures } from '@shared/hooks/use-features';
+import { usePlacesAvailable } from '@features/chowdeck/use-chowdeck';
 
 import { useDecide, useDecideOptions, usePrefetchDecideOptions } from '../hooks/use-decide';
 import { useMyKitchen } from '../hooks/use-my-kitchen';
@@ -19,10 +20,11 @@ import { DecideThinking } from './parts/decide-thinking';
 import { VerdictStories } from './parts/verdict-stories';
 import { StepKitchen } from './parts/step-kitchen';
 import { StepMood } from './parts/step-mood';
+import { StepPlace } from './parts/step-place';
 import { StepTime } from './parts/step-time';
 import { StepWeight } from './parts/step-weight';
 import { DECIDE_STAGES } from '../types/decide.types';
-import type { DecideStage, Mood, TimeBudget, Weight } from '../types/decide.types';
+import type { DecidePlace, DecideStage, Mood, TimeBudget, Weight } from '../types/decide.types';
 
 /**
  * The front door.
@@ -67,12 +69,63 @@ function DecideFlow() {
    * rail must say so. Telling somebody "2 of 4" when only three will be asked
    * is a small lie that makes the whole thing feel careless.
    */
-  const totalSteps = myKitchen.canSkip ? 3 : 4;
-  const stepOffset = myKitchen.canSkip ? 0 : 1;
   const location = useLocation();
 
   const search = location.search as { step?: DecideStage };
   const stage: DecideStage = search.step ?? 'hero';
+
+  /**
+   * Frozen once the flow is under way, NOT recomputed live.
+   *
+   * Somebody who signs in from the invite sheet flips `canSkip` mid-flow, and
+   * a rail that jumps from "4 of 4" to "3 of 3" under them — renumbering the
+   * step they are standing on and changing where Back goes — reads as the app
+   * losing its place. The shape of the flow is decided when it begins; signing
+   * in changes what happens NEXT time, not the run in progress.
+   *
+   * Still live on the hero, where nothing has started yet.
+   */
+  const shapeRef = useRef<boolean | null>(null);
+  if (stage === 'hero') {
+    shapeRef.current = null;
+  } else {
+    shapeRef.current ??= myKitchen.canSkip;
+  }
+  const canSkipKitchen = shapeRef.current ?? myKitchen.canSkip;
+
+  const totalSteps = canSkipKitchen ? 3 : 4;
+  const stepOffset = canSkipKitchen ? 0 : 1;
+
+  /**
+   * Order mode: "don't worry, I'll order" on the kitchen step.
+   *
+   * Only while the Chowdeck flag is on — a draft left in order mode from
+   * before the switch was thrown falls back to cooking rather than asking for
+   * a place nothing can use. The last question is then WHERE, not how long;
+   * the step count is unchanged, because one question replaces the other.
+   */
+  /**
+   * The flag alone is not enough. With no saved places yet, "I'll order"
+   * would lead to an empty list and the verdict would have nowhere to look —
+   * which is exactly how switching this on used to show nothing at all.
+   */
+  const offersOn = usePlacesAvailable(features.chowdeck_offers);
+  const ordering = offersOn && decide.draft.mode === 'order';
+  const lastStage: DecideStage = ordering ? 'place' : 'time';
+
+  const setPlace = useCallback(
+    (place: DecidePlace | null) => {
+      decide.patch({ place, ...(place !== null && { city: place.city }) });
+      if (place !== null) {
+        analytics.track(EVENTS.DECIDE_PLACE_CHOSEN, {
+          place_id: place.id,
+          city: place.city,
+          mode: decide.draft.mode,
+        });
+      }
+    },
+    [decide],
+  );
 
   /**
    * When the current step was reached, for `ms_on_step`.
@@ -144,8 +197,19 @@ function DecideFlow() {
 
   const [rejectedName, setRejectedName] = useState<string | null>(null);
 
+  /**
+   * "After step 3", which is the TIME step — not the weight step.
+   *
+   * Weight IS step 3 for a guest, so anchoring here to `weight` fired the
+   * sheet while that question was still on screen, interrupting the very
+   * answer it is supposed to reward. Anchored to `time`, it arrives once
+   * three questions are behind them and the verdict is one tap away.
+   *
+   * Deliberately never on the verdict: that screen carries its own signup
+   * offer, and two asks back to back is how an offer becomes a nuisance.
+   */
   const showInvite =
-    features.decide_invite && !isSignedIn && !inviteDismissed && stage === 'weight';
+    features.decide_invite && !isSignedIn && !inviteDismissed && stage === lastStage;
 
   const dismissInvite = useCallback(() => {
     inviteStore.dismiss();
@@ -179,14 +243,21 @@ function DecideFlow() {
       decide.error === null &&
       decide.retryAfterSeconds === null
     ) {
-      setStage(decide.draft.weight !== null ? 'time' : 'hero', true);
+      setStage(decide.draft.weight !== null ? lastStage : 'hero', true);
       return;
     }
-    if (stage === 'time' && decide.draft.weight === null) {
+    if ((stage === 'time' || stage === 'place') && decide.draft.weight === null) {
       setStage(decide.draft.mood !== null ? 'weight' : 'kitchen', true);
+      return;
+    }
+    // The other road's last step: a shared `?step=place` while cooking, or a
+    // `?step=time` while ordering, goes to the one this person is on.
+    if ((stage === 'time' || stage === 'place') && stage !== lastStage) {
+      setStage(lastStage, true);
     }
   }, [
     stage,
+    lastStage,
     decide.verdict,
     decide.isDeciding,
     decide.error,
@@ -202,8 +273,8 @@ function DecideFlow() {
     // the step changing and the request starting.
     setRequested(true);
     setStage('verdict');
-    await decide.decide();
-  }, [decide, setStage]);
+    await decide.decide({ mode: ordering ? 'order' : 'cook' });
+  }, [decide, setStage, ordering]);
 
   /**
    * "Cook this" on a specific card.
@@ -223,6 +294,21 @@ function DecideFlow() {
         meal_id: mealId,
         is_winner: decide.verdict?.verdict.meal_id === mealId,
       });
+      /**
+       * A member already HAS the thing signup was asking for.
+       *
+       * This routed everybody to register, from when the flow was guests
+       * only. Signed in, that is a redirect to a page the guard bounces
+       * straight back, so the button reads as broken — the recipe is what
+       * "cook this" means once there is an account to open it with.
+       */
+      if (isSignedIn) {
+        // `''` would build `/meals/`, a route that does not exist. Nothing
+        // passes it today, but the signature allows it.
+        if (mealId !== '') void navigate({ to: ROUTES.MEAL(mealId) });
+        return;
+      }
+
       // `source` is what says WHICH pitch converts: wanting to save this meal,
       // or running into the hourly cap. Two different findings.
       analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, {
@@ -233,7 +319,7 @@ function DecideFlow() {
 
       void navigate({ to: ROUTES.REGISTER });
     },
-    [decide, navigate],
+    [decide, navigate, isSignedIn],
   );
 
   const goSignUp = useCallback(() => {
@@ -253,7 +339,9 @@ function DecideFlow() {
           // Somebody whose kitchen we already know is never asked for it: the
           // clearest possible signal that the app does not remember them.
           if (myKitchen.canSkip) {
-            decide.patch({ kitchenItems: myKitchen.items, kitchenSkipped: false });
+            // Cooking by default. "I'll order" is still one tap away: "Change"
+            // on the mood step opens the kitchen step, where it lives.
+            decide.patch({ kitchenItems: myKitchen.items, kitchenSkipped: false, mode: 'cook' });
             setStage('mood');
             return;
           }
@@ -274,14 +362,25 @@ function DecideFlow() {
         selected={decide.draft.kitchenItems}
         onChange={(items) => { decide.patch({ kitchenItems: items, kitchenSkipped: false }); }}
         onContinue={() => {
+          decide.patch({ mode: 'cook' });
           trackStep('kitchen', null, decide.draft.kitchenItems.length);
           setStage('mood');
         }}
-        onSkip={() => {
-          decide.patch({ kitchenItems: [], kitchenSkipped: true });
-          trackSkip('kitchen');
-          setStage('mood');
-        }}
+        onOrder={
+          offersOn
+            ? () => {
+                // The taps are kept, not cleared: somebody who comes back and
+                // decides to cook after all should find their kitchen as they
+                // left it. The payload sends an empty kitchen in order mode.
+                decide.patch({ mode: 'order' });
+                analytics.track(EVENTS.DECIDE_ORDER_CHOSEN, {
+                  kitchen_item_count: decide.draft.kitchenItems.length,
+                  ms_on_step: Date.now() - stageEnteredAt.current,
+                });
+                setStage('mood');
+              }
+            : undefined
+        }
         onBack={() => { setStage('hero'); }}
       />
     );
@@ -292,7 +391,7 @@ function DecideFlow() {
       <StepMood
         step={stepOffset + 1}
         total={totalSteps}
-        {...(myKitchen.canSkip && {
+        {...(canSkipKitchen && {
           usingKitchen: {
             items: decide.draft.kitchenItems,
             onChange: () => { setStage('kitchen'); },
@@ -305,7 +404,7 @@ function DecideFlow() {
           trackStep('mood', decide.draft.mood);
           setStage('weight');
         }}
-        onBack={() => { setStage(myKitchen.canSkip ? 'hero' : 'kitchen'); }}
+        onBack={() => { setStage(canSkipKitchen ? 'hero' : 'kitchen'); }}
       />
     );
   }
@@ -319,8 +418,35 @@ function DecideFlow() {
           options={options}
           value={decide.draft.weight}
           onChange={(weight: Weight) => { decide.patch({ weight }); }}
-          onContinue={() => { setStage('time'); }}
+          onContinue={() => { setStage(lastStage); }}
           onBack={() => { setStage('mood'); }}
+        />
+      </>
+    );
+  }
+
+  if (stage === 'time') {
+    return (
+      <>
+        <StepTime
+          step={stepOffset + 3}
+          total={totalSteps}
+          options={options}
+          minutes={decide.draft.minutes}
+          city={decide.draft.city}
+          onMinutes={(minutes: TimeBudget) => { decide.patch({ minutes }); }}
+          onCity={(city) => { decide.patch({ city }); }}
+          onDecide={() => {
+            trackStep('time', decide.draft.minutes);
+            void run();
+          }}
+          onSkip={() => {
+            trackSkip('time');
+            void run();
+          }}
+          onBack={() => { setStage('weight'); }}
+          busy={decide.isDeciding}
+          {...(offersOn && { placePicker: { value: decide.draft.place, onChange: setPlace } })}
         />
 
         {/* Non-blocking by construction: the step above stays mounted and
@@ -333,27 +459,27 @@ function DecideFlow() {
     );
   }
 
-  if (stage === 'time') {
+  if (stage === 'place') {
     return (
-      <StepTime
-        step={stepOffset + 3}
-        total={totalSteps}
-        options={options}
-        minutes={decide.draft.minutes}
-        city={decide.draft.city}
-        onMinutes={(minutes: TimeBudget) => { decide.patch({ minutes }); }}
-        onCity={(city) => { decide.patch({ city }); }}
-        onDecide={() => {
-          trackStep('time', decide.draft.minutes);
-          void run();
-        }}
-        onSkip={() => {
-          trackSkip('time');
-          void run();
-        }}
-        onBack={() => { setStage('weight'); }}
-        busy={decide.isDeciding}
-      />
+      <>
+        <StepPlace
+          step={stepOffset + 3}
+          total={totalSteps}
+          place={decide.draft.place}
+          onPlace={setPlace}
+          onDecide={() => {
+            if (decide.draft.place === null) return;
+            trackStep('place', decide.draft.place.id);
+            void run();
+          }}
+          onBack={() => { setStage('weight'); }}
+          busy={decide.isDeciding}
+        />
+
+        {showInvite && (
+          <InviteSheet onDismiss={dismissInvite} onSignedUp={dismissInvite} />
+        )}
+      </>
     );
   }
 
@@ -385,7 +511,7 @@ function DecideFlow() {
         title={DECIDE_COPY.exhausted.title}
         body={DECIDE_COPY.exhausted.body}
         tone="caution"
-        primary={{ label: DECIDE_COPY.exhausted.widen, onClick: () => { setStage('time'); } }}
+        primary={{ label: DECIDE_COPY.exhausted.widen, onClick: () => { setStage(lastStage); } }}
         secondary={{
           label: DECIDE_COPY.exhausted.restart,
           onClick: () => { decide.reset(); setRequested(false); setStage('hero'); },
@@ -415,8 +541,8 @@ function DecideFlow() {
         primary={{
           label: 'Change an answer',
           onClick: () => {
-            analytics.track(EVENTS.DECIDE_ANSWER_CHANGED, { from_stage: 'verdict', to_stage: 'time' });
-            setStage('time');
+            analytics.track(EVENTS.DECIDE_ANSWER_CHANGED, { from_stage: 'verdict', to_stage: lastStage });
+            setStage(lastStage);
           },
         }}
         secondary={{
@@ -440,9 +566,12 @@ function DecideFlow() {
         setRejectedName(refused?.name ?? null);
         decide.reject(mealId);
       }}
-      onChangeAnswer={() => { setRejectedName(null); setStage('time'); }}
+      onChangeAnswer={() => { setRejectedName(null); setStage(lastStage); }}
       onRegenerate={() => { setRejectedName(null); void run(); }}
       onRestart={() => { setRejectedName(null); decide.reset(); setRequested(false); setStage('hero'); }}
+      mode={ordering ? 'order' : 'cook'}
+      place={decide.draft.place}
+      showOffers={offersOn}
     />
   );
 }
@@ -514,8 +643,23 @@ export default function DecideScreen() {
 
   if (!isSignedIn) return <DecideFlow />;
 
+  /**
+   * The nav belongs to the LANDING step only.
+   *
+   * From the mood step onward the flow draws its own fixed footer — Back and
+   * Continue — and the app's fixed bottom nav sits on top of it, burying the
+   * one control the step exists to offer. Two fixed bars competing for the
+   * same edge is not something padding can fix honestly.
+   *
+   * So the flow becomes what it actually is once entered: a full-screen task.
+   * `inner` drops both chromes. On the hero it stays a proper tab, with the
+   * nav, because that is the one place somebody might want to leave for the
+   * kitchen or the market.
+   */
+  const inFlow = stage !== 'hero';
+
   return (
-    <AppShell title="Decide" active="decide" bareHeader={stage !== 'hero'}>
+    <AppShell title="Decide" active="decide" bareHeader={inFlow} inner={inFlow}>
       <DecideFlow />
     </AppShell>
   );

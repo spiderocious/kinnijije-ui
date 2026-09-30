@@ -30,6 +30,17 @@ export const EP = {
     DECIDE: `${V1}/decide`,
   },
 
+  /**
+   * Public, like decide. Only OFFERS can ever make the server call Chowdeck;
+   * PLACES is our own table and GO is a lookup and a redirect.
+   */
+  CHOWDECK: {
+    PLACES: `${V1}/places`,
+    OFFERS: `${V1}/partners/chowdeck/offers`,
+    /** Prefixed onto an offer's `go_path`, which already starts `/go/chowdeck/...`. */
+    GO_BASE: V1,
+  },
+
   ONBOARDING: {
     GET: `${V1}/onboarding`,
     SAVE: `${V1}/onboarding`,
@@ -136,6 +147,25 @@ export const EP = {
     JOB: (jobId: string) => `${V1}/admin/jobs/${jobId}`,
     JOB_RETRY: (jobId: string) => `${V1}/admin/jobs/${jobId}/retry`,
     JOB_CANCEL: (jobId: string) => `${V1}/admin/jobs/${jobId}/cancel`,
+
+    /** The Chowdeck integration. Literals before the :id routes, as on the server. */
+    CHOWDECK_OVERVIEW: `${V1}/admin/chowdeck/overview`,
+    CHOWDECK_BREAKER_RESET: `${V1}/admin/chowdeck/breaker/reset`,
+    CHOWDECK_COVERAGE: `${V1}/admin/chowdeck/coverage`,
+    CHOWDECK_FETCH_AHEAD: `${V1}/admin/chowdeck/fetch-ahead`,
+    CHOWDECK_PLACES: `${V1}/admin/chowdeck/places`,
+    CHOWDECK_PLACES_AUTOCOMPLETE: `${V1}/admin/chowdeck/places/autocomplete`,
+    CHOWDECK_PLACES_IMPORT: `${V1}/admin/chowdeck/places/import`,
+    CHOWDECK_PLACES_PURGE: `${V1}/admin/chowdeck/places/purge`,
+    CHOWDECK_PLACE: (placeId: string) => `${V1}/admin/chowdeck/places/${encodeURIComponent(placeId)}`,
+    CHOWDECK_CACHE: `${V1}/admin/chowdeck/cache`,
+    CHOWDECK_CACHE_CLEAR: `${V1}/admin/chowdeck/cache/clear`,
+    CHOWDECK_CACHE_ENTRY: (id: string) => `${V1}/admin/chowdeck/cache/${id}`,
+    CHOWDECK_CACHE_REFRESH: (id: string) => `${V1}/admin/chowdeck/cache/${id}/refresh`,
+    CHOWDECK_CALLS: `${V1}/admin/chowdeck/calls`,
+    CHOWDECK_CALL: (id: string) => `${V1}/admin/chowdeck/calls/${id}`,
+    CHOWDECK_CALL_REPLAY: (id: string) => `${V1}/admin/chowdeck/calls/${id}/replay`,
+    CHOWDECK_CLICKS: `${V1}/admin/chowdeck/clicks`,
   },
 
   CHAT: {

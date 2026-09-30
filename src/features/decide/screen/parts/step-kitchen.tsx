@@ -1,7 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 
 import { EVENTS, analytics } from '@shared/services/analytics';
-import { Plus, Search, X } from 'lucide-react';
+import { Bike, Plus, Search, X } from 'lucide-react';
 
 import { Button } from '@ui/primitives';
 
@@ -20,8 +20,12 @@ interface StepKitchenProps {
   readonly selected: string[];
   readonly onChange: (items: string[]) => void;
   readonly onContinue: () => void;
-  readonly onSkip: () => void;
   readonly onBack: () => void;
+  /**
+   * "Don't worry, I'll order". Absent when Chowdeck is switched off, so the
+   * button never leads somewhere that cannot answer.
+   */
+  readonly onOrder?: (() => void) | undefined;
 }
 
 /**
@@ -57,8 +61,8 @@ export function StepKitchen({
   selected,
   onChange,
   onContinue,
-  onSkip,
   onBack,
+  onOrder,
 }: StepKitchenProps) {
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
@@ -172,12 +176,23 @@ export function StepKitchen({
         </div>
       }
       footer={
-        <StepNav
-          onBack={onBack}
-          onContinue={onContinue}
-          continueLabel={DECIDE_COPY.kitchen.continue(selected.length)}
-          secondary={{ label: DECIDE_COPY.kitchen.skip, onClick: onSkip }}
-        />
+        <>
+          <StepNav
+            onBack={onBack}
+            onContinue={onContinue}
+            continueLabel={DECIDE_COPY.kitchen.continue(selected.length)}
+          />
+          {/* The one alternative to cooking. There is no "I have nothing"
+              beside it: somebody with an empty kitchen who still wants to
+              cook just continues with nothing selected, and somebody who
+              does not want to cook is taking this road instead. */}
+          {onOrder !== undefined && (
+            <Button fullWidth variant="secondary" onClick={onOrder}>
+              <Bike size={16} strokeWidth={2.4} className="mr-2" />
+              {DECIDE_COPY.kitchen.order}
+            </Button>
+          )}
+        </>
       }
     >
       {results !== null ? (

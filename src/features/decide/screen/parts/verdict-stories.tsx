@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, ChevronLeft, ChevronRight, Clock, Plus, RotateCcw, Sparkles, Users } from 'lucide-react';
 
+import { ChowdeckOffers } from '@features/chowdeck/parts/chowdeck-offers';
 import { Button } from '@ui/primitives';
 
 import { DECIDE_COPY } from '../../content/decide.content';
 import { ILLUSTRATION } from '../../content/decide.illustrations';
-import type { DecideMeal, DecideVerdict } from '../../types/decide.types';
+import type { DecideMeal, DecideMode, DecidePlace, DecideVerdict } from '../../types/decide.types';
 import { useSwipe } from './use-swipe';
 
 /**
@@ -29,6 +30,15 @@ interface VerdictStoriesProps {
   /** Spends a token: asks the server for a fresh set with the same answers. */
   readonly onRegenerate: () => void;
   readonly onSignUp: () => void;
+  /**
+   * `order` turns every card around: restaurants first, the recipe a small
+   * link underneath. `cook` keeps the recipe and adds "buy it instead" below.
+   */
+  readonly mode: DecideMode;
+  /** Null hides every Chowdeck section — there is nowhere to look. */
+  readonly place: DecidePlace | null;
+  /** False while the Chowdeck flag is off. */
+  readonly showOffers: boolean;
 }
 
 function Fact({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
@@ -59,6 +69,11 @@ function StoryCard({
   isLast,
   onCook,
   onReject,
+  mode,
+  place,
+  showOffers,
+  active,
+  onNext,
 }: {
   meal: DecideMeal;
   isWinner: boolean;
@@ -68,9 +83,31 @@ function StoryCard({
   isLast: boolean;
   onCook: () => void;
   onReject: () => void;
+  mode: DecideMode;
+  place: DecidePlace | null;
+  showOffers: boolean;
+  /** Only the card on screen asks Chowdeck anything. */
+  active: boolean;
+  onNext: (() => void) | undefined;
 }) {
+  const ordering = mode === 'order';
   const { have, missing, pantry } = meal.match;
-  const total = have.length + missing.length;
+  // In order mode the kitchen is set aside, so "0 of 7" would be a count of
+  // nothing the person asked about.
+  const total = ordering ? 0 : have.length + missing.length;
+
+  const offers =
+    showOffers && place !== null ? (
+      <ChowdeckOffers
+        mealSlug={meal.slug}
+        mealName={meal.name}
+        placeId={place.id}
+        placeName={place.name}
+        mode={mode}
+        active={active}
+        onNext={onNext}
+      />
+    ) : null;
 
   return (
     <article className="overflow-hidden rounded-blade-lg border-2 border-ink bg-white shadow-drop">
@@ -110,19 +147,25 @@ function StoryCard({
         </h2>
 
         <p className="mt-1.5 text-[13px] font-extrabold text-success-onsoft">
-          {hookLine(meal, fastest)}
+          {ordering ? DECIDE_COPY.verdict.orderHook : hookLine(meal, fastest)}
         </p>
         <p className="mt-1 text-sm text-ink-2">{meal.why}</p>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          <Fact icon={<Clock size={13} strokeWidth={2.4} className="text-ink-3" />}>
-            {meal.cook_time_minutes} min
-          </Fact>
-          <Fact icon={null}>{meal.difficulty}</Fact>
-          <Fact icon={<Users size={13} strokeWidth={2.4} className="text-ink-3" />}>
-            Serves {meal.serves}
-          </Fact>
-        </div>
+        {/* Cook time and effort describe the COOK. Nobody is cooking in order
+            mode, so the facts would be true and beside the point. */}
+        {!ordering && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            <Fact icon={<Clock size={13} strokeWidth={2.4} className="text-ink-3" />}>
+              {meal.cook_time_minutes} min
+            </Fact>
+            <Fact icon={null}>{meal.difficulty}</Fact>
+            <Fact icon={<Users size={13} strokeWidth={2.4} className="text-ink-3" />}>
+              Serves {meal.serves}
+            </Fact>
+          </div>
+        )}
+
+        {ordering && offers}
 
         {total > 0 && (
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -150,7 +193,7 @@ function StoryCard({
           </div>
         )}
 
-        {pantry.length > 0 && (
+        {!ordering && pantry.length > 0 && (
           <p className="mt-2.5 text-[11.5px] text-ink-3">
             <span className="font-bold text-ink-2">Also uses </span>
             {pantry.join(', ').toLowerCase()}
@@ -162,10 +205,18 @@ function StoryCard({
             pinned to the window. On a carousel a fixed footer is ambiguous:
             it is not obvious which card it acts on. */}
         <div className="mt-4 flex flex-col gap-2">
-          <Button fullWidth size="lg" onClick={onCook}>
-            {DECIDE_COPY.verdict.cook}
-            <ArrowRight size={18} strokeWidth={2.6} className="ml-2" />
-          </Button>
+          {/* In order mode the restaurants above ARE the action; the recipe
+              stays one tap away for somebody who changes their mind. */}
+          {ordering ? (
+            <Button fullWidth variant="tertiary" onClick={onCook}>
+              {DECIDE_COPY.verdict.cookInstead}
+            </Button>
+          ) : (
+            <Button fullWidth size="lg" onClick={onCook}>
+              {DECIDE_COPY.verdict.cook}
+              <ArrowRight size={18} strokeWidth={2.6} className="ml-2" />
+            </Button>
+          )}
 
           {/* Only on the last one: while there are more to see, swiping is the
               obvious move, and offering to re-decide competes with it. */}
@@ -176,6 +227,10 @@ function StoryCard({
             </Button>
           )}
         </div>
+
+        {/* Cook mode: the recipe is the answer, and buying it is the quiet
+            alternative underneath — never above the button it competes with. */}
+        {!ordering && offers}
       </div>
     </article>
   );
@@ -255,6 +310,9 @@ export function VerdictStories({
   onRestart,
   onRegenerate,
   onSignUp,
+  mode,
+  place,
+  showOffers,
 }: VerdictStoriesProps) {
   /**
    * The winner, then the rest, de-duplicated.
@@ -314,7 +372,7 @@ export function VerdictStories({
       <header className="flex shrink-0 flex-col gap-2 px-4 pb-2 pt-4">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-extrabold uppercase tracking-overline text-ink-3">
-            {DECIDE_COPY.verdict.eyebrow}
+            {mode === 'order' ? DECIDE_COPY.verdict.orderEyebrow : DECIDE_COPY.verdict.eyebrow}
           </span>
           <span className="flex items-center gap-1">
             <Button variant="tertiary" size="sm" onClick={onChangeAnswer}>
@@ -416,6 +474,12 @@ export function VerdictStories({
                 isLast={i === meals.length - 1}
                 onCook={() => { onCook(m.meal_id); }}
                 onReject={() => { onReject(m.meal_id); }}
+                mode={mode}
+                place={place}
+                showOffers={showOffers}
+                active={i === safeIndex}
+                // The next card, or the closing slide after the last one.
+                onNext={canGoNext ? next : undefined}
               />
             </div>
           ))}

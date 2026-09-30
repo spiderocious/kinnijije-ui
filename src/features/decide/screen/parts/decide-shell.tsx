@@ -48,9 +48,24 @@ export function DecideShell({
   footer,
 }: DecideShellProps) {
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-[520px] flex-col bg-paper">
+    <div
+      className="mx-auto flex h-screen w-full max-w-[520px] flex-col bg-paper"
+      style={{
+        /**
+         * `100dvh`, declared after a `100vh` fallback.
+         *
+         * Both go through the same property, so a browser that understands
+         * `dvh` takes the second and one that does not keeps the first. `dvh`
+         * tracks the collapsing mobile toolbar, which is what keeps the footer
+         * off the bottom edge. `height` rather than `min-height`: the footer
+         * is only pinned if the column is exactly the viewport, and a
+         * min-height lets tall content push it out of sight.
+         */
+        height: '100dvh',
+      }}
+    >
       {/* ── HEAD ─────────────────────────────────────────────────────── */}
-      <header className="flex shrink-0 flex-col gap-3 px-4 pb-3 pt-4">
+      <header className="flex shrink-0 flex-col gap-2.5 px-4 pb-2.5 pt-3">
         {/* Back lives at the bottom, beside Continue, where the thumb already
             is. A second one up here would be two controls doing one job. */}
         <div className="flex items-center gap-3">
@@ -78,7 +93,7 @@ export function DecideShell({
           <div className="text-[11px] font-extrabold uppercase tracking-overline text-ink-3">
             {eyebrow ?? (step === total ? 'Last one' : `Step ${String(step)} of ${String(total)}`)}
           </div>
-          <h1 className="mt-1.5 font-display text-[26px] font-extrabold leading-[1.08] tracking-display text-ink">
+          <h1 className="mt-1 font-display text-[22px] font-extrabold leading-[1.08] tracking-display text-ink sm:text-[26px]">
             {title}
           </h1>
           {sub !== undefined && <p className="mt-1 text-[13.5px] text-ink-3">{sub}</p>}
@@ -99,7 +114,7 @@ export function DecideShell({
           A hairline rather than a shadow: the system's depth is a solid
           drop-edge, and a blurred shadow here would be the only one in the
           product. `pb-[max(...)]` clears the iPhone home indicator. */}
-      <footer className="flex shrink-0 flex-col gap-2 border-t-hair border-line bg-paper px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <footer className="flex shrink-0 flex-col gap-2 border-t-hair border-line bg-paper px-4 pt-2.5 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))]">
         {footer}
       </footer>
     </div>

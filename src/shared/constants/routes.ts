@@ -73,6 +73,15 @@ export const ROUTES = {
   ADMIN_EMAIL: (emailId: string) => `/admin/emails/${emailId}`,
   ADMIN_JOBS: '/admin/jobs',
   ADMIN_JOB: (jobId: string) => `/admin/jobs/${jobId}`,
+  /** The Chowdeck integration: what we asked them, what we kept, who tapped through. */
+  ADMIN_CHOWDECK: '/admin/chowdeck',
+  ADMIN_CHOWDECK_REQUESTS: '/admin/chowdeck/requests',
+  ADMIN_CHOWDECK_REQUEST: (callId: string) => `/admin/chowdeck/requests/${callId}`,
+  ADMIN_CHOWDECK_CACHE: '/admin/chowdeck/cache',
+  ADMIN_CHOWDECK_CACHE_ENTRY: (entryId: string) => `/admin/chowdeck/cache/${entryId}`,
+  ADMIN_CHOWDECK_COVERAGE: '/admin/chowdeck/coverage',
+  ADMIN_CHOWDECK_PLACES: '/admin/chowdeck/places',
+  ADMIN_CHOWDECK_CLICKS: '/admin/chowdeck/clicks',
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
