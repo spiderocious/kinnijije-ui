@@ -23,13 +23,44 @@ import { StatStrip } from './stat-strip';
 interface DecideHeroProps {
   readonly onStart: () => void;
   readonly onSignIn: () => void;
+  /**
+   * Signed in, the app shell already provides the brand and the navigation, so
+   * drawing them again here would be two chromes stacked — and a "Sign in"
+   * button shown to a member is the clearest possible sign we do not know them.
+   */
+  readonly signedIn?: boolean;
+  /** How many things are on file, so the copy can say so. */
+  readonly kitchenCount?: number;
 }
 
 const { hero } = DECIDE_COPY;
 
-export function DecideHero({ onStart, onSignIn }: DecideHeroProps) {
+export function DecideHero({
+  onStart,
+  onSignIn,
+  signedIn = false,
+  kitchenCount = 0,
+}: DecideHeroProps) {
+  const copy = signedIn ? hero.member : hero;
+  const sub = signedIn
+    ? kitchenCount > 0
+      ? hero.member.subWithKitchen(kitchenCount)
+      : hero.member.subEmpty
+    : hero.sub;
+
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[520px] flex-col gap-4 bg-paper px-5 pb-8 pt-4">
+    <div
+      className={[
+        'mx-auto flex w-full max-w-[520px] flex-col gap-4 bg-paper px-5 pb-8',
+        // Both variants must claim a height, or the `flex-1` on the middle
+        // block has nothing to distribute and the whole hero collapses to the
+        // top of the screen. The member sits inside the shell, under an app bar
+        // and above the nav, so it subtracts both rather than filling the
+        // viewport the way the standalone guest page does.
+        signedIn ? 'min-h-[calc(100dvh-8.5rem)] pt-2' : 'min-h-dvh pt-4',
+      ].join(' ')}
+    >
+      {!signedIn && (
       <header className="flex items-center justify-between">
         <span className="flex items-center gap-2">
           <span className="grid h-8 w-8 place-items-center rounded-blade-xs border-2 border-ink bg-sky text-white">
@@ -62,6 +93,7 @@ export function DecideHero({ onStart, onSignIn }: DecideHeroProps) {
           </Button>
         </span>
       </header>
+      )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
         <img
@@ -75,23 +107,25 @@ export function DecideHero({ onStart, onSignIn }: DecideHeroProps) {
         />
 
         <h1 className="font-display text-[34px] font-extrabold leading-[1.02] tracking-display text-ink sm:text-[40px]">
-          {hero.title}
+          {copy.title}
           <br />
-          <em className="not-italic text-sky-deep">{hero.titleAccent}</em>
+          <em className="not-italic text-sky-deep">{copy.titleAccent}</em>
         </h1>
 
-        <p className="max-w-[40ch] text-base leading-relaxed text-ink-2">{hero.sub}</p>
+        <p className="max-w-[40ch] text-base leading-relaxed text-ink-2">{sub}</p>
 
-        <StatStrip />
-
+        {/* Counters are social proof. Shown to somebody who has already joined
+            they are noise, so a member does not get them. */}
+        {!signedIn && <StatStrip />}
       </div>
 
       <div className="flex flex-col items-center gap-3">
         <Button fullWidth size="lg" onClick={onStart}>
-          {hero.cta}
+          {copy.cta}
           <ArrowRight size={19} strokeWidth={2.6} className="ml-2" />
         </Button>
 
+        {!signedIn && (
         <p className="text-[12.5px] text-ink-3">
           {hero.support.prompt}{' '}
           <a
@@ -101,6 +135,7 @@ export function DecideHero({ onStart, onSignIn }: DecideHeroProps) {
             {hero.support.label}
           </a>
         </p>
+        )}
       </div>
     </div>
   );

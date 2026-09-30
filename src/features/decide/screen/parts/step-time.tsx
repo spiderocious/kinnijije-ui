@@ -6,6 +6,15 @@ import { DecideShell } from './decide-shell';
 import { StepNav } from './step-nav';
 
 interface StepTimeProps {
+  /**
+   * Position in the flow, passed in rather than hardcoded.
+   *
+   * A signed-in cook skips the kitchen step, so this is 1-of-3 for them and
+   * 2-of-4 for a guest. A hardcoded number would tell one of them the wrong
+   * thing about how much is left.
+   */
+  readonly step: number;
+  readonly total: number;
   readonly options: DecideOptions | undefined;
   readonly minutes: TimeBudget | null;
   readonly city: string | null;
@@ -45,6 +54,8 @@ function Pill({
 }
 
 export function StepTime({
+  step,
+  total,
   options,
   minutes,
   city,
@@ -60,9 +71,8 @@ export function StepTime({
 
   return (
     <DecideShell
-      step={4}
-      total={4}
-      eyebrow={DECIDE_COPY.time.step}
+      step={step}
+      total={total}
       title={DECIDE_COPY.time.title}
       footer={
         <StepNav

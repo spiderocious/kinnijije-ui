@@ -22,7 +22,8 @@ import type { ReactNode } from 'react';
 interface DecideShellProps {
   readonly step: number;
   readonly total: number;
-  readonly eyebrow: string;
+  /** Overrides the derived "Step N of M". Rarely needed. */
+  readonly eyebrow?: string | undefined;
   readonly title: string;
   readonly sub?: string | undefined;
   /**
@@ -71,8 +72,11 @@ export function DecideShell({
         </div>
 
         <div>
+          {/* Derived from the numbers, not written into the copy: a signed-in
+              cook is asked three questions, so a hardcoded "Step two" would
+              contradict the rail beside it. */}
           <div className="text-[11px] font-extrabold uppercase tracking-overline text-ink-3">
-            {eyebrow}
+            {eyebrow ?? (step === total ? 'Last one' : `Step ${String(step)} of ${String(total)}`)}
           </div>
           <h1 className="mt-1.5 font-display text-[26px] font-extrabold leading-[1.08] tracking-display text-ink">
             {title}

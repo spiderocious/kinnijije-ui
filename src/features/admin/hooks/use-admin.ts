@@ -370,3 +370,12 @@ export function useDecideLog(logId: string) {
     enabled: logId.length > 0,
   });
 }
+
+/** Cost, health and volume across every prompt. */
+export function useAiStats(days?: number) {
+  return useQuery({
+    queryKey: ['admin', 'ai', 'stats', days ?? 30],
+    queryFn: () => adminApi.aiStats(days),
+    staleTime: 60_000,
+  });
+}

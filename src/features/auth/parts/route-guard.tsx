@@ -70,9 +70,9 @@ export function RouteGuard({
     }
 
     // Someone who has finished onboarding should not be able to walk back
-    // into it from history — send them on to the app.
+    // into it from history — send them on to the app's default tab.
     if (hasOnboarded && isOnboardingRoute) {
-      void navigate({ to: ROUTES.KITCHEN, replace: true });
+      void navigate({ to: ROUTES.ENTRY, replace: true });
     }
   }, [
     isLoading,
@@ -100,7 +100,7 @@ export function GuestOnly({ children }: { readonly children: ReactNode }) {
 
   useEffect(() => {
     if (isLoading || !isSignedIn) return;
-    void navigate({ to: hasOnboarded ? ROUTES.KITCHEN : ROUTES.ONBOARDING, replace: true });
+    void navigate({ to: hasOnboarded ? ROUTES.ENTRY : ROUTES.ONBOARDING, replace: true });
   }, [isLoading, isSignedIn, hasOnboarded, navigate]);
 
   return <Show when={!isLoading && !isSignedIn}>{children}</Show>;

@@ -36,6 +36,25 @@ export const DECIDE_COPY = {
 
     signIn: 'Sign in',
     why: 'How it works',
+
+    /**
+     * What a signed-in cook sees instead.
+     *
+     * The guest copy sells the idea; a member has already bought it. Theirs
+     * states what is ready and gets out of the way, and the counters and the
+     * support line are dropped — social proof aimed at somebody who already
+     * joined is noise.
+     */
+    member: {
+      title: 'What do you want',
+      titleAccent: 'to eat today?',
+      /** With a kitchen on file. */
+      subWithKitchen: (count: number) =>
+        `Your kitchen is ready, ${String(count)} ${count === 1 ? 'thing' : 'things'} in it. Three quick questions and we will pick.`,
+      /** Signed in, but nothing in stock yet. */
+      subEmpty: 'Tell us what you have at home and we will pick tonight\'s meal.',
+      cta: 'Decide for me',
+    },
   },
 
   kitchen: {
@@ -47,6 +66,33 @@ export const DECIDE_COPY = {
     fewer: 'Fewer groups',
     continue: (n: number) => (n === 0 ? 'Continue' : `Continue · ${String(n)} picked`),
     skip: "I have nothing, just decide for me",
+  },
+
+  /**
+   * The invite, mid-flow.
+   *
+   * Written to be skippable without guilt: the dismiss line is a real option,
+   * not a dark-pattern "no thanks, I hate saving money".
+   */
+  invite: {
+    title: 'Want this remembered?',
+    sub: 'Takes ten seconds. You keep going right after.',
+    benefits: [
+      'Your kitchen saved, so you never tap it again',
+      'A fresh idea every morning, before you ask',
+      'The full recipe and method, step by step',
+    ],
+    cta: 'Save my spot',
+    dismiss: 'Not now, keep deciding',
+    footnote: 'Free. No card. Your answers so far are kept either way.',
+  },
+
+  /** Shown to a signed-in cook in place of the kitchen step. */
+  usingKitchen: {
+    title: 'Using your kitchen',
+    detail: (count: number, examples: string[]) =>
+      `${String(count)} ${count === 1 ? 'thing' : 'things'} · ${examples.join(', ')}${count > examples.length ? '…' : ''}`,
+    change: 'Change',
   },
 
   mood: {

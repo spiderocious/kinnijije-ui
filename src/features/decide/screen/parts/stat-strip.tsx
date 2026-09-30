@@ -53,8 +53,23 @@ export function StatStrip() {
   const { data } = useDecideStats();
 
   const decided = useLiveStat(data?.meals_decided, data?.as_of, TICK_SALTS.decided);
-  const today = useLiveStat(data?.decided_today, data?.as_of, TICK_SALTS.today);
-  const cooked = useLiveStat(data?.meals_cooked, data?.as_of, TICK_SALTS.cooked);
+  const todayRaw = useLiveStat(data?.decided_today, data?.as_of, TICK_SALTS.today);
+  const cookedRaw = useLiveStat(data?.meals_cooked, data?.as_of, TICK_SALTS.cooked);
+
+  /**
+   * The counters drift independently, which can produce an IMPOSSIBLE reading.
+   *
+   * Today's decisions are a subset of all decisions, and meals cooked are a
+   * subset too — but each number creeps at its own rate, so on a young install
+   * where the two totals start equal, "sorted today" overtakes "meals decided"
+   * within seconds. A visibly impossible pair is worse than a static one: it
+   * tells somebody the numbers are decorative.
+   *
+   * Clamped here rather than by syncing the rates, because the relationship
+   * has to hold for any rates and any starting values.
+   */
+  const today = todayRaw === undefined ? undefined : Math.min(todayRaw, decided ?? todayRaw);
+  const cooked = cookedRaw === undefined ? undefined : Math.min(cookedRaw, decided ?? cookedRaw);
 
   const values: Record<StatDef['key'], number | undefined> = { decided, today, cooked };
 

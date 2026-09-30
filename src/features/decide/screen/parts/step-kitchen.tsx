@@ -119,7 +119,6 @@ export function StepKitchen({
     <DecideShell
       step={1}
       total={4}
-      eyebrow={DECIDE_COPY.kitchen.step}
       title={DECIDE_COPY.kitchen.title}
       sub={DECIDE_COPY.kitchen.sub}
       sticky={

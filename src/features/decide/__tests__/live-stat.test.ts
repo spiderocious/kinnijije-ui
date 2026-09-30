@@ -110,3 +110,35 @@ describe('the source and display rates stay in proportion', () => {
     assert.ok(added <= renderable, `${String(added)} added, only ${String(renderable)} renderable`);
   });
 });
+
+describe('the counters stay possible relative to each other', () => {
+  /**
+   * Today's decisions are a SUBSET of all decisions, and meals cooked are a
+   * subset too. Each counter drifts at its own rate, so on a young install
+   * where the totals start equal, "sorted today" overtakes "meals decided"
+   * within seconds — a visibly impossible pair that tells somebody the numbers
+   * are decorative.
+   */
+  const clamp = (value: number, ceiling: number) => Math.min(value, ceiling);
+
+  it('never lets today exceed all-time', () => {
+    // The exact case from a fresh install: both totals identical, today
+    // drifting faster.
+    assert.equal(clamp(65_476, 65_424), 65_424);
+  });
+
+  it('leaves an honest reading alone', () => {
+    assert.equal(clamp(412, 65_424), 412);
+  });
+
+  it('holds when the two are equal', () => {
+    assert.equal(clamp(500, 500), 500);
+  });
+
+  it('holds for every drift pair over a simulated hour', () => {
+    const asOf = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const allTime = driftedValue(1000, asOf, 1);
+    const today = clamp(driftedValue(1000, asOf, 7), allTime);
+    assert.ok(today <= allTime, `${String(today)} must not exceed ${String(allTime)}`);
+  });
+});

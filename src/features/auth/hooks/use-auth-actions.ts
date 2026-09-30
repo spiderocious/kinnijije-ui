@@ -21,10 +21,20 @@ import { useSession } from './use-session';
  * onboarding, and cannot skip it either.
  */
 function landingRouteFor(session: AuthSession): string {
-  return session.user.has_onboarded ? ROUTES.KITCHEN : ROUTES.ONBOARDING;
+  // Deciding is the default tab, so landing anywhere else after signing in
+  // contradicts what the navigation says the product is for.
+  return session.user.has_onboarded ? ROUTES.ENTRY : ROUTES.ONBOARDING;
 }
 
-export function useRegister() {
+/**
+ * @param options.onDone replaces the navigation on success.
+ *
+ * For signing up WITHOUT leaving: the invite sheet inside the decide flow
+ * needs the account created and the draft carried over, then the sheet to
+ * close — navigating away would lose the step they were on, which is the
+ * whole friction that sheet exists to remove.
+ */
+export function useRegister(options: { onDone?: () => void } = {}) {
   const { signIn } = useSession();
   const navigate = useNavigate();
 
@@ -32,6 +42,16 @@ export function useRegister() {
     mutationFn: authApi.register,
     onSuccess: (session) => {
       signIn(session);
+
+      if (options.onDone !== undefined) {
+        const draft = decideDraft.get();
+        // Best effort, and deliberately not awaited: the account exists, so
+        // making them watch a spinner for two writes that cannot fail visibly
+        // would be worse than closing the sheet now.
+        if (draft !== null) void carryOverDraft(draft);
+        options.onDone();
+        return;
+      }
 
       /**
        * `identify` BEFORE the event, so the signup itself is attributed to the

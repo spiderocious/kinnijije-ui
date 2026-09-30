@@ -88,6 +88,7 @@ export const EP = {
     SETUP: `${V1}/admin/setup`,
     OVERVIEW: `${V1}/admin/overview`,
     /** Visibility into the anonymous decide flow. */
+    AI_STATS: `${V1}/admin/ai/stats`,
     DECIDE_OVERVIEW: `${V1}/admin/decide/overview`,
     DECIDE_LOGS: `${V1}/admin/decide/logs`,
     DECIDE_LOG: (logId: string) => `${V1}/admin/decide/logs/${logId}`,

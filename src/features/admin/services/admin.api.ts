@@ -321,7 +321,40 @@ export interface DecideLogRow {
   created_at: string | null;
 }
 
+export interface AiStats {
+  days: number;
+  totals: {
+    calls: number;
+    failed: number;
+    rejected: number;
+    tokens_in: number;
+    tokens_out: number;
+    estimated_usd: number | null;
+    p50_ms: number;
+    p95_ms: number;
+  };
+  daily: { date: string; calls: number; failed: number; tokens: number }[];
+  by_prompt: {
+    prompt_id: string;
+    calls: number;
+    failed: number;
+    rejected: number;
+    tokens: number;
+    estimated_usd: number | null;
+    p95_ms: number;
+    avg_confidence: number | null;
+    avg_ambiguity: number | null;
+  }[];
+  by_model: { model: string; calls: number; tokens: number; estimated_usd: number | null }[];
+  by_provider: { provider: string; calls: number }[];
+}
+
 export const adminApi = {
+  aiStats: (days?: number): Promise<AiStats> =>
+    apiClient.get<AiStats>(
+      days === undefined ? EP.ADMIN.AI_STATS : `${EP.ADMIN.AI_STATS}?days=${String(days)}`,
+    ),
+
   decideOverview: (days?: number): Promise<DecideOverview> =>
     apiClient.get<DecideOverview>(
       days === undefined ? EP.ADMIN.DECIDE_OVERVIEW : `${EP.ADMIN.DECIDE_OVERVIEW}?days=${String(days)}`,

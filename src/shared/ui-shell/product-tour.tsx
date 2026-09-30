@@ -7,6 +7,7 @@ import { Show } from 'meemaw';
 
 import { KoboyoIcon, type KoboyoIconName } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
+import { useSession } from '@features/auth/hooks/use-session';
 import { useFeatures } from '@shared/hooks/use-features';
 import { cn } from '@shared/utils/cn';
 import { Button } from '@ui/primitives';
@@ -53,11 +54,18 @@ export interface TourStep {
 
 const STEPS: readonly TourStep[] = [
   {
+    route: ROUTES.ENTRY,
+    anchor: 'nav-decide',
+    icon: 'potStew',
+    title: 'Start here, every time',
+    body: 'Tell it how your day is going and it picks tonight\'s meal from what you already have. Three questions, about thirty seconds.',
+  },
+  {
     route: ROUTES.KITCHEN,
     anchor: 'stats',
     icon: 'dashboard',
-    title: 'This is your kitchen',
-    body: 'What is in, what is running low, what to use soon, and what you could cook right now.',
+    title: 'And this is your kitchen',
+    body: 'What is in, what is running low, and what to use soon. Deciding reads from this, so keeping it current is what makes the suggestions good.',
   },
   {
     anchor: 'attention',
@@ -104,7 +112,7 @@ const STEPS: readonly TourStep[] = [
   },
   {
     route: ROUTES.KITCHEN,
-    anchor: 'nav-ai',
+    anchor: 'cook-cta',
     icon: 'robotForAi',
     title: 'Or just ask',
     body: 'The assistant knows your kitchen. Ask what to cook, or tell it to add something — it does it, then tells you what it did.',
@@ -217,7 +225,15 @@ function placeCard(box: Box | null): {
  * It is root-mounted, so without this it would fire over the landing page and
  * the login form — neither of which has a kitchen to point at.
  */
-const START_ROUTE = ROUTES.KITCHEN;
+/**
+ * Where the tour begins.
+ *
+ * `/` is the decide flow and the DEFAULT TAB for a signed-in cook, which is
+ * why the tour starts there rather than on the kitchen. But `/` is also the
+ * public front door, so starting here is only correct in combination with the
+ * signed-in check below — without it, the tour ambushes strangers.
+ */
+const START_ROUTE = ROUTES.ENTRY;
 
 /**
  * `?tour=true` on the kitchen forces the tour open, ignoring "already seen".
@@ -240,6 +256,7 @@ export function ProductTour() {
   const [open, setOpen] = useState(false);
   const [box, setBox] = useState<Box | null>(null);
   const features = useFeatures();
+  const { isSignedIn, isLoading: sessionLoading } = useSession();
   /** Set once a forced run begins, so finishing it does not immediately restart. */
   const forcedRef = useRef(false);
 
@@ -289,6 +306,21 @@ export function ProductTour() {
   useEffect(() => {
     if (open || forcedRef.current) return;
     if (pathname !== START_ROUTE) return;
+
+    /**
+     * ONLY for somebody signed in.
+     *
+     * `/` used to be behind a login and is now the public front door, so
+     * without this the tour ambushes every first-time visitor — walking them
+     * through a kitchen and a market list they do not have, before they have
+     * even decided what to eat.
+     *
+     * Waiting on `isLoading` matters too: the session resolves a tick after
+     * mount, and firing in that gap would show the tour to somebody who is
+     * about to turn out to be signed out.
+     */
+    if (sessionLoading || !isSignedIn) return;
+
     // Switched off in the console. `?tour=true` cannot override it — an
     // operator who turned the tour off means it, including for themselves.
     if (!features.onboarding_tour) return;
@@ -304,7 +336,7 @@ export function ProductTour() {
       step_index: 0,
       was_forced: forced,
     });
-  }, [open, pathname, search, features.onboarding_tour]);
+  }, [open, pathname, search, features.onboarding_tour, isSignedIn, sessionLoading]);
 
   // Walk to the step's screen. Compared against the CURRENT url so re-running
   // this effect on an unrelated render does not re-navigate.

@@ -6,7 +6,14 @@ import { ROUTES } from '@shared/constants/routes';
 import { Button } from '@ui/primitives';
 
 import { DECIDE_COPY } from '../content/decide.content';
+import { useSession } from '@features/auth/hooks/use-session';
+import { AppShell } from '@shared/ui-shell/app-shell';
+import { useFeatures } from '@shared/hooks/use-features';
+
 import { useDecide, useDecideOptions, usePrefetchDecideOptions } from '../hooks/use-decide';
+import { useMyKitchen } from '../hooks/use-my-kitchen';
+import { inviteStore } from '../services/invite-store';
+import { InviteSheet } from './parts/invite-sheet';
 import { DecideHero } from './parts/decide-hero';
 import { DecideThinking } from './parts/decide-thinking';
 import { VerdictStories } from './parts/verdict-stories';
@@ -26,13 +33,42 @@ import type { DecideStage, Mood, TimeBudget, Weight } from '../types/decide.type
  * separately, so going back never loses an answer.
  */
 
-export default function DecideScreen() {
+/**
+ * The flow itself, without any chrome.
+ *
+ * Split from the export so the shell can be wrapped around it ONLY for
+ * somebody signed in: a guest must still get the bare public page, with no
+ * nav bar pointing at screens they cannot open.
+ */
+function DecideFlow() {
   const navigate = useNavigate();
   // Warmed the moment somebody lands, so the kitchen screen two taps later
   // paints from memory instead of waiting on the network.
   usePrefetchDecideOptions();
   const { data: options } = useDecideOptions();
   const decide = useDecide();
+  const myKitchen = useMyKitchen();
+  const features = useFeatures();
+  const { isSignedIn } = useSession();
+
+  /**
+   * The invite, offered once and never blocking.
+   *
+   * Shown on the WEIGHT step — after three answers, so there is something to
+   * lose, and before the verdict, which has its own keep-band. Never to
+   * somebody already signed in, and never after a dismissal.
+   */
+  const [inviteDismissed, setInviteDismissed] = useState(() => inviteStore.dismissed());
+
+  /**
+   * How many questions this person will actually be asked.
+   *
+   * A signed-in cook skips the kitchen, so their flow is three steps and the
+   * rail must say so. Telling somebody "2 of 4" when only three will be asked
+   * is a small lie that makes the whole thing feel careless.
+   */
+  const totalSteps = myKitchen.canSkip ? 3 : 4;
+  const stepOffset = myKitchen.canSkip ? 0 : 1;
   const location = useLocation();
 
   const search = location.search as { step?: DecideStage };
@@ -107,6 +143,14 @@ export default function DecideScreen() {
   }, []);
 
   const [rejectedName, setRejectedName] = useState<string | null>(null);
+
+  const showInvite =
+    features.decide_invite && !isSignedIn && !inviteDismissed && stage === 'weight';
+
+  const dismissInvite = useCallback(() => {
+    inviteStore.dismiss();
+    setInviteDismissed(true);
+  }, []);
 
   /**
    * True from the moment Decide is pressed until an answer or an error lands.
@@ -203,7 +247,18 @@ export default function DecideScreen() {
   if (stage === 'hero') {
     return (
       <DecideHero
-        onStart={() => { setStage('kitchen'); }}
+        signedIn={isSignedIn}
+        kitchenCount={myKitchen.items.length}
+        onStart={() => {
+          // Somebody whose kitchen we already know is never asked for it: the
+          // clearest possible signal that the app does not remember them.
+          if (myKitchen.canSkip) {
+            decide.patch({ kitchenItems: myKitchen.items, kitchenSkipped: false });
+            setStage('mood');
+            return;
+          }
+          setStage('kitchen');
+        }}
         onSignIn={() => {
           analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, { source: 'hero_signin', stage: 'hero' });
           void navigate({ to: ROUTES.LOGIN });
@@ -235,6 +290,14 @@ export default function DecideScreen() {
   if (stage === 'mood') {
     return (
       <StepMood
+        step={stepOffset + 1}
+        total={totalSteps}
+        {...(myKitchen.canSkip && {
+          usingKitchen: {
+            items: decide.draft.kitchenItems,
+            onChange: () => { setStage('kitchen'); },
+          },
+        })}
         options={options}
         value={decide.draft.mood}
         onChange={(mood: Mood) => { decide.patch({ mood }); }}
@@ -242,29 +305,39 @@ export default function DecideScreen() {
           trackStep('mood', decide.draft.mood);
           setStage('weight');
         }}
-        onBack={() => { setStage('kitchen'); }}
+        onBack={() => { setStage(myKitchen.canSkip ? 'hero' : 'kitchen'); }}
       />
     );
   }
 
   if (stage === 'weight') {
     return (
-      <StepWeight
-        options={options}
-        value={decide.draft.weight}
-        onChange={(weight: Weight) => { decide.patch({ weight }); }}
-        onContinue={() => {
-          trackStep('weight', decide.draft.weight);
-          setStage('time');
-        }}
-        onBack={() => { setStage('mood'); }}
-      />
+      <>
+        <StepWeight
+          step={stepOffset + 2}
+          total={totalSteps}
+          options={options}
+          value={decide.draft.weight}
+          onChange={(weight: Weight) => { decide.patch({ weight }); }}
+          onContinue={() => { setStage('time'); }}
+          onBack={() => { setStage('mood'); }}
+        />
+
+        {/* Non-blocking by construction: the step above stays mounted and
+            keeps its state, so dismissing puts them back exactly where they
+            were with nothing lost. */}
+        {showInvite && (
+          <InviteSheet onDismiss={dismissInvite} onSignedUp={dismissInvite} />
+        )}
+      </>
     );
   }
 
   if (stage === 'time') {
     return (
       <StepTime
+        step={stepOffset + 3}
+        total={totalSteps}
         options={options}
         minutes={decide.draft.minutes}
         city={decide.draft.city}
@@ -410,5 +483,40 @@ function Centered({
         </Button>
       </div>
     </div>
+  );
+}
+
+/**
+ * The front door.
+ *
+ * Signed in, it is the default tab and therefore needs the app's navigation —
+ * without it a member lands on `/` and sees the same page a stranger does,
+ * with no way back into their kitchen.
+ *
+ * The chrome depends on the step, which is why the stage is read here as well
+ * as inside the flow. The landing step draws no title of its own, so it takes
+ * the ordinary app bar; every step after it draws its own title AND its own
+ * progress rail, so a second bar above that would be two chromes stacked.
+ *
+ * `bareHeader` rather than `inner` throughout: both drop the title bar, but
+ * `inner` also drops the bottom nav, which is right for a step inside a flow
+ * and wrong on a default tab — that is what left members with no way out.
+ */
+export default function DecideScreen() {
+  const { isSignedIn, isLoading } = useSession();
+  const location = useLocation();
+  const stage: DecideStage = (location.search as { step?: DecideStage }).step ?? 'hero';
+
+  // Nothing is rendered until the session resolves. Showing the guest page
+  // first and correcting a tick later is the flash this whole screen is meant
+  // to avoid.
+  if (isLoading) return null;
+
+  if (!isSignedIn) return <DecideFlow />;
+
+  return (
+    <AppShell title="Decide" active="decide" bareHeader={stage !== 'hero'}>
+      <DecideFlow />
+    </AppShell>
   );
 }

@@ -6,6 +6,15 @@ import { DecideTile } from './decide-tile';
 import { StepNav } from './step-nav';
 
 interface StepWeightProps {
+  /**
+   * Position in the flow, passed in rather than hardcoded.
+   *
+   * A signed-in cook skips the kitchen step, so this is 1-of-3 for them and
+   * 2-of-4 for a guest. A hardcoded number would tell one of them the wrong
+   * thing about how much is left.
+   */
+  readonly step: number;
+  readonly total: number;
   readonly options: DecideOptions | undefined;
   readonly value: Weight | null;
   readonly onChange: (weight: Weight) => void;
@@ -13,15 +22,14 @@ interface StepWeightProps {
   readonly onBack: () => void;
 }
 
-export function StepWeight({ options, value, onChange, onContinue, onBack }: StepWeightProps) {
+export function StepWeight({ step, total, options, value, onChange, onContinue, onBack }: StepWeightProps) {
   const tiles = options?.weights ?? [];
   const captions = options?.captions.weights ?? {};
 
   return (
     <DecideShell
-      step={3}
-      total={4}
-      eyebrow={DECIDE_COPY.weight.step}
+      step={step}
+      total={total}
       title={DECIDE_COPY.weight.title}
       sub={DECIDE_COPY.weight.sub}
       footer={

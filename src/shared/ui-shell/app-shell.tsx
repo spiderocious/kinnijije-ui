@@ -15,6 +15,7 @@ import { Avatar } from '@ui/structure';
 
 /** Where each nav entry actually goes. Ids match the design's nav. */
 const DESTINATIONS: Record<string, string> = {
+  decide: ROUTES.ENTRY,
   kitchen: ROUTES.KITCHEN,
   stock: ROUTES.STOCK,
   saved: ROUTES.FAVOURITES,
@@ -46,11 +47,14 @@ function useNavCounts(): { market: number; attention: number } {
 }
 
 function buildPhoneNav(counts: { market: number; attention: number }): TabBarItem[] {
+  // Five slots is the phone maximum. Deciding is what the product does, so it
+  // takes the first one; "Ask" moves into the Kitchen screen rather than being
+  // dropped, because it is a tool rather than a destination.
   return [
+    { id: 'decide', label: 'Decide', icon: 'potStew' },
     { id: 'kitchen', label: 'Kitchen', icon: 'cookingPot', ...(counts.attention > 0 && { count: counts.attention }) },
     { id: 'saved', label: 'Saved', icon: 'bookmark' },
     { id: 'market', label: 'Market', icon: 'shoppingBasket', ...(counts.market > 0 && { count: counts.market }) },
-    { id: 'ai', label: 'Ask', icon: 'robotForAi' },
     { id: 'you', label: 'You', icon: 'user' },
   ];
 }
@@ -59,6 +63,7 @@ function buildDesktopNav(counts: { market: number; attention: number }): Sidebar
   return [
     {
       items: [
+        { id: 'decide', label: 'Decide', icon: 'potStew' },
         { id: 'kitchen', label: 'Kitchen', icon: 'cookingPot' },
         { id: 'stock', label: 'Stock', icon: 'stockAsRawIngredients', ...(counts.attention > 0 && { count: counts.attention }) },
         { id: 'market', label: 'Market list', icon: 'shoppingBasket', ...(counts.market > 0 && { count: counts.market }) },
@@ -96,6 +101,15 @@ interface AppShellProps {
    * rather than focused.
    */
   readonly inner?: boolean;
+  /**
+   * Suppresses the title bar while KEEPING the navigation.
+   *
+   * For a screen that draws its own header and its own progress — the decide
+   * flow — where a second title above it would be two chromes stacked. This is
+   * deliberately NOT `inner`: that also removes the bottom nav, which on a
+   * default tab strands somebody with no way back to the rest of the app.
+   */
+  readonly bareHeader?: boolean;
 }
 
 /**
@@ -120,6 +134,7 @@ export function AppShell({
   backLabel,
   maxWidth = 'max-w-[1100px]',
   inner = false,
+  bareHeader = false,
 }: AppShellProps) {
   const isDesktop = useMediaQuery(DESKTOP_QUERY);
   const navigate = useNavigate();
@@ -175,7 +190,7 @@ export function AppShell({
         />
         </div>
 
-        <main className="flex-1 overflow-x-hidden px-8 py-8">
+        <main className={cn('flex-1 overflow-x-hidden', bareHeader ? 'px-0 py-0' : 'px-8 py-8')}>
           <div className={`mx-auto w-full ${maxWidth}`}>
             {/* Back sits on its OWN line, above the title — beside it, the
                 two compete for the same reading position and the title stops
@@ -193,12 +208,16 @@ export function AppShell({
               </button>
             </Show>
 
+            {/* A screen that draws its own header suppresses this one, so two
+                title rows are never stacked. */}
+            <Show when={!bareHeader}>
             <div className="mb-6 flex items-center justify-between gap-4">
               <h1 className="min-w-0 truncate font-display text-3xl font-extrabold tracking-display">
                 {title}
               </h1>
               <Show when={actions !== undefined}>{actions}</Show>
             </div>
+            </Show>
             {children}
           </div>
         </main>
@@ -208,13 +227,15 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-ground">
-      <AppShellPhoneBar title={title} actions={actions} onBack={onBack} backLabel={backLabel} />
+      <Show when={!bareHeader}>
+        <AppShellPhoneBar title={title} actions={actions} onBack={onBack} backLabel={backLabel} />
+      </Show>
 
       {/* Padding, not margin: the fixed bars overlay this, and without room the
           last row of content sits underneath them. */}
       <div
         className={cn(
-          'px-5 pt-4',
+          bareHeader ? 'px-0 pt-0' : 'px-5 pt-4',
           // Room for whichever fixed bars are actually present.
           dock !== undefined && inner && 'pb-[96px]',
           dock !== undefined && !inner && 'pb-[168px]',

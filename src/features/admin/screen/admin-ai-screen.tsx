@@ -8,6 +8,7 @@ import { formatDateTime } from '@shared/utils/format-date';
 import { Tag } from '@ui/status';
 
 import { useAiLogs, useAiPromptIds } from '../hooks/use-admin';
+import { AiStatsPanel } from '../parts/ai-stats-panel';
 import { ConsoleShell } from '../parts/console-shell';
 import { DataTable, type Column } from '../parts/data-table';
 import type { AiLogRow } from '../services/admin.api';
@@ -75,6 +76,10 @@ export default function AdminAiScreen() {
 
   return (
     <ConsoleShell active="ai" title="AI audit">
+      {/* The numbers first: a list of rows cannot answer what this costs or
+          which prompt is failing, which are the reasons to open the page. */}
+      <AiStatsPanel />
+
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <select
           value={promptId}
