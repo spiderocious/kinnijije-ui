@@ -1,3 +1,5 @@
+import type { UserRole } from '@shared/constants/permissions';
+
 /**
  * Wire types for auth.
  *
@@ -10,7 +12,15 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'moderator' | 'admin' | 'super_admin';
+  role: UserRole;
+  /**
+   * Effective permission scopes, implications already resolved by the server.
+   *
+   * Empty for an ordinary customer. Used to hide console UI a person cannot
+   * use — never to decide whether an action is allowed, which the server does
+   * on every route.
+   */
+  permissions: string[];
   status: 'pending' | 'active' | 'suspended' | 'banned' | 'deleted';
   email_verified_at: string | null;
   last_login_at: string | null;

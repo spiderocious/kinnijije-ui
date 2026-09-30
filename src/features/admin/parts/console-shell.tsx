@@ -4,34 +4,53 @@ import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { useSession, useSignOut } from '@features/auth';
+import { usePermissions } from '@shared/hooks/use-permissions';
+import type { Scope } from '@shared/constants/permissions';
 import { ROUTES } from '@shared/constants/routes';
 import { Sidebar, type SidebarGroup } from '@ui/navigation';
 import { Avatar } from '@ui/structure';
 
-const CONSOLE_NAV: SidebarGroup[] = [
+/**
+ * The nav, with the scope each section needs.
+ *
+ * A section a person cannot use is not shown: an empty console is a clearer
+ * message than nine links that all 403. `scope: null` means any staff member
+ * may open it — only the dashboard qualifies, because it is where everybody
+ * lands.
+ */
+interface NavSpec {
+  readonly label?: string;
+  readonly items: readonly { id: string; label: string; icon: string; scope: Scope | null }[];
+}
+
+const CONSOLE_NAV: readonly NavSpec[] = [
   {
     items: [
-      { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-      { id: 'recipes', label: 'Recipes', icon: 'cookbook' },
-      { id: 'users', label: 'Users', icon: 'contact' },
+      { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', scope: null },
+      { id: 'recipes', label: 'Recipes', icon: 'cookbook', scope: 'recipes:read' },
+      { id: 'users', label: 'Users', icon: 'contact', scope: 'users:read' },
     ],
   },
   {
     label: 'The model',
     items: [
-      { id: 'decide', label: 'Decide flow', icon: 'chartBarBig' },
-      { id: 'ai', label: 'AI audit', icon: 'robotForAi' },
-      { id: 'jobs', label: 'Jobs', icon: 'cycle' },
-      { id: 'emails', label: 'Email', icon: 'envelope' },
+      { id: 'decide', label: 'Decide flow', icon: 'chartBarBig', scope: 'decide:read' },
+      { id: 'ai', label: 'AI audit', icon: 'robotForAi', scope: 'ai:read' },
+      { id: 'jobs', label: 'Jobs', icon: 'cycle', scope: 'jobs:read' },
+      { id: 'emails', label: 'Email', icon: 'envelope', scope: 'emails:read' },
     ],
   },
   {
     label: 'Partners',
-    items: [{ id: 'chowdeck', label: 'Chowdeck', icon: 'truck' }],
+    items: [{ id: 'chowdeck', label: 'Chowdeck', icon: 'truck', scope: 'chowdeck:read' }],
   },
   {
+    label: 'Organisation',
     items: [
-      { id: 'settings', label: 'Settings', icon: 'settings' },
+      { id: 'staff', label: 'Staff', icon: 'contact', scope: 'staff:read' },
+      { id: 'audit', label: 'Audit trail', icon: 'list', scope: 'audit:read' },
+      { id: 'scripts', label: 'Operations', icon: 'cycle', scope: 'scripts:read' },
+      { id: 'settings', label: 'Settings', icon: 'settings', scope: 'settings:write' },
     ],
   },
 ];
@@ -45,6 +64,9 @@ const DESTINATIONS: Record<string, string> = {
   jobs: ROUTES.ADMIN_JOBS,
   emails: ROUTES.ADMIN_EMAILS,
   chowdeck: ROUTES.ADMIN_CHOWDECK,
+  staff: ROUTES.ADMIN_STAFF,
+  audit: ROUTES.ADMIN_AUDIT,
+  scripts: ROUTES.ADMIN_SCRIPTS,
   settings: ROUTES.ADMIN_SETTINGS,
 };
 
@@ -69,6 +91,20 @@ export function ConsoleShell({
   const navigate = useNavigate();
   const signOut = useSignOut();
   const { user } = useSession();
+  const { can } = usePermissions();
+
+  /**
+   * Only the sections this person can actually open.
+   *
+   * A group whose every item was filtered out is dropped too, so no empty
+   * heading is left behind — "The model" above nothing reads as broken.
+   */
+  const nav: SidebarGroup[] = CONSOLE_NAV.map((group) => ({
+    ...(group.label === undefined ? {} : { label: group.label }),
+    items: group.items
+      .filter((item) => item.scope === null || can(item.scope))
+      .map(({ id, label, icon }) => ({ id, label, icon })),
+  })).filter((group) => group.items.length > 0) as SidebarGroup[];
 
   return (
     <div className="counter flex min-h-dvh bg-paper">
@@ -78,7 +114,7 @@ export function ConsoleShell({
           const destination = DESTINATIONS[id];
           if (destination !== undefined) void navigate({ to: destination });
         }}
-        groups={CONSOLE_NAV}
+        groups={nav}
         header={
           <span className="inline-flex items-center gap-2">
             <img src="/favicon.svg" alt="" width={22} height={22} className="rounded-blade-xs" />

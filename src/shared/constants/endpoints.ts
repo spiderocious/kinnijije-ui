@@ -98,6 +98,18 @@ export const EP = {
   },
 
   ADMIN: {
+    STAFF: `${V1}/admin/staff`,
+    STAFF_GROUPS: `${V1}/admin/staff/groups`,
+    STAFF_INVITES: `${V1}/admin/staff/invites`,
+    STAFF_INVITE: (userId: string) => `${V1}/admin/staff/${userId}/invite`,
+    STAFF_PERMISSIONS: (userId: string) => `${V1}/admin/staff/${userId}/permissions`,
+    AUDIT: `${V1}/admin/audit`,
+    SCRIPTS: `${V1}/admin/scripts`,
+    SCRIPT_RUN: (scriptId: string) => `${V1}/admin/scripts/${scriptId}/run`,
+    /** PUBLIC — no session, the token IS the credential. */
+    INVITE_PEEK: (token: string) => `${V1}/admin/invites/${token}`,
+    INVITE_ACCEPT: (token: string) => `${V1}/admin/invites/${token}/accept`,
+
     SETUP: `${V1}/admin/setup`,
     OVERVIEW: `${V1}/admin/overview`,
     /** Visibility into the anonymous decide flow. */
@@ -108,6 +120,8 @@ export const EP = {
 
     RECIPES: `${V1}/admin/recipes`,
     RECIPES_BULK: `${V1}/admin/recipes/bulk`,
+    RECIPES_DELETE: `${V1}/admin/recipes/delete`,
+    RECIPES_STATUS: `${V1}/admin/recipes/status`,
     RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
     RECIPE_STATUS: (mealId: string) => `${V1}/admin/recipes/${mealId}/status`,
 

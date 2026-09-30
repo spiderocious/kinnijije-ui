@@ -4,13 +4,12 @@ import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { useSession } from '@features/auth';
+import { usePermissions } from '@shared/hooks/use-permissions';
+import type { Scope } from '@shared/constants/permissions';
 import { buildNext, NEXT_PARAM } from '@features/auth/hooks/use-next-path';
 import { KoboyoIcon } from '@icons';
 import { ROUTES } from '@shared/constants/routes';
 import { Button } from '@ui/primitives';
-
-/** Roles that may see the console at all. */
-const CONSOLE_ROLES: readonly string[] = ['admin', 'super_admin'];
 
 /**
  * Gates the console.
@@ -25,17 +24,29 @@ const CONSOLE_ROLES: readonly string[] = ['admin', 'super_admin'];
  *   signed in, no role  → told plainly, with a way back to the app
  *   admin or above      → render
  *
- * This is CONVENIENCE, not security. The server checks the role on every one of
- * the twenty-one admin endpoints, and that is what actually protects the data —
- * a hidden route is not a permission.
+ * This is CONVENIENCE, not security. The server enforces a role AND a scope on
+ * every one of the 69 admin endpoints, and that is what actually protects the
+ * data — a hidden route is not a permission.
+ *
+ * `scope` narrows it further: a staff member with `recipes:write` and nothing
+ * else gets the same honest card on /admin/users rather than a screen of 403s.
  */
-export function AdminGuard({ children }: { readonly children: ReactNode }) {
-  const { user, isSignedIn, isLoading } = useSession();
+export function AdminGuard({
+  children,
+  scope,
+}: {
+  readonly children: ReactNode;
+  /** The scope this screen needs. Omit for one any staff member may open. */
+  readonly scope?: Scope;
+}) {
+  const { isSignedIn, isLoading } = useSession();
+  const { isStaff, can } = usePermissions();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
 
-  const isOperator = user !== null && CONSOLE_ROLES.includes(user.role);
+  // Staff AND, where a screen names one, holding its scope.
+  const isOperator = isStaff && (scope === undefined || can(scope));
 
   useEffect(() => {
     if (isLoading || isSignedIn) return;
@@ -72,8 +83,9 @@ export function AdminGuard({ children }: { readonly children: ReactNode }) {
             Not your console
           </h1>
           <p className="mt-2 text-sm text-ink-2">
-            This account does not have console access. If that is wrong, somebody with an admin
-            account can change it.
+            {isStaff
+              ? 'Your account does not have access to this part of the console. Somebody who manages staff can change that.'
+              : 'This account does not have console access. If that is wrong, somebody with an admin account can change it.'}
           </p>
           <Button
             className="mt-5"

@@ -105,6 +105,34 @@ export function useDeleteRecipe() {
   });
 }
 
+/** The recipes list's multi-select publish / unpublish. */
+export function useSetRecipesStatus() {
+  const queryClient = useQueryClient();
+  return useMutation<
+    { changed: number; unchanged: number; missing: string[] },
+    ApiError,
+    { ids: string[]; status: 'draft' | 'published' }
+  >({
+    mutationFn: ({ ids, status }) => adminApi.setRecipesStatus(ids, status),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
+/** The recipes list's multi-select delete. */
+export function useDeleteRecipes() {
+  const queryClient = useQueryClient();
+  return useMutation<{ deleted: number; missing: string[] }, ApiError, string[]>({
+    mutationFn: adminApi.deleteRecipes,
+    onSuccess: async (result) => {
+      analytics.track(EVENTS.ADMIN_RECIPE_DELETED, { count: result.deleted, bulk: true });
+
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
+  });
+}
+
 // ── Users ────────────────────────────────────────────────────────────
 export function useAdminUsers(params: Record<string, string | number | undefined>) {
   return useQuery({

@@ -68,6 +68,14 @@ export const ROUTES = {
   ADMIN_AI: '/admin/ai',
   ADMIN_AI_LOG: (logId: string) => `/admin/ai/${logId}`,
   ADMIN_SETTINGS: '/admin/settings',
+  /** Colleagues, their permissions and outstanding invitations. */
+  ADMIN_STAFF: '/admin/staff',
+  /** What staff have been doing. */
+  ADMIN_AUDIT: '/admin/audit',
+  /** Operations an operator runs instead of a shell command. */
+  ADMIN_SCRIPTS: '/admin/scripts',
+  /** PUBLIC: setting a password from an invite link. Outside the console shell. */
+  ADMIN_ACCEPT_INVITE: '/admin/accept-invite',
   ADMIN_EMAILS: '/admin/emails',
   ADMIN_EMAIL_NEW: '/admin/emails/new',
   ADMIN_EMAIL: (emailId: string) => `/admin/emails/${emailId}`,

@@ -384,6 +384,17 @@ export const adminApi = {
     apiClient.patch<void>(EP.ADMIN.RECIPE_STATUS(mealId), { status }),
   deleteRecipe: (mealId: string): Promise<void> => apiClient.delete<void>(EP.ADMIN.RECIPE(mealId)),
 
+  /** Publish or unpublish several. `unchanged` were already in that state. */
+  setRecipesStatus: (
+    ids: string[],
+    status: 'draft' | 'published',
+  ): Promise<{ changed: number; unchanged: number; missing: string[] }> =>
+    apiClient.post(EP.ADMIN.RECIPES_STATUS, { ids, status }),
+
+  /** Several at once. `missing` are ids somebody else already deleted. */
+  deleteRecipes: (ids: string[]): Promise<{ deleted: number; missing: string[] }> =>
+    apiClient.post(EP.ADMIN.RECIPES_DELETE, { ids }),
+
   users: (params: Record<string, string | number | undefined>): Promise<Paged<AdminUserRow>> =>
     apiClient.get<Paged<AdminUserRow>>(`${EP.ADMIN.USERS}${qs(params)}`),
   user: (userId: string): Promise<AdminUserDetail> =>

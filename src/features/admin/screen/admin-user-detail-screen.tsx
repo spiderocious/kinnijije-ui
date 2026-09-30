@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
+import { ALL_ROLES } from '@shared/constants/permissions';
 import { Repeat, Show } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes';
@@ -11,7 +12,14 @@ import { useAdminUser, useSetUserRole, useSetUserStatus } from '../hooks/use-adm
 import { ConsoleShell } from '../parts/console-shell';
 
 const STATUSES = ['active', 'pending', 'suspended', 'banned', 'deleted'];
-const ROLES = ['user', 'moderator', 'admin', 'super_admin'];
+/**
+ * From the shared list, not a fourth hand-written copy.
+ *
+ * `super_admin` is deliberately absent: the server refuses to grant a role at
+ * or above the actor's own, so offering it here would be a dropdown whose last
+ * option always 403s.
+ */
+const ROLES = ALL_ROLES.filter((role) => role !== 'super_admin');
 
 function Row({ label, value }: { readonly label: string; readonly value: string | number | null }) {
   return (

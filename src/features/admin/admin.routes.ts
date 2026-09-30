@@ -173,3 +173,28 @@ export const adminEmailRoute = createRoute({
   path: '/admin/emails/$emailId',
   component: lazyRouteComponent(() => import('./screen/admin-email-detail-route')),
 });
+
+export const adminStaffRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_STAFF,
+  component: lazyRouteComponent(() => import('./screen/admin-staff-route')),
+});
+
+export const adminAuditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_AUDIT,
+  component: lazyRouteComponent(() => import('./screen/admin-audit-route')),
+});
+
+/** PUBLIC. No guard — see the route component. */
+export const adminAcceptInviteRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_ACCEPT_INVITE,
+  component: lazyRouteComponent(() => import('./screen/admin-accept-invite-route')),
+});
+
+export const adminScriptsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_SCRIPTS,
+  component: lazyRouteComponent(() => import('./screen/admin-scripts-route')),
+});
