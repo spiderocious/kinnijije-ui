@@ -73,12 +73,21 @@ export function KoboyoIcon({
   className,
   title,
 }: KoboyoIconProps) {
-  const glyph = KOBOYO_GLYPHS[name];
+  // Typed as always present, but a name can still arrive from data or a cast
+  // that the union never saw. One unknown icon must not take down the screen
+  // around it — so it renders as an empty box of the right size instead.
+  const glyph = KOBOYO_GLYPHS[name] as (typeof KOBOYO_GLYPHS)[KoboyoIconName] | undefined;
 
   const inner = useMemo(() => {
+    if (glyph === undefined) return '';
     const w = weight ?? weightFor(size, alone);
     return restroke(glyph.d, Math.round(w * (glyph.h / size) * 100) / 100);
   }, [glyph, size, alone, weight]);
+
+  if (glyph === undefined) {
+    if (import.meta.env.DEV) console.warn(`KoboyoIcon: no glyph named "${String(name)}"`);
+    return <span aria-hidden="true" className={className} style={{ display: 'inline-block', width: size, height: size }} />;
+  }
 
   const width = Math.round((glyph.w / glyph.h) * size * 100) / 100;
 

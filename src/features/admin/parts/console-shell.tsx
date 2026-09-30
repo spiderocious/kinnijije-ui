@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import type { KoboyoIconName } from '@icons';
+
 import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
@@ -20,7 +22,12 @@ import { Avatar } from '@ui/structure';
  */
 interface NavSpec {
   readonly label?: string;
-  readonly items: readonly { id: string; label: string; icon: string; scope: Scope | null }[];
+  /**
+   * `icon` is the real glyph-name union, not `string`: a name that is not in
+   * the icon set used to type-check and then crash the whole console at
+   * render, which is exactly what `'list'` did.
+   */
+  readonly items: readonly { id: string; label: string; icon: KoboyoIconName; scope: Scope | null }[];
 }
 
 const CONSOLE_NAV: readonly NavSpec[] = [
@@ -48,7 +55,7 @@ const CONSOLE_NAV: readonly NavSpec[] = [
     label: 'Organisation',
     items: [
       { id: 'staff', label: 'Staff', icon: 'contact', scope: 'staff:read' },
-      { id: 'audit', label: 'Audit trail', icon: 'list', scope: 'audit:read' },
+      { id: 'audit', label: 'Audit trail', icon: 'checklistPaper', scope: 'audit:read' },
       { id: 'scripts', label: 'Operations', icon: 'cycle', scope: 'scripts:read' },
       { id: 'settings', label: 'Settings', icon: 'settings', scope: 'settings:write' },
     ],
