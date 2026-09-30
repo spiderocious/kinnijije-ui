@@ -128,6 +128,21 @@ export const DECIDE_COPY = {
     },
   },
 
+  /** The saved decisions, behind the history icon. Signed in only. */
+  history: {
+    open: 'Past decisions',
+    title: 'What you decided before',
+    sub: 'Tap one to see it again, or remix it into a new answer.',
+    empty: 'Nothing here yet. Decide something and it will be saved.',
+    emptyHint: 'Only decisions you make while signed in are kept.',
+    remix: 'Remix this',
+    remixHint: 'Same answers, change what you like, decide again.',
+    view: 'See the verdict',
+    remove: 'Remove',
+    nothingMatched: 'Nothing matched',
+    close: 'Close',
+  },
+
   /** Shown to a signed-in cook in place of the kitchen step. */
   usingKitchen: {
     title: 'Using your kitchen',

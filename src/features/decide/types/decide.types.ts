@@ -158,3 +158,30 @@ export interface DecideStats {
   refresh_in_seconds: number;
   as_of: string;
 }
+
+/**
+ * One saved decision, as the history endpoint returns it.
+ *
+ * Holds the ANSWERS as well as the outcome, which is what makes remix
+ * possible: the flow is seeded from `answers` and re-run.
+ */
+export interface DecideHistoryEntry {
+  id: string;
+  created_at: string;
+  answers: {
+    kitchen_items: string[];
+    kitchen_skipped: boolean;
+    mood: Mood;
+    weight: Weight;
+    minutes: TimeBudget;
+    city: string | null;
+    mode: 'cook' | 'order';
+  };
+  verdict: {
+    meal_id: string | null;
+    name: string | null;
+    score: number | null;
+    why: string | null;
+  };
+  pool_count: number;
+}

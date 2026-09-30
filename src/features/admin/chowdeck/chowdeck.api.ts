@@ -63,6 +63,9 @@ export const chowdeckApi = {
   /** The default seed list. Returns a job id. */
   importPlaces: (): Promise<{ job_id: string; count: number }> =>
     apiClient.post(EP.ADMIN.CHOWDECK_PLACES_IMPORT, {}),
+  /** The chosen places, and their cached searches. */
+  deletePlaces: (ids: string[]): Promise<{ places: number; cleared: number }> =>
+    apiClient.post(EP.ADMIN.CHOWDECK_PLACES_DELETE, { ids }),
   /** Every place and every cached search. */
   purgePlaces: (): Promise<{ places: number; cleared: number }> =>
     apiClient.post(EP.ADMIN.CHOWDECK_PLACES_PURGE, {}),

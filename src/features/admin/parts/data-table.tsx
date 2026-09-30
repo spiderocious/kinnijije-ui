@@ -6,7 +6,8 @@ import { cn } from '@shared/utils/cn';
 
 export interface Column<T> {
   readonly key: string;
-  readonly header: string;
+  /** Usually a label; a node for the rare header that is a control, like select-all. */
+  readonly header: ReactNode;
   readonly render: (row: T) => ReactNode;
   /** Numbers read better right-aligned and tabular. */
   readonly numeric?: boolean;

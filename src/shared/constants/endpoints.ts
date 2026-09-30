@@ -28,6 +28,9 @@ export const EP = {
     OPTIONS: `${V1}/decide/options`,
     STATS: `${V1}/decide/stats`,
     DECIDE: `${V1}/decide`,
+    /** Authenticated, unlike the rest: history belongs to an account. */
+    HISTORY: `${V1}/decide/history`,
+    HISTORY_ENTRY: (id: string) => `${V1}/decide/history/${id}`,
   },
 
   /**
@@ -156,6 +159,7 @@ export const EP = {
     CHOWDECK_PLACES_AUTOCOMPLETE: `${V1}/admin/chowdeck/places/autocomplete`,
     CHOWDECK_PLACES_IMPORT: `${V1}/admin/chowdeck/places/import`,
     CHOWDECK_PLACES_PURGE: `${V1}/admin/chowdeck/places/purge`,
+    CHOWDECK_PLACES_DELETE: `${V1}/admin/chowdeck/places/delete`,
     CHOWDECK_PLACE: (placeId: string) => `${V1}/admin/chowdeck/places/${encodeURIComponent(placeId)}`,
     CHOWDECK_CACHE: `${V1}/admin/chowdeck/cache`,
     CHOWDECK_CACHE_CLEAR: `${V1}/admin/chowdeck/cache/clear`,

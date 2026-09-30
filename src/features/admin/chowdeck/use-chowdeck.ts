@@ -223,6 +223,20 @@ export function useImportPlaces() {
   });
 }
 
+/** Deletes the selected places. Refreshes the same views a purge does. */
+export function useDeletePlaces() {
+  const queryClient = useQueryClient();
+  return useMutation<{ places: number; cleared: number }, ApiError, string[]>({
+    mutationFn: chowdeckApi.deletePlaces,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: CHOWDECK_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['chowdeck', 'places'] }),
+      ]);
+    },
+  });
+}
+
 /**
  * Deletes every place and the whole cache with them. Everything Chowdeck is
  * dropped afterwards — places, cache, coverage and the overview all change —

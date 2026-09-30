@@ -5,7 +5,7 @@ import { Show } from 'meemaw';
 import { ROUTES } from '@shared/constants/routes';
 import { formatDate } from '@shared/utils/format-date';
 import { InfoCard } from '@ui/admin';
-import { Input, Switch } from '@ui/inputs';
+import { Checkbox, Input, Switch } from '@ui/inputs';
 import { Button } from '@ui/primitives';
 import { Tag } from '@ui/status';
 
@@ -21,6 +21,7 @@ import {
   useChowdeckPlaces,
   useDebounced,
   useDeletePlace,
+  useDeletePlaces,
   useImportPlaces,
   useInvalidateChowdeck,
   usePlaceAutocomplete,
@@ -162,6 +163,32 @@ export default function AdminChowdeckPlacesScreen() {
   const [purgeWord, setPurgeWord] = useState('');
   const [purged, setPurged] = useState<{ places: number; cleared: number } | null>(null);
 
+  /**
+   * The multi-select. Held as ids, and read back through the current rows —
+   * so a place deleted or re-imported elsewhere drops out of the selection
+   * instead of lingering as an id nothing on screen matches.
+   */
+  const bulkDelete = useDeletePlaces();
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const [confirmBulk, setConfirmBulk] = useState(false);
+  const rows = data?.items ?? [];
+  const selectedIds = rows.filter((row) => selected.has(row.id)).map((row) => row.id);
+  const allSelected = rows.length > 0 && selectedIds.length === rows.length;
+  const headerState = allSelected ? true : selectedIds.length > 0 ? 'mixed' : false;
+
+  const toggleOne = (id: string, on: boolean) => {
+    setSelected((current) => {
+      const next = new Set(current);
+      if (on) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
+  const toggleAll = (on: boolean) => {
+    setSelected(on ? new Set(rows.map((row) => row.id)) : new Set());
+  };
+
   const onImportDone = useCallback(() => {
     void invalidate();
   }, [invalidate]);
@@ -173,6 +200,32 @@ export default function AdminChowdeckPlacesScreen() {
   };
 
   const columns: Column<PlaceRow>[] = [
+    {
+      key: 'select',
+      header: (
+        <Checkbox
+          checked={headerState}
+          disabled={rows.length === 0}
+          onCheckedChange={(on) => {
+            // A partly-selected header clears on click rather than filling up:
+            // clearing is the safer of the two when a delete is one click away.
+            toggleAll(headerState === 'mixed' ? false : on);
+          }}
+        >
+          <span className="sr-only">Select all places</span>
+        </Checkbox>
+      ),
+      render: (row) => (
+        <Checkbox
+          checked={selected.has(row.id)}
+          onCheckedChange={(on) => {
+            toggleOne(row.id, on);
+          }}
+        >
+          <span className="sr-only">Select {row.name}</span>
+        </Checkbox>
+      ),
+    },
     {
       key: 'name',
       header: 'Place',
@@ -503,7 +556,79 @@ export default function AdminChowdeckPlacesScreen() {
         <PlaceSearch />
       </div>
 
-      <div className="mb-2 flex items-center">
+      <ChowdeckError error={bulkDelete.error} title="The selected places were not deleted" />
+
+      <Show when={bulkDelete.data !== undefined && selectedIds.length === 0}>
+        <p className="mb-3 text-xs font-extrabold text-success-onsoft">
+          Deleted {bulkDelete.data?.places ?? 0} places and {bulkDelete.data?.cleared ?? 0} cached searches.
+        </p>
+      </Show>
+
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        {/* The bulk bar: only while something is selected, with its own
+            second step, like the single delete in each row. */}
+        <Show when={selectedIds.length > 0}>
+          <span className="text-xs font-extrabold text-ink">
+            {selectedIds.length} selected
+          </span>
+          <Show
+            when={confirmBulk}
+            fallback={
+              <>
+                <Button
+                  size="sm"
+                  variant="tertiary"
+                  destructive
+                  onClick={() => {
+                    setConfirmBulk(true);
+                  }}
+                >
+                  Delete selected
+                </Button>
+                <Button
+                  size="sm"
+                  variant="tertiary"
+                  onClick={() => {
+                    toggleAll(false);
+                  }}
+                >
+                  Clear
+                </Button>
+              </>
+            }
+          >
+            <span className="text-xs font-extrabold text-caution-onsoft">
+              Delete {selectedIds.length} {selectedIds.length === 1 ? 'place' : 'places'} and their cached searches?
+            </span>
+            <Button
+              size="sm"
+              destructive
+              loading={bulkDelete.isPending}
+              onClick={() => {
+                bulkDelete.mutate(selectedIds, {
+                  onSuccess: () => {
+                    setSelected(new Set());
+                  },
+                  onSettled: () => {
+                    setConfirmBulk(false);
+                  },
+                });
+              }}
+            >
+              Yes, delete
+            </Button>
+            <Button
+              size="sm"
+              variant="tertiary"
+              onClick={() => {
+                setConfirmBulk(false);
+              }}
+            >
+              No
+            </Button>
+          </Show>
+        </Show>
+
         <Show when={data !== undefined}>
           <span className="ml-auto font-mono text-xs text-ink-3">
             {data?.items.filter((p) => p.active).length ?? 0} offered of {data?.total ?? 0}

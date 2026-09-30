@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 import { ROUTES } from '@shared/constants/routes';
@@ -31,6 +31,11 @@ interface DecideHeroProps {
   readonly signedIn?: boolean;
   /** How many things are on file, so the copy can say so. */
   readonly kitchenCount?: number;
+  /**
+   * Opens past decisions. Present only for a signed-in cook, because a guest
+   * has no history — an icon that opens an empty sheet is worse than none.
+   */
+  readonly onHistory?: (() => void) | undefined;
 }
 
 const { hero } = DECIDE_COPY;
@@ -40,6 +45,7 @@ export function DecideHero({
   onSignIn,
   signedIn = false,
   kitchenCount = 0,
+  onHistory,
 }: DecideHeroProps) {
   const copy = signedIn ? hero.member : hero;
   const sub = signedIn
@@ -88,6 +94,22 @@ export function DecideHero({
           </Button>
         </span>
       </header>
+      )}
+
+      {/* A member's only chrome on this screen. The guest header above carries
+          sign-in and "how it works"; this carries the one thing a member has
+          that a guest does not. */}
+      {signedIn && onHistory !== undefined && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={onHistory}
+            className="flex items-center gap-1.5 rounded-blade-xs border-2 border-line-2 px-2.5 py-1.5 text-[12px] font-extrabold text-ink-2 hover:border-ink hover:text-ink"
+          >
+            <Clock size={14} strokeWidth={2.6} />
+            {DECIDE_COPY.history.open}
+          </button>
+        </div>
       )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">

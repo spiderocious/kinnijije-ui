@@ -14,6 +14,7 @@ import { usePlacesAvailable } from '@features/chowdeck/use-chowdeck';
 import { useDecide, useDecideOptions, usePrefetchDecideOptions } from '../hooks/use-decide';
 import { useMyKitchen } from '../hooks/use-my-kitchen';
 import { inviteStore } from '../services/invite-store';
+import { HistorySheet } from './parts/history-sheet';
 import { InviteSheet } from './parts/invite-sheet';
 import { DecideHero } from './parts/decide-hero';
 import { DecideThinking } from './parts/decide-thinking';
@@ -24,7 +25,14 @@ import { StepPlace } from './parts/step-place';
 import { StepTime } from './parts/step-time';
 import { StepWeight } from './parts/step-weight';
 import { DECIDE_STAGES } from '../types/decide.types';
-import type { DecidePlace, DecideStage, Mood, TimeBudget, Weight } from '../types/decide.types';
+import type {
+  DecideHistoryEntry,
+  DecidePlace,
+  DecideStage,
+  Mood,
+  TimeBudget,
+  Weight,
+} from '../types/decide.types';
 
 /**
  * The front door.
@@ -196,6 +204,44 @@ function DecideFlow() {
   }, []);
 
   const [rejectedName, setRejectedName] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  /**
+   * Replaying a past decision.
+   *
+   * Seeds the draft from the saved ANSWERS and drops them on the first
+   * question rather than re-running immediately: "remix" means change
+   * something and decide again, so landing on a fresh verdict they did not
+   * ask for would be a repeat, not a remix.
+   *
+   * The old verdict is cleared. Keeping it would put a stale answer behind
+   * the step guard, which sends them straight back to it.
+   */
+  const remix = useCallback(
+    (entry: DecideHistoryEntry) => {
+      const { answers } = entry;
+      decide.patch({
+        kitchenItems: answers.kitchen_items,
+        kitchenSkipped: answers.kitchen_skipped,
+        mood: answers.mood,
+        weight: answers.weight,
+        minutes: answers.minutes,
+        city: answers.city,
+        mode: answers.mode,
+        verdict: null,
+      });
+      setHistoryOpen(false);
+      setRejectedName(null);
+      setRequested(false);
+      // `entry_stage` stays a real stage everywhere, so the funnel breakdown
+      // is not polluted by a value that is not one. The remix is its own
+      // property: "how many runs start from a past answer" is the question.
+      const entryStage: DecideStage = canSkipKitchen ? 'mood' : 'kitchen';
+      analytics.track(EVENTS.DECIDE_STARTED, { entry_stage: entryStage, is_remix: true });
+      setStage(entryStage);
+    },
+    [decide, setStage, canSkipKitchen],
+  );
 
   /**
    * "After step 3", which is the TIME step — not the weight step.
@@ -332,10 +378,12 @@ function DecideFlow() {
 
   if (stage === 'hero') {
     return (
-      <DecideHero
-        signedIn={isSignedIn}
-        kitchenCount={myKitchen.items.length}
-        onStart={() => {
+      <>
+        <DecideHero
+          signedIn={isSignedIn}
+          kitchenCount={myKitchen.items.length}
+          {...(isSignedIn && { onHistory: () => { setHistoryOpen(true); } })}
+          onStart={() => {
           // Somebody whose kitchen we already know is never asked for it: the
           // clearest possible signal that the app does not remember them.
           if (myKitchen.canSkip) {
@@ -351,7 +399,12 @@ function DecideFlow() {
           analytics.track(EVENTS.DECIDE_SIGNUP_CLICKED, { source: 'hero_signin', stage: 'hero' });
           void navigate({ to: ROUTES.LOGIN });
         }}
-      />
+        />
+
+        {historyOpen && (
+          <HistorySheet onClose={() => { setHistoryOpen(false); }} onRemix={remix} />
+        )}
+      </>
     );
   }
 
