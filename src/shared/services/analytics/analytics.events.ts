@@ -91,8 +91,14 @@ export const EVENTS = {
   JOB_CANCELLED: 'job_cancelled',
   JOB_RETRIED: 'job_retried',
 
-  // ── Admin console ──────────────────────────────────────────────────────
-  ADMIN_LOGGED_IN: 'admin_logged_in',
+  /**
+   * ── Admin console ────────────────────────────────────────────────────
+   *
+   * No `admin_logged_in`: the console reuses the ordinary `useLogin`, so an
+   * operator signing in already sends `logged_in` with `role` on the profile.
+   * A second event for the same act would double the login count and need
+   * excluding from every report that uses it.
+   */
   ADMIN_RECIPE_CREATED: 'admin_recipe_created',
   ADMIN_RECIPE_STATUS_CHANGED: 'admin_recipe_status_changed',
   ADMIN_RECIPE_DELETED: 'admin_recipe_deleted',

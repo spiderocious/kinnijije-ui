@@ -267,7 +267,15 @@ export function useSendEmail() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: adminApi.sendEmail,
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      // Broadcast volume, to read against opt-outs and deletions in the days
+      // after it goes out.
+      const input = variables as { kind?: string; user_ids?: string[] };
+      analytics.track(EVENTS.ADMIN_EMAIL_SENT, {
+        kind: input.kind ?? 'unknown',
+        recipient_count: input.user_ids?.length ?? null,
+        is_resend: false,
+      });
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -278,6 +286,8 @@ export function useResendEmail() {
   return useMutation({
     mutationFn: adminApi.resendEmail,
     onSuccess: async () => {
+      analytics.track(EVENTS.ADMIN_EMAIL_SENT, { kind: 'resend', is_resend: true });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });
@@ -312,7 +322,13 @@ export function useRetryJob() {
   return useMutation({
     mutationFn: ({ jobId, force }: { jobId: string; force?: boolean }) =>
       adminApi.retryJob(jobId, force ?? false),
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      // Which job types need babysitting.
+      analytics.track(EVENTS.ADMIN_JOB_RETRIED, {
+        job_id: variables.jobId,
+        forced: variables.force ?? false,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
   });

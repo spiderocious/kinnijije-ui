@@ -1,4 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
+
+import { EVENTS, analytics } from '@shared/services/analytics';
 import { Repeat, Show } from 'meemaw';
 
 import { KoboyoIcon } from '@icons';
@@ -103,13 +105,28 @@ export function ChatMessage({ message }: { readonly message: ChatHistoryItem }) 
                  * a dead end, and it was the most common answer the chat gave.
                  */
                 const open = (): void => {
+                  /**
+                   * Whether chat drives COOKING or just conversation.
+                   *
+                   * This is the event that justifies the feature's cost — every
+                   * message is an LLM call. If this is near zero, chat is an
+                   * expensive toy.
+                   *
+                   * `source=chat` rides along on the navigation so `meal_viewed`
+                   * can attribute the visit back here.
+                   */
+                  analytics.track(EVENTS.CHAT_SUGGESTION_OPENED, {
+                    meal_id: isOurs ? mealId : null,
+                    was_generated: !isOurs,
+                  });
+
                   if (isOurs) {
-                    void navigate({ to: ROUTES.MEAL(mealId) });
+                    void navigate({ to: ROUTES.MEAL(mealId), search: { from: 'chat' } as never });
                     return;
                   }
                   void navigate({
                     to: ROUTES.MEAL(ROUTES.GENERATED_MEAL_ID),
-                    search: { meal: meal.name } as never,
+                    search: { meal: meal.name, from: 'chat' } as never,
                   });
                 };
 
