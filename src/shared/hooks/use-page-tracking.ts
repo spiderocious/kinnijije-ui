@@ -13,8 +13,10 @@ import { router } from '@app/app.router';
  * somebody adds a route.
  */
 const TRACKED: Record<string, string> = {
-  [ROUTES.ENTRY]: 'Landing Viewed',
+  // `/` is deliberately absent: it redirects before rendering, so it could
+  // only ever report a view nobody actually saw.
   [ROUTES.DECIDE]: 'Decide Viewed',
+  [ROUTES.WHY]: 'Landing Viewed',
 };
 
 /**

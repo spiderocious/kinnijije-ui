@@ -1,4 +1,4 @@
-import { createRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
 
 import { ROUTES } from '@shared/constants/routes';
 import { rootRoute } from '@app/app.root-route';
@@ -6,24 +6,31 @@ import { rootRoute } from '@app/app.root-route';
 const screen = lazyRouteComponent(() => import('../hero/screen/hero-screen'));
 
 /**
- * The marketing landing, still at `/`.
+ * `/` sends everybody to the decide flow.
  *
- * The decide flow lives at `/decide` until it has been tested against real
- * traffic. Making it the front door is a one-line change here and one in
- * `decide.routes.ts`.
+ * A REDIRECT rather than rendering the flow at `/` directly, so there is one
+ * canonical URL for it. Two paths serving the same screen splits search
+ * ranking between them and makes a shared link ambiguous about which one was
+ * meant.
+ *
+ * `throw redirect` in `beforeLoad` happens before anything renders, so nobody
+ * sees the marketing page flash first. `replace` keeps `/` out of the back
+ * stack: pressing Back from the flow should leave the site, not bounce through
+ * a redirect that immediately sends them forward again.
  */
 export const landingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ENTRY,
-  component: screen,
+  beforeLoad: () => {
+    throw redirect({ to: ROUTES.DECIDE, replace: true });
+  },
 });
 
 /**
- * The same page at `/why`.
+ * The marketing page, at `/why`.
  *
- * Exists now rather than later so the decide flow can link to it by its
- * permanent name, and so the eventual swap does not also have to introduce a
- * new URL.
+ * Kept whole rather than deleted: it still answers "what is this" for somebody
+ * who wants that before deciding, and the flow's header links to it.
  */
 export const whyRoute = createRoute({
   getParentRoute: () => rootRoute,

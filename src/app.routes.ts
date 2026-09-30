@@ -47,8 +47,8 @@ import { rootRoute } from './app.root-route';
  * genuinely can shadow a literal `/meals/...`, so the params go last.
  */
 export const routeTree = rootRoute.addChildren([
-  // Public. `landingRoute` owns "/" for now; the decide flow is at /decide
-  // until it has been tested live.
+  // Public. `/` redirects to the decide flow, which is the real front door;
+  // the marketing page keeps its own URL at /why.
   landingRoute,
   whyRoute,
   decideRoute,

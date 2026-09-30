@@ -36,6 +36,9 @@ const AUTH_PATHS: readonly string[] = [
   ROUTES.FORGOT_PASSWORD,
   ROUTES.RESET_PASSWORD,
   ROUTES.ENTRY,
+  // `/` redirects here, and somebody who signed up FROM the flow should land
+  // in the app rather than back at the question they already answered.
+  ROUTES.DECIDE,
   ROUTES.ADMIN_LOGIN,
 ];
 
