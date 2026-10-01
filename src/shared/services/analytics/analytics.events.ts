@@ -34,6 +34,16 @@ export const EVENTS = {
   CHOWDECK_OFFERS_VIEWED: 'chowdeck_offers_viewed',
   CHOWDECK_OFFER_CLICKED: 'chowdeck_offer_clicked',
 
+  // ── Crashes ────────────────────────────────────────────────────────────
+  /**
+   * The route error boundary caught something.
+   *
+   * A client-side crash is invisible otherwise: the server returned 200, the
+   * logs are clean, and the only person who knows is the one looking at
+   * "Something went wrong".
+   */
+  APP_ERROR_BOUNDARY: 'app_error_boundary',
+
   // ── Marketing ──────────────────────────────────────────────────────────
   WHY_PAGE_VIEWED: 'why_page_viewed',
 
