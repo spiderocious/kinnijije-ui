@@ -193,7 +193,21 @@ export default function AskScreen() {
     greeted.current = true;
     analytics.track(EVENTS.ASK_SESSION_STARTED, { surface: 'ask', is_signed_in: isSignedIn });
     say({ role: 'pot', text: ASK_COPY.questions.kitchen.ask, step: 'kitchen' });
-  }, [say, isSignedIn]);
+
+    /**
+     * Create the session HERE, not on the first typed message.
+     *
+     * `ensure()` used to be called only from `sendFreeform`, so a conversation
+     * answered entirely by tapping never created one — and tapping is the
+     * fast path we steer everybody towards. The result was an `ask_sessions`
+     * collection that stayed empty in production while the flow visibly
+     * worked, because the thread lives in local state and needs no server.
+     *
+     * Deliberately not awaited: it is one insert, nothing on screen depends on
+     * it, and a slow or failed call must never delay the first question.
+     */
+    void session.ensure();
+  }, [say, isSignedIn, session]);
 
   /**
    * Where the thread lands after a new message.
