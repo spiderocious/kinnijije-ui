@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 import { MOOD_ART, WEIGHT_ART } from '@features/decide/content/decide.illustrations';
 import type { DecideOptions, DecidePlace } from '@features/decide/types/decide.types';
@@ -57,6 +57,33 @@ export function AskDock({
 
     return (
       <div className="flex flex-col gap-2">
+        {/* What has been picked, above the search. Without this, anything
+            chosen in the full picker that is not one of the six quick tiles
+            was invisible here — selected, and nowhere on screen.
+
+            ONE scrolling row, never wrapping: the dock's height must not
+            change as picks pile up, or the thread above it jumps. Each chip
+            removes itself, so a mis-tap is undone where it is seen. */}
+        {kitchen.length > 0 && (
+          <div
+            className="-mx-[14px] flex gap-1.5 overflow-x-auto px-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="Selected ingredients"
+          >
+            {kitchen.map((label) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => { onKitchenToggle(label); }}
+                aria-label={`Remove ${label}`}
+                className="kj-tile-in inline-flex shrink-0 items-center gap-1 rounded-pill border-2 border-ink bg-sky-100 px-2.5 py-1 text-[11.5px] font-extrabold text-ink"
+              >
+                {label}
+                <X size={10} strokeWidth={3} className="opacity-60" />
+              </button>
+            ))}
+          </div>
+        )}
+
         <button
           type="button"
           onClick={onOpenPanel}
@@ -82,15 +109,22 @@ export function AskDock({
         </div>
 
         {/* "Nothing" belongs in a conversation even though it was cut from the
-            tap flow: a conversation that cannot accept "nothing" is a bad one. */}
-        <button
-          type="button"
-          onClick={onNothing}
-          disabled={busy}
-          className="rounded-blade-xs border-2 border-line-2 bg-white py-2 text-[12px] font-extrabold text-ink-2 transition-colors duration-fast hover:border-ink disabled:opacity-50"
-        >
-          {copy.nothing}
-        </button>
+            tap flow: a conversation that cannot accept "nothing" is a bad one.
+
+            Only while nothing is picked. Beside three chosen ingredients it
+            contradicts the screen — and tapping it would throw them away — so
+            it steps aside for the "Use N items" button and returns the moment
+            the last pick is removed. */}
+        {kitchen.length === 0 && (
+          <button
+            type="button"
+            onClick={onNothing}
+            disabled={busy}
+            className="rounded-blade-xs border-2 border-line-2 bg-white py-2 text-[12px] font-extrabold text-ink-2 transition-colors duration-fast hover:border-ink disabled:opacity-50"
+          >
+            {copy.nothing}
+          </button>
+        )}
       </div>
     );
   }

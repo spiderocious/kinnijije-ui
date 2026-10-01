@@ -13,6 +13,9 @@ import { cn } from '@shared/utils/cn';
  * real design decision, not a gap: a hand-drawn glyph beside an illustration
  * reads as a set, where a missing image reads as broken.
  */
+/** The mood tile's picture size, for illustrations and glyphs both. */
+const MOOD_ART_PX = 24;
+
 interface AskTileProps {
   readonly label: string;
   readonly caption?: string | undefined;
@@ -53,17 +56,22 @@ export function AskTile({
       // enough that a twelve-tile grid still lands in under half a second.
       style={{ animationDelay: `${String(index * 35)}ms` }}
     >
+      {/* The big (mood) tile draws its picture at 24px — illustration and
+          fallback glyph ALIKE. They used to be 44 and 28, so a mood with an
+          illustration sat visibly larger than one without, and the row read
+          as two different kinds of tile. One size makes it a set; a fixed
+          box, so a wide illustration cannot grow past it. */}
       {art !== undefined ? (
         <img
           src={art}
           alt=""
-          width={big ? 44 : 30}
-          height={big ? 44 : 30}
-          className={cn('h-auto object-contain', big ? 'w-11' : 'w-[30px]')}
+          width={big ? MOOD_ART_PX : 30}
+          height={big ? MOOD_ART_PX : 30}
+          className={cn('object-contain', big ? 'h-6 w-6' : 'h-auto w-[30px]')}
           loading="lazy"
         />
       ) : icon !== undefined ? (
-        <KoboyoIcon name={icon as KoboyoIconName} size={big ? 28 : 20} className="text-ink-2" />
+        <KoboyoIcon name={icon as KoboyoIconName} size={big ? MOOD_ART_PX : 20} className="text-ink-2" />
       ) : null}
 
       <span

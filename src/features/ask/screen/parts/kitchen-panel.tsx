@@ -102,6 +102,30 @@ export function KitchenPanel({
     >
       <>
         <div className="shrink-0 px-4 pb-3">
+          {/* Picks sit ABOVE the search and stay pinned, so a long scroll never
+              hides what you chose — and they read first, as the answer so far.
+              Capped in height with its own scroll: forty picks must not push
+              the search field and the list off the sheet. */}
+          {selected.length > 0 && (
+            <div
+              className="mb-2.5 flex max-h-[84px] flex-wrap gap-1.5 overflow-y-auto overscroll-contain"
+              aria-label="Selected ingredients"
+            >
+              {selected.map((label) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => { toggle(label); }}
+                  aria-label={`Remove ${label}`}
+                  className="kj-tile-in inline-flex items-center gap-1 rounded-pill border-2 border-ink bg-sky-100 px-2.5 py-1 text-[11.5px] font-extrabold text-ink"
+                >
+                  {label}
+                  <X size={10} strokeWidth={3} className="opacity-60" />
+                </button>
+              ))}
+            </div>
+          )}
+
           <label className="flex min-h-ctrl items-center gap-2 rounded-blade-xs border-2 border-line-2 bg-white px-3 focus-within:border-sky focus-within:shadow-drop-sm">
             <Search size={16} strokeWidth={2.4} className="shrink-0 text-ink-4" />
             <input
@@ -126,23 +150,6 @@ export function KitchenPanel({
               </button>
             )}
           </label>
-
-          {/* Picks stay pinned, so a long scroll never hides what you chose. */}
-          {selected.length > 0 && (
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {selected.map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => { toggle(label); }}
-                  className="kj-tile-in inline-flex items-center gap-1 rounded-pill border-2 border-ink bg-sky-100 px-2.5 py-1 text-[11.5px] font-extrabold text-ink"
-                >
-                  {label}
-                  <X size={10} strokeWidth={3} className="opacity-60" />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">
