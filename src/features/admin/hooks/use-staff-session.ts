@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 
 import { EP } from '@shared/constants/endpoints';
+import { ROUTES } from '@shared/constants/routes';
 import type { Scope } from '@shared/constants/permissions';
 import { satisfies } from '@shared/constants/permissions';
 import type { ApiError } from '@shared/services/api-client';
@@ -83,8 +85,22 @@ export function useStaffLogin() {
   });
 }
 
+/**
+ * Signing out of the console, and landing on its sign-in page.
+ *
+ * The navigation is explicit, not left to `AdminGuard`. `removeQueries` drops
+ * the cached profile but does NOT tell the screens already showing it — they
+ * keep their last answer ("signed in") until something else re-renders them,
+ * so the guard never saw the change and the console stayed on screen with
+ * every credential already gone.
+ *
+ * Order matters: tokens first (nothing can be re-fetched with them), then
+ * away from the console, then the cache — clearing it while a console screen
+ * is still mounted would only invite that screen to ask again.
+ */
 export function useStaffLogout() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation<void, ApiError, void>({
     mutationFn: async () => {
@@ -97,8 +113,10 @@ export function useStaffLogout() {
           .catch(() => undefined);
       }
     },
-    onSuccess: () => {
+    // Settled, not success: signing out must finish even if something above threw.
+    onSettled: async () => {
       staffSessionStore.clear();
+      await navigate({ to: ROUTES.ADMIN_LOGIN, replace: true });
       queryClient.removeQueries({ queryKey: ['admin'] });
     },
   });

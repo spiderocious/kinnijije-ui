@@ -31,7 +31,7 @@ export const DECIDE_COPY = {
     support: {
       prompt: 'Have a question?',
       label: 'Contact support',
-      email: 'devferanmi@gmail.com',
+      email: 'feranmi@kinnijije.xyz',
     },
 
     signIn: 'Sign in',
