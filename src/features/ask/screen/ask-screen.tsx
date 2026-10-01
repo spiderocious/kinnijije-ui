@@ -196,16 +196,60 @@ export default function AskScreen() {
   }, [say, isSignedIn]);
 
   /**
-   * Scrolls to the newest POT message, not the raw bottom.
+   * Where the thread lands after a new message.
    *
-   * Scrolling to the bottom puts the dock in view and the question off it,
-   * which is exactly backwards — the question is the thing that needs reading.
+   * Normally the bottom, which is what a conversation wants. But the verdict
+   * card is TALL — photo, facts, have/need, buttons, provenance, alternates,
+   * and a strip of Chowdeck offers — and on a small screen scrolling to the
+   * bottom of it lands on the offers with the dish itself already off the top.
+   * The one thing somebody asked for ends up the one thing they cannot see.
+   *
+   * So when the newest message is the verdict, the thread scrolls to that
+   * card's TOP instead and lets everything below it be scrolled into view.
+   * Every other message keeps the ordinary behaviour.
    */
+  const verdictRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const node = threadRef.current;
-    if (node === null) return;
+    if (node === null) return undefined;
+
+    const last = messages[messages.length - 1];
+    const card = verdictRef.current;
+
+    if (last?.kind === 'summary' && card !== null) {
+      /**
+       * Pinned to the card's top, and HELD there while it grows.
+       *
+       * The Chowdeck strip loads after the card first renders, so its height
+       * changes a second or two later. Without the observer the thread would
+       * settle correctly and then drift as the offers arrive — which is the
+       * same complaint in slow motion.
+       *
+       * `offsetTop` rather than `scrollIntoView`: the card's offset parent is
+       * the scroll container, and `scrollIntoView` would also scroll the page
+       * behind it.
+       */
+      const pin = (): void => {
+        node.scrollTo({ top: Math.max(0, card.offsetTop - 8), behavior: 'smooth' });
+      };
+      pin();
+
+      const observer = new ResizeObserver(pin);
+      observer.observe(card);
+      // Long enough for the offers to land, short enough that it never fights
+      // somebody who has started scrolling for themselves.
+      const release = setTimeout(() => { observer.disconnect(); }, 4_000);
+
+      return () => {
+        observer.disconnect();
+        clearTimeout(release);
+      };
+    }
+
     node.scrollTo({ top: node.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+    return undefined;
+  }, [messages, showingVerdict]);
 
   /** Moves the conversation on, with the pot's written reaction. */
   /**
@@ -946,8 +990,10 @@ export default function AskScreen() {
       >
         {visible.map((message, i) =>
           message.kind === 'summary' && showingVerdict && decide.verdict !== null ? (
+            // Wrapped so the scroll effect has a node to measure. The card
+            // itself is a composed layout, not a single element.
+            <div key={message.id} ref={verdictRef}>
             <VerdictSummary
-              key={message.id}
               verdict={decide.verdict}
               saved={saved}
               onBookmark={bookmark}
@@ -965,6 +1011,7 @@ export default function AskScreen() {
                 analytics.track(EVENTS.ASK_SUGGESTIONS_OPENED, { surface: 'ask', via: 'strip' });
               }}
             />
+            </div>
           ) : (
             <AskBubble
               key={message.id}
