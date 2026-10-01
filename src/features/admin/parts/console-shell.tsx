@@ -5,7 +5,7 @@ import type { KoboyoIconName } from '@icons';
 import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
-import { useSession, useSignOut } from '@features/auth';
+import { useStaffLogout, useStaffSession } from '../hooks/use-staff-session';
 import { usePermissions } from '@shared/hooks/use-permissions';
 import type { Scope } from '@shared/constants/permissions';
 import { ROUTES } from '@shared/constants/routes';
@@ -96,8 +96,8 @@ export function ConsoleShell({
   readonly children: ReactNode;
 }) {
   const navigate = useNavigate();
-  const signOut = useSignOut();
-  const { user } = useSession();
+  const logout = useStaffLogout();
+  const { staff } = useStaffSession();
   const { can } = usePermissions();
 
   /**
@@ -133,12 +133,12 @@ export function ConsoleShell({
         }
         footer={
           <div className="flex items-center gap-2">
-            <Avatar name={user?.email ?? 'admin'} size={26} />
+            <Avatar name={staff?.email ?? 'admin'} size={26} />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-extrabold text-ink">{user?.email ?? 'admin'}</p>
+              <p className="truncate text-xs font-extrabold text-ink">{staff?.email ?? 'admin'}</p>
               <button
                 type="button"
-                onClick={signOut}
+                onClick={() => { logout.mutate(); }}
                 className="text-xs text-ink-3 underline-offset-2 hover:underline"
               >
                 Sign out

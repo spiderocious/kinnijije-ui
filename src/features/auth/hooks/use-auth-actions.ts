@@ -67,7 +67,6 @@ export function useRegister(options: { onDone?: () => void } = {}) {
         email: session.user.email,
         name: session.user.name,
         created_at: new Date().toISOString(),
-        role: session.user.role,
         status: session.user.status,
         has_onboarded: session.user.has_onboarded,
       });
@@ -134,7 +133,6 @@ export function useLogin(options: { onDone?: () => void } = {}) {
       analytics.identify(session.user.id);
       analytics.setProfile({
         email: session.user.email,
-        role: session.user.role,
         status: session.user.status,
         has_onboarded: session.user.has_onboarded,
       });

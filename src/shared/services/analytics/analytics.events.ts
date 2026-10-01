@@ -120,6 +120,7 @@ export const EVENTS = {
   ADMIN_STAFF_INVITE_REVOKED: 'admin_staff_invite_revoked',
   ADMIN_STAFF_PERMISSIONS_CHANGED: 'admin_staff_permissions_changed',
   ADMIN_SCRIPT_RUN: 'admin_script_run',
+  ADMIN_SCRIPT_REVERTED: 'admin_script_reverted',
 } as const;
 
 export type AnalyticsEvent = (typeof EVENTS)[keyof typeof EVENTS];

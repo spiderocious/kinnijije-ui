@@ -43,3 +43,15 @@ export function useRunScript() {
     },
   });
 }
+
+export function useRevertScript() {
+  const queryClient = useQueryClient();
+
+  return useMutation<Job, ApiError, string>({
+    mutationFn: (scriptId) => scriptsApi.revert(scriptId),
+    onSuccess: async (_job, scriptId) => {
+      analytics.track(EVENTS.ADMIN_SCRIPT_REVERTED, { script_id: scriptId });
+      await queryClient.invalidateQueries({ queryKey: SCRIPTS_KEY });
+    },
+  });
+}

@@ -1,4 +1,3 @@
-import type { UserRole } from '@shared/constants/permissions';
 
 /**
  * Wire types for auth.
@@ -12,15 +11,13 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: UserRole;
   /**
-   * Effective permission scopes, implications already resolved by the server.
+   * NO ROLE, and no permissions.
    *
-   * Empty for an ordinary customer. Used to hide console UI a person cannot
-   * use — never to decide whether an action is allowed, which the server does
-   * on every route.
+   * A customer account has neither: console access is a `staff_users` row with
+   * its own credential and its own token audience. See
+   * `features/admin/hooks/use-staff-session`.
    */
-  permissions: string[];
   status: 'pending' | 'active' | 'suspended' | 'banned' | 'deleted';
   email_verified_at: string | null;
   last_login_at: string | null;

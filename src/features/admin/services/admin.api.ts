@@ -1,5 +1,5 @@
 import { EP } from '@shared/constants/endpoints';
-import { apiClient } from '@shared/services/api-client';
+import { staffClient } from './staff-client';
 
 // ── Setup ────────────────────────────────────────────────────────────
 export interface SetupState {
@@ -381,109 +381,109 @@ export interface AiStats {
 
 export const adminApi = {
   aiStats: (days?: number): Promise<AiStats> =>
-    apiClient.get<AiStats>(
+    staffClient.get<AiStats>(
       days === undefined ? EP.ADMIN.AI_STATS : `${EP.ADMIN.AI_STATS}?days=${String(days)}`,
     ),
 
   decideOverview: (days?: number): Promise<DecideOverview> =>
-    apiClient.get<DecideOverview>(
+    staffClient.get<DecideOverview>(
       days === undefined ? EP.ADMIN.DECIDE_OVERVIEW : `${EP.ADMIN.DECIDE_OVERVIEW}?days=${String(days)}`,
     ),
 
   decideLogs: (params: Record<string, string | number | undefined>): Promise<Paged<DecideLogRow>> =>
-    apiClient.get<Paged<DecideLogRow>>(`${EP.ADMIN.DECIDE_LOGS}${qs(params)}`),
+    staffClient.get<Paged<DecideLogRow>>(`${EP.ADMIN.DECIDE_LOGS}${qs(params)}`),
 
   decideLog: (logId: string): Promise<DecideLogRow> =>
-    apiClient.get<DecideLogRow>(EP.ADMIN.DECIDE_LOG(logId)),
+    staffClient.get<DecideLogRow>(EP.ADMIN.DECIDE_LOG(logId)),
 
-  setupState: (): Promise<SetupState> => apiClient.get<SetupState>(EP.ADMIN.SETUP),
-  bootstrap: (): Promise<BootstrapResult> => apiClient.post<BootstrapResult>(EP.ADMIN.SETUP),
+  setupState: (): Promise<SetupState> => staffClient.get<SetupState>(EP.ADMIN.SETUP),
+  bootstrap: (): Promise<BootstrapResult> => staffClient.post<BootstrapResult>(EP.ADMIN.SETUP),
 
-  overview: (): Promise<AdminOverview> => apiClient.get<AdminOverview>(EP.ADMIN.OVERVIEW),
+  overview: (): Promise<AdminOverview> => staffClient.get<AdminOverview>(EP.ADMIN.OVERVIEW),
 
   recipes: (params: Record<string, string | number | undefined>): Promise<Paged<AdminRecipeRow>> =>
-    apiClient.get<Paged<AdminRecipeRow>>(`${EP.ADMIN.RECIPES}${qs(params)}`),
+    staffClient.get<Paged<AdminRecipeRow>>(`${EP.ADMIN.RECIPES}${qs(params)}`),
   recipe: (mealId: string): Promise<AdminRecipeDetail> =>
-    apiClient.get<AdminRecipeDetail>(EP.ADMIN.RECIPE(mealId)),
+    staffClient.get<AdminRecipeDetail>(EP.ADMIN.RECIPE(mealId)),
   createRecipe: (input: RecipeInput): Promise<{ id: string; matched: number; unmatched: string[] }> =>
-    apiClient.post(EP.ADMIN.RECIPES, input),
+    staffClient.post(EP.ADMIN.RECIPES, input),
   bulkRecipes: (recipes: RecipeInput[]): Promise<BulkResult> =>
-    apiClient.post<BulkResult>(EP.ADMIN.RECIPES_BULK, { recipes }),
+    staffClient.post<BulkResult>(EP.ADMIN.RECIPES_BULK, { recipes }),
   setRecipeStatus: (mealId: string, status: 'draft' | 'published'): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.RECIPE_STATUS(mealId), { status }),
-  deleteRecipe: (mealId: string): Promise<void> => apiClient.delete<void>(EP.ADMIN.RECIPE(mealId)),
+    staffClient.patch<void>(EP.ADMIN.RECIPE_STATUS(mealId), { status }),
+  deleteRecipe: (mealId: string): Promise<void> => staffClient.delete<void>(EP.ADMIN.RECIPE(mealId)),
 
   /** Publish or unpublish several. `unchanged` were already in that state. */
   setRecipesStatus: (
     ids: string[],
     status: 'draft' | 'published',
   ): Promise<{ changed: number; unchanged: number; missing: string[] }> =>
-    apiClient.post(EP.ADMIN.RECIPES_STATUS, { ids, status }),
+    staffClient.post(EP.ADMIN.RECIPES_STATUS, { ids, status }),
 
   /** Several at once. `missing` are ids somebody else already deleted. */
   deleteRecipes: (ids: string[]): Promise<{ deleted: number; missing: string[] }> =>
-    apiClient.post(EP.ADMIN.RECIPES_DELETE, { ids }),
+    staffClient.post(EP.ADMIN.RECIPES_DELETE, { ids }),
 
   users: (params: Record<string, string | number | undefined>): Promise<Paged<AdminUserRow>> =>
-    apiClient.get<Paged<AdminUserRow>>(`${EP.ADMIN.USERS}${qs(params)}`),
+    staffClient.get<Paged<AdminUserRow>>(`${EP.ADMIN.USERS}${qs(params)}`),
   user: (userId: string): Promise<AdminUserDetail> =>
-    apiClient.get<AdminUserDetail>(EP.ADMIN.USER(userId)),
+    staffClient.get<AdminUserDetail>(EP.ADMIN.USER(userId)),
   setUserStatus: (userId: string, status: string): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.USER_STATUS(userId), { status }),
+    staffClient.patch<void>(EP.ADMIN.USER_STATUS(userId), { status }),
   setUserRole: (userId: string, role: string): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.USER_ROLE(userId), { role }),
+    staffClient.patch<void>(EP.ADMIN.USER_ROLE(userId), { role }),
 
   aiLogs: (params: Record<string, string | number | undefined>): Promise<Paged<AiLogRow>> =>
-    apiClient.get<Paged<AiLogRow>>(`${EP.ADMIN.AI}${qs(params)}`),
-  aiLog: (logId: string): Promise<AiLogDetail> => apiClient.get<AiLogDetail>(EP.ADMIN.AI_LOG(logId)),
-  aiPromptIds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.AI_PROMPT_IDS),
+    staffClient.get<Paged<AiLogRow>>(`${EP.ADMIN.AI}${qs(params)}`),
+  aiLog: (logId: string): Promise<AiLogDetail> => staffClient.get<AiLogDetail>(EP.ADMIN.AI_LOG(logId)),
+  aiPromptIds: (): Promise<string[]> => staffClient.get<string[]>(EP.ADMIN.AI_PROMPT_IDS),
 
   features: (): Promise<FeatureFlagRow[]> =>
-    apiClient.get<FeatureFlagRow[]>(EP.ADMIN.FEATURES),
+    staffClient.get<FeatureFlagRow[]>(EP.ADMIN.FEATURES),
   setFeature: (flag: string, enabled: boolean, reason?: string): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.FEATURE(flag), { enabled, reason }),
+    staffClient.patch<void>(EP.ADMIN.FEATURE(flag), { enabled, reason }),
 
   emails: (params: Record<string, string | number | undefined>): Promise<Paged<EmailLogRow>> =>
-    apiClient.get<Paged<EmailLogRow>>(`${EP.ADMIN.EMAILS}${qs(params)}`),
+    staffClient.get<Paged<EmailLogRow>>(`${EP.ADMIN.EMAILS}${qs(params)}`),
   email: (emailId: string): Promise<EmailLogDetail> =>
-    apiClient.get<EmailLogDetail>(EP.ADMIN.EMAIL(emailId)),
-  emailKinds: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.EMAIL_KINDS),
+    staffClient.get<EmailLogDetail>(EP.ADMIN.EMAIL(emailId)),
+  emailKinds: (): Promise<string[]> => staffClient.get<string[]>(EP.ADMIN.EMAIL_KINDS),
   emailSettings: (): Promise<EmailSetting[]> =>
-    apiClient.get<EmailSetting[]>(EP.ADMIN.EMAIL_SETTINGS),
+    staffClient.get<EmailSetting[]>(EP.ADMIN.EMAIL_SETTINGS),
   setEmailKind: (kind: string, enabled: boolean, reason?: string): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.EMAIL_SETTING(kind), { enabled, reason }),
+    staffClient.patch<void>(EP.ADMIN.EMAIL_SETTING(kind), { enabled, reason }),
   mailProvider: (): Promise<MailProviderState> =>
-    apiClient.get<MailProviderState>(EP.ADMIN.EMAIL_PROVIDER),
+    staffClient.get<MailProviderState>(EP.ADMIN.EMAIL_PROVIDER),
   setMailProvider: (
     provider: MailProvider,
     reason?: string,
   ): Promise<{ provider: MailProvider; live: boolean }> =>
-    apiClient.put(EP.ADMIN.EMAIL_PROVIDER, { provider, reason }),
+    staffClient.put(EP.ADMIN.EMAIL_PROVIDER, { provider, reason }),
   testMailProvider: (
     provider: MailProvider,
     to: string,
   ): Promise<{ id: string; delivered: boolean; error: string | null }> =>
-    apiClient.post(EP.ADMIN.EMAIL_PROVIDER_TEST, { provider, to }),
+    staffClient.post(EP.ADMIN.EMAIL_PROVIDER_TEST, { provider, to }),
   previewAudience: (
     audience: EmailAudience,
     userIds?: string[],
   ): Promise<{ count: number; sample: string[] }> =>
-    apiClient.post(EP.ADMIN.EMAIL_PREVIEW, { audience, user_ids: userIds }),
+    staffClient.post(EP.ADMIN.EMAIL_PREVIEW, { audience, user_ids: userIds }),
   sendEmail: (input: {
     audience: EmailAudience;
     user_ids?: string[];
     subject: string;
     body: string;
-  }): Promise<{ sent: number; failed: number }> => apiClient.post(EP.ADMIN.EMAIL_SEND, input),
+  }): Promise<{ sent: number; failed: number }> => staffClient.post(EP.ADMIN.EMAIL_SEND, input),
   resendEmail: (emailId: string): Promise<{ id: string; delivered: boolean }> =>
-    apiClient.post(EP.ADMIN.EMAIL_RESEND(emailId)),
+    staffClient.post(EP.ADMIN.EMAIL_RESEND(emailId)),
 
   jobs: (params: Record<string, string | number | undefined>): Promise<Paged<AdminJobRow>> =>
-    apiClient.get<Paged<AdminJobRow>>(`${EP.ADMIN.JOBS}${qs(params)}`),
-  job: (jobId: string): Promise<AdminJobDetail> => apiClient.get<AdminJobDetail>(EP.ADMIN.JOB(jobId)),
-  jobTypes: (): Promise<string[]> => apiClient.get<string[]>(EP.ADMIN.JOB_TYPES),
+    staffClient.get<Paged<AdminJobRow>>(`${EP.ADMIN.JOBS}${qs(params)}`),
+  job: (jobId: string): Promise<AdminJobDetail> => staffClient.get<AdminJobDetail>(EP.ADMIN.JOB(jobId)),
+  jobTypes: (): Promise<string[]> => staffClient.get<string[]>(EP.ADMIN.JOB_TYPES),
   retryJob: (jobId: string, force = false): Promise<AdminJobDetail> =>
-    apiClient.post<AdminJobDetail>(EP.ADMIN.JOB_RETRY(jobId), { force }),
+    staffClient.post<AdminJobDetail>(EP.ADMIN.JOB_RETRY(jobId), { force }),
   cancelJob: (jobId: string): Promise<AdminJobDetail> =>
-    apiClient.post<AdminJobDetail>(EP.ADMIN.JOB_CANCEL(jobId)),
+    staffClient.post<AdminJobDetail>(EP.ADMIN.JOB_CANCEL(jobId)),
 };

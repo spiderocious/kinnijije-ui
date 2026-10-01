@@ -1,35 +1,34 @@
-import { useSession } from '@features/auth';
-import { isConsoleRole, satisfies, type Scope } from '@shared/constants/permissions';
+import { useStaffSession } from '@features/admin/hooks/use-staff-session';
+import type { Scope } from '@shared/constants/permissions';
 
 export interface Permissions {
-  /** Whether this account may see the console at all. */
+  /** Whether this browser holds a console session at all. */
   readonly isStaff: boolean;
   /** Effective scopes, as the server resolved them. */
   readonly scopes: readonly string[];
-  /** Whether a specific action is available. */
   readonly can: (scope: Scope) => boolean;
-  /** Still resolving the session — render nothing rather than flashing a denial. */
+  /** Still resolving — render nothing rather than flashing a denial. */
   readonly isLoading: boolean;
 }
 
 /**
- * What this person may do.
+ * What the signed-in STAFF MEMBER may do.
  *
- * Drives what the console OFFERS, not what it permits: every admin route is
+ * Reads the console session, not the customer one — those are separate
+ * identities now, and a customer has no scopes at all.
+ *
+ * Drives what the console OFFERS, never what it permits: every admin route is
  * enforced server-side, so a client that lied to itself here would simply get
- * a 403. Hiding is a courtesy — nine links that all fail is a worse experience
- * than not showing them.
+ * a 403. Hiding is a courtesy — nine links that all fail is worse than not
+ * showing them.
  */
 export function usePermissions(): Permissions {
-  const { user, isLoading } = useSession();
-
-  const scopes = user?.permissions ?? [];
-  const isStaff = user !== null && isConsoleRole(user.role);
+  const { staff, isLoading, can } = useStaffSession();
 
   return {
-    isStaff,
-    scopes,
-    can: (scope: Scope) => satisfies(scopes, scope),
+    isStaff: staff !== null,
+    scopes: staff?.permissions ?? [],
+    can,
     isLoading,
   };
 }

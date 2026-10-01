@@ -1,17 +1,18 @@
 import { EP } from '@shared/constants/endpoints';
-import { apiClient } from '@shared/services/api-client';
+import { staffClient } from './staff-client';
 
 export interface StaffRow {
   id: string;
   email: string;
   name: string;
-  role: string;
+  tier: string;
   status: string;
   permissions: string[];
   group_keys: string[];
-  last_login_at: string | null;
+  last_console_login_at: string | null;
   created_at: string | null;
-  invite: { expires_at: string | null; expired: boolean; invited_by: string } | null;
+  has_customer_account: boolean;
+  invite: { expires_at: string | null; expired: boolean; invited_by: string | null } | null;
 }
 
 export interface GroupRow {
@@ -43,23 +44,27 @@ export interface AuditRow {
 export interface InvitePayload {
   email: string;
   name: string;
-  role: 'moderator' | 'admin';
+  tier: 'moderator' | 'admin';
   group_keys: string[];
   scopes: string[];
 }
 
 export const staffApi = {
-  list: (): Promise<StaffRow[]> => apiClient.get<StaffRow[]>(EP.ADMIN.STAFF),
-  groups: (): Promise<GroupRow[]> => apiClient.get<GroupRow[]>(EP.ADMIN.STAFF_GROUPS),
+  list: (): Promise<StaffRow[]> => staffClient.get<StaffRow[]>(EP.ADMIN.STAFF),
+  groups: (): Promise<GroupRow[]> => staffClient.get<GroupRow[]>(EP.ADMIN.STAFF_GROUPS),
 
   invite: (payload: InvitePayload): Promise<{ user_id: string; invite_id: string }> =>
-    apiClient.post<{ user_id: string; invite_id: string }>(EP.ADMIN.STAFF_INVITES, payload),
+    staffClient.post<{ user_id: string; invite_id: string }>(EP.ADMIN.STAFF_INVITES, payload),
 
-  revokeInvite: (userId: string): Promise<void> =>
-    apiClient.delete<void>(EP.ADMIN.STAFF_INVITE(userId)),
+  revokeInvite: (staffId: string): Promise<void> =>
+    staffClient.delete<void>(EP.ADMIN.STAFF_INVITE(staffId)),
 
-  setPermissions: (userId: string, body: { group_keys: string[]; scopes: string[] }): Promise<void> =>
-    apiClient.patch<void>(EP.ADMIN.STAFF_PERMISSIONS(userId), body),
+  /** Removes console access. The row survives so the audit trail still reads. */
+  revokeAccess: (staffId: string, reason?: string): Promise<void> =>
+    staffClient.post<void>(EP.ADMIN.STAFF_REVOKE(staffId), reason === undefined ? {} : { reason }),
+
+  setPermissions: (staffId: string, body: { group_keys: string[]; scopes: string[] }): Promise<void> =>
+    staffClient.patch<void>(EP.ADMIN.STAFF_PERMISSIONS(staffId), body),
 
   audit: (params: Record<string, string | number | undefined>): Promise<AuditRow[]> => {
     const query = new URLSearchParams();
@@ -67,13 +72,13 @@ export const staffApi = {
       if (value !== undefined && value !== '') query.set(key, String(value));
     }
     const suffix = query.toString();
-    return apiClient.get<AuditRow[]>(`${EP.ADMIN.AUDIT}${suffix === '' ? '' : `?${suffix}`}`);
+    return staffClient.get<AuditRow[]>(`${EP.ADMIN.AUDIT}${suffix === '' ? '' : `?${suffix}`}`);
   },
 
   // ── Public: the invite link ──────────────────────────────────────────
   peekInvite: (token: string): Promise<{ email: string; name: string }> =>
-    apiClient.get<{ email: string; name: string }>(EP.ADMIN.INVITE_PEEK(token)),
+    staffClient.get<{ email: string; name: string }>(EP.ADMIN.INVITE_PEEK(token)),
 
   acceptInvite: (token: string, password: string): Promise<void> =>
-    apiClient.post<void>(EP.ADMIN.INVITE_ACCEPT(token), { password }),
+    staffClient.post<void>(EP.ADMIN.INVITE_ACCEPT(token), { password }),
 };

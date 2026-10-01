@@ -1,43 +1,43 @@
 import { EP } from '@shared/constants/endpoints';
-import { apiClient } from '@shared/services/api-client';
+import { staffClient } from '../services/staff-client';
 
 import type { AdminImage, AdminImageList, ImagePrompt } from './admin-images.types';
 
 export const adminImagesApi = {
   list: (mealId: string): Promise<AdminImageList> =>
-    apiClient.get<AdminImageList>(EP.ADMIN.RECIPE_IMAGES(mealId)),
+    staffClient.get<AdminImageList>(EP.ADMIN.RECIPE_IMAGES(mealId)),
 
   /** The prompt, without generating anything. Costs nothing. */
   prompt: (mealId: string): Promise<ImagePrompt> =>
-    apiClient.get<ImagePrompt>(EP.ADMIN.RECIPE_IMAGE_PROMPT(mealId)),
+    staffClient.get<ImagePrompt>(EP.ADMIN.RECIPE_IMAGE_PROMPT(mealId)),
 
   requestUpload: (
     mealId: string,
     body: { content_type: string; content_length: number },
   ): Promise<{ image_id: string; url: string; expires_in_seconds: number }> =>
-    apiClient.post(EP.ADMIN.RECIPE_IMAGE_UPLOAD_URL(mealId), body),
+    staffClient.post(EP.ADMIN.RECIPE_IMAGE_UPLOAD_URL(mealId), body),
 
   confirmUpload: (mealId: string, imageId: string, contentType: string): Promise<AdminImage> =>
-    apiClient.post(EP.ADMIN.RECIPE_IMAGE_CONFIRM(mealId, imageId), { content_type: contentType }),
+    staffClient.post(EP.ADMIN.RECIPE_IMAGE_CONFIRM(mealId, imageId), { content_type: contentType }),
 
   /** Returns a job id; the console follows it rather than waiting. */
   generate: (mealId: string, promptOverride?: string): Promise<{ job_id: string }> =>
-    apiClient.post(
+    staffClient.post(
       EP.ADMIN.RECIPE_IMAGE_GENERATE(mealId),
       promptOverride !== undefined ? { prompt_override: promptOverride } : {},
     ),
 
   publish: (mealId: string, imageId: string): Promise<AdminImage> =>
-    apiClient.post(EP.ADMIN.RECIPE_IMAGE_PUBLISH(mealId, imageId)),
+    staffClient.post(EP.ADMIN.RECIPE_IMAGE_PUBLISH(mealId, imageId)),
 
   reject: (mealId: string, imageId: string, reason: string): Promise<AdminImage> =>
-    apiClient.post(EP.ADMIN.RECIPE_IMAGE_REJECT(mealId, imageId), { reason }),
+    staffClient.post(EP.ADMIN.RECIPE_IMAGE_REJECT(mealId, imageId), { reason }),
 
   setPrimary: (mealId: string, imageId: string): Promise<{ primary_image_id: string }> =>
-    apiClient.put(EP.ADMIN.RECIPE_IMAGE_PRIMARY(mealId), { image_id: imageId }),
+    staffClient.put(EP.ADMIN.RECIPE_IMAGE_PRIMARY(mealId), { image_id: imageId }),
 
   remove: (mealId: string, imageId: string): Promise<void> =>
-    apiClient.delete(EP.ADMIN.RECIPE_IMAGE(mealId, imageId)),
+    staffClient.delete(EP.ADMIN.RECIPE_IMAGE(mealId, imageId)),
 };
 
 /**

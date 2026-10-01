@@ -104,6 +104,11 @@ export const EP = {
     STAFF_INVITE: (userId: string) => `${V1}/admin/staff/${userId}/invite`,
     STAFF_PERMISSIONS: (userId: string) => `${V1}/admin/staff/${userId}/permissions`,
     AUDIT: `${V1}/admin/audit`,
+    ME: `${V1}/admin/auth/me`,
+    LOGIN: `${V1}/admin/auth/login`,
+    LOGOUT: `${V1}/admin/auth/logout`,
+    STAFF_REVOKE: (staffId: string) => `${V1}/admin/staff/${staffId}/revoke`,
+    SCRIPT_REVERT: (scriptId: string) => `${V1}/admin/scripts/${scriptId}/revert`,
     SCRIPTS: `${V1}/admin/scripts`,
     SCRIPT_RUN: (scriptId: string) => `${V1}/admin/scripts/${scriptId}/run`,
     /** PUBLIC — no session, the token IS the credential. */

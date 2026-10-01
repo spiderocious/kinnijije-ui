@@ -9,7 +9,7 @@ import { Tag } from '@ui/status';
 
 import { usePermissions } from '@shared/hooks/use-permissions';
 
-import { useRunScript, useScripts } from '../hooks/use-scripts';
+import { useRevertScript, useRunScript, useScripts } from '../hooks/use-scripts';
 import { ConsoleShell } from '../parts/console-shell';
 import type { ScriptRow } from '../services/scripts.api';
 
@@ -68,6 +68,7 @@ function RunRow({ job }: { readonly job: Job }) {
 
 function ScriptCard({ script }: { readonly script: ScriptRow }) {
   const run = useRunScript();
+  const revert = useRevertScript();
   const { can } = usePermissions();
   const [confirming, setConfirming] = useState(false);
 
@@ -76,7 +77,7 @@ function ScriptCard({ script }: { readonly script: ScriptRow }) {
   const mayRun = can('scripts:write');
 
   const inFlight = script.recent.some((job) => !job.is_terminal);
-  const busy = run.isPending || inFlight;
+  const busy = run.isPending || revert.isPending || inFlight;
 
   const start = (dryRun: boolean): void => {
     run.mutate({ scriptId: script.id, dryRun });
@@ -92,6 +93,12 @@ function ScriptCard({ script }: { readonly script: ScriptRow }) {
           <p className="mt-1 text-xs text-ink-3">
             <span className="font-bold">Effect:</span> {script.effect}
           </p>
+          <Show when={script.last_run_at !== null}>
+            <p className="mt-1 text-xs text-ink-4">
+              Last run {formatDate(script.last_run_at ?? '')} — {script.last_outcome}
+              {script.run_once && script.has_run ? ' · one-off, already applied' : ''}
+            </p>
+          </Show>
         </div>
         <Show when={script.destructive}>
           <Tag size="sm" tone="neutral">
@@ -118,13 +125,27 @@ function ScriptCard({ script }: { readonly script: ScriptRow }) {
           <Button
             size="sm"
             loading={busy}
+            // Disabled rather than hidden: an operator needs to see that this
+            // exists and that it is already done, or they go looking for it.
+            disabled={script.run_disabled}
             onClick={() => {
               // A destructive script asks twice. Everything else runs.
               if (script.destructive) setConfirming(true);
               else start(false);
             }}
           >
-            Run for real
+            {script.run_disabled ? 'Already applied' : 'Run for real'}
+          </Button>
+        </Show>
+
+        <Show when={mayRun && script.can_revert && script.has_run}>
+          <Button
+            size="sm"
+            variant="tertiary"
+            loading={busy}
+            onClick={() => { revert.mutate(script.id); }}
+          >
+            Revert
           </Button>
         </Show>
 

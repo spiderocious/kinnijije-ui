@@ -54,7 +54,7 @@ export default function AdminStaffScreen() {
         </span>
       ),
     },
-    { key: 'role', header: 'Role', render: (row) => <Tag size="sm">{row.role}</Tag> },
+    { key: 'tier', header: 'Tier', render: (row) => <Tag size="sm">{row.tier}</Tag> },
     {
       key: 'status',
       header: 'Status',
@@ -80,7 +80,7 @@ export default function AdminStaffScreen() {
         <span className="flex flex-wrap gap-1">
           <Show when={row.group_keys.length === 0}>
             <span className="text-xs text-ink-4">
-              {row.role === 'super_admin' ? 'everything (owner)' : 'none'}
+              {row.tier === 'super_admin' ? 'everything (owner)' : 'none'}
             </span>
           </Show>
           {row.group_keys.map((key) => (
@@ -96,7 +96,7 @@ export default function AdminStaffScreen() {
       header: 'Last seen',
       render: (row) => (
         <span className="text-xs text-ink-3">
-          {row.last_login_at === null ? 'never' : formatDate(row.last_login_at)}
+          {row.last_console_login_at === null ? 'never' : formatDate(row.last_console_login_at)}
         </span>
       ),
     },
@@ -104,7 +104,7 @@ export default function AdminStaffScreen() {
       key: 'id',
       header: '',
       render: (row) =>
-        !mayManage || row.role === 'super_admin' ? null : (
+        !mayManage || row.tier === 'super_admin' ? null : (
           <span className="flex gap-2">
             <Button
               size="sm"
@@ -176,7 +176,7 @@ export default function AdminStaffScreen() {
                     name,
                     // Moderator is the console's ordinary staff tier; admin is
                     // reserved for somebody who needs the whole thing.
-                    role: 'moderator',
+                    tier: 'moderator',
                     group_keys: [groupKey],
                     scopes: [],
                   },

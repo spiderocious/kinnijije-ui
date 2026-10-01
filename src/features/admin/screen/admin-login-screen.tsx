@@ -1,30 +1,42 @@
 import { useState, type FormEvent } from 'react';
 
+import { useNavigate } from '@tanstack/react-router';
+
 import { KoboyoIcon } from '@icons';
 import { Field, Input, PasswordInput } from '@ui/inputs';
 import { Button } from '@ui/primitives';
+import { ROUTES } from '@shared/constants/routes';
 
-import { useLogin } from '@features/auth/hooks/use-auth-actions';
+import { useStaffLogin } from '../hooks/use-staff-session';
 import { fieldError } from '@features/auth/hooks/use-field-errors';
 import { FormError } from '@features/auth/parts/form-error';
 
 /**
  * Signing in to the console.
  *
- * The same credentials endpoint as the consumer app — there is one identity
- * system, and the ROLE decides what you can reach. A second login path would be
- * a second thing to get wrong.
+ * A SEPARATE credential from the app. Staff authenticate against
+ * `staff_users`, and the token they get is issued for the console audience —
+ * so it cannot be used on the customer API, and a customer's password cannot
+ * be used here. One person may hold both, and they do not interfere.
  */
 export default function AdminLoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const login = useLogin();
+  const navigate = useNavigate();
+  const login = useStaffLogin();
   const error = login.error ?? null;
 
   const submit = (event: FormEvent): void => {
     event.preventDefault();
-    login.mutate({ email: email.trim(), password });
+    login.mutate(
+      { email: email.trim(), password },
+      {
+        onSuccess: () => {
+          void navigate({ to: ROUTES.ADMIN_DASHBOARD });
+        },
+      },
+    );
   };
 
   return (

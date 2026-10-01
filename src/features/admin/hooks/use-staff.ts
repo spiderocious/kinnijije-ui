@@ -29,7 +29,7 @@ export function useInviteStaff() {
       // Who is being let in, and with what. The email is NOT sent as a
       // property — a colleague's address is personal data.
       analytics.track(EVENTS.ADMIN_STAFF_INVITED, {
-        role: variables.role,
+        tier: variables.tier,
         group_count: variables.group_keys.length,
         scope_count: variables.scopes.length,
       });

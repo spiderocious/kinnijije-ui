@@ -3,7 +3,6 @@ import { useEffect, type ReactNode } from 'react';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
-import { useSession } from '@features/auth';
 import { usePermissions } from '@shared/hooks/use-permissions';
 import type { Scope } from '@shared/constants/permissions';
 import { buildNext, NEXT_PARAM } from '@features/auth/hooks/use-next-path';
@@ -39,8 +38,8 @@ export function AdminGuard({
   /** The scope this screen needs. Omit for one any staff member may open. */
   readonly scope?: Scope;
 }) {
-  const { isSignedIn, isLoading } = useSession();
-  const { isStaff, can } = usePermissions();
+  const { isStaff, can, isLoading } = usePermissions();
+  const isSignedIn = isStaff;
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
