@@ -114,7 +114,15 @@ export function ConsoleShell({
   })).filter((group) => group.items.length > 0) as SidebarGroup[];
 
   return (
-    <div className="counter flex min-h-dvh bg-paper">
+    /**
+     * Exactly the viewport tall, never taller — `h-dvh`, not `min-h-dvh`.
+     *
+     * With `min-h-dvh` a long page grew the whole shell and the WINDOW
+     * scrolled, carrying the sidebar away with it. Pinned to the viewport, the
+     * sidebar stays put (its own nav list scrolls inside it if it ever gets
+     * long) and `main` below is the one thing that scrolls.
+     */
+    <div className="counter flex h-dvh overflow-hidden bg-paper">
       <Sidebar
         value={active}
         onValueChange={(id) => {
@@ -148,7 +156,10 @@ export function ConsoleShell({
         }
       />
 
-      <main className="flex min-w-0 flex-1 flex-col">
+      {/* The only scroll container. `min-h-0` lets it shrink to the shell's
+          height instead of growing to its content; the sticky title bar now
+          sticks to the top of THIS box. */}
+      <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-contain">
         <header className="sticky top-0 z-sticky flex items-center justify-between gap-3 border-b border-line bg-white px-6 py-3">
           <h1 className="min-w-0 truncate font-display text-lg font-extrabold tracking-display">
             {title}
