@@ -121,6 +121,9 @@ export const EVENTS = {
   ADMIN_STAFF_PERMISSIONS_CHANGED: 'admin_staff_permissions_changed',
   ADMIN_SCRIPT_RUN: 'admin_script_run',
   ADMIN_SCRIPT_REVERTED: 'admin_script_reverted',
+  ADMIN_EMAIL_COMPOSED: 'admin_email_composed',
+  ADMIN_EMAIL_SETTINGS_CHANGED: 'admin_email_settings_changed',
+  ADMIN_EMAIL_BATCH_APPROVED: 'admin_email_batch_approved',
 } as const;
 
 export type AnalyticsEvent = (typeof EVENTS)[keyof typeof EVENTS];

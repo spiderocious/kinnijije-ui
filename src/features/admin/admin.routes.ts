@@ -198,3 +198,22 @@ export const adminScriptsRoute = createRoute({
   path: ROUTES.ADMIN_SCRIPTS,
   component: lazyRouteComponent(() => import('./screen/admin-scripts-route')),
 });
+
+export const adminCampaignsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CAMPAIGNS,
+  component: lazyRouteComponent(() => import('./screen/admin-campaigns-route')),
+});
+
+// Literal before the parameterised one, as everywhere else.
+export const adminCampaignComposeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_CAMPAIGN_COMPOSE,
+  component: lazyRouteComponent(() => import('./screen/admin-campaign-compose-route')),
+});
+
+export const adminCampaignBatchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/campaigns/batches/$batchId',
+  component: lazyRouteComponent(() => import('./screen/admin-campaign-batch-route')),
+});

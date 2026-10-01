@@ -74,6 +74,12 @@ export const ROUTES = {
   ADMIN_AUDIT: '/admin/audit',
   /** Operations an operator runs instead of a shell command. */
   ADMIN_SCRIPTS: '/admin/scripts',
+  /** Automated email: what runs, what is queued, what got skipped. */
+  ADMIN_CAMPAIGNS: '/admin/campaigns',
+  /** One drafted batch, reviewed per recipient before anything sends. */
+  ADMIN_CAMPAIGN_BATCH: (batchId: string) => `/admin/campaigns/batches/${batchId}`,
+  /** Build one kind for named users, to see exactly what they would get. */
+  ADMIN_CAMPAIGN_COMPOSE: '/admin/campaigns/compose',
   /** PUBLIC: setting a password from an invite link. Outside the console shell. */
   ADMIN_ACCEPT_INVITE: '/admin/accept-invite',
   ADMIN_EMAILS: '/admin/emails',

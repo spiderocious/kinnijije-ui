@@ -44,7 +44,8 @@ const CONSOLE_NAV: readonly NavSpec[] = [
       { id: 'decide', label: 'Decide flow', icon: 'chartBarBig', scope: 'decide:read' },
       { id: 'ai', label: 'AI audit', icon: 'robotForAi', scope: 'ai:read' },
       { id: 'jobs', label: 'Jobs', icon: 'cycle', scope: 'jobs:read' },
-      { id: 'emails', label: 'Email', icon: 'envelope', scope: 'emails:read' },
+      { id: 'emails', label: 'Email log', icon: 'envelope', scope: 'emails:read' },
+      { id: 'campaigns', label: 'Automated email', icon: 'cycle', scope: 'emails:read' },
     ],
   },
   {
@@ -70,6 +71,7 @@ const DESTINATIONS: Record<string, string> = {
   ai: ROUTES.ADMIN_AI,
   jobs: ROUTES.ADMIN_JOBS,
   emails: ROUTES.ADMIN_EMAILS,
+  campaigns: ROUTES.ADMIN_CAMPAIGNS,
   chowdeck: ROUTES.ADMIN_CHOWDECK,
   staff: ROUTES.ADMIN_STAFF,
   audit: ROUTES.ADMIN_AUDIT,
