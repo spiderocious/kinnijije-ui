@@ -7,6 +7,7 @@ import {
   adminCampaignBatchRoute,
   adminScriptsRoute,
   adminDecideLogRoute,
+  adminAskRoute,
   adminDecideRoute,
   adminStaffRoute,
   adminAiRoute,
@@ -25,6 +26,7 @@ import {
   adminJobRoute,
   adminJobsRoute,
   adminLoginRoute,
+  adminRecipeEditRoute,
   adminRecipeNewRoute,
   adminRecipeRoute,
   adminRecipesRoute,
@@ -40,6 +42,7 @@ import {
   resetPasswordRoute,
 } from '@features/auth/auth.routes';
 import { chatRoute } from '@features/chat/chat.routes';
+import { askRoute, askSessionRoute } from '@features/ask/ask.routes';
 import { decideAliasRoute, decideRoute } from '@features/decide/decide.routes';
 import { heroRoute } from '@features/hero/hero.routes';
 import { kitchenRoute } from '@features/kitchen/kitchen.routes';
@@ -68,6 +71,10 @@ export const routeTree = rootRoute.addChildren([
   // reachable at /decide. The marketing page keeps its own URL at /why.
   decideRoute,
   decideAliasRoute,
+  // The conversational flow. Public like decide, and a sibling of it rather
+  // than a mode inside it.
+  askRoute,
+  askSessionRoute,
   whyRoute,
   heroRoute,
   registerRoute,
@@ -102,6 +109,7 @@ export const routeTree = rootRoute.addChildren([
   adminRecipesRoute,
   adminUsersRoute,
   adminAiRoute,
+  adminAskRoute,
   adminDecideRoute,
   adminEmailNewRoute,
   adminEmailsRoute,
@@ -121,6 +129,7 @@ export const routeTree = rootRoute.addChildren([
   adminChowdeckPlacesRoute,
   adminChowdeckClicksRoute,
   adminRecipeRoute,
+  adminRecipeEditRoute,
   adminUserRoute,
   adminAiLogRoute,
   adminDecideLogRoute,

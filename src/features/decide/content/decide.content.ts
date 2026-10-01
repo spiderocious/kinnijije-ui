@@ -128,6 +128,11 @@ export const DECIDE_COPY = {
     },
   },
 
+  /** The door into the conversational flow. Secondary to the tap CTA. */
+  askEntry: {
+    cta: 'Ask KinniJije AI',
+  },
+
   /** The saved decisions, behind the history icon. Signed in only. */
   history: {
     open: 'Past decisions',

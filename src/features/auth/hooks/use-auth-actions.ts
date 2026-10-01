@@ -1,12 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { EVENTS, analytics } from '@shared/services/analytics';
 import { ROUTES } from '@shared/constants/routes';
 import type { ApiError } from '@shared/services/api-client';
 
-import { carryOverDraft } from '@features/decide/services/decide-carryover';
+import { carryOverDraft, hasAnswers } from '@features/decide/services/decide-carryover';
 import { decideDraft } from '@features/decide/services/decide-draft';
+import { STOCK_KEY } from '@features/stock/hooks/use-stock';
 
 import { useNextPath } from './use-next-path';
 import { authApi } from '../services/auth.api';
@@ -14,16 +15,16 @@ import type { AuthSession, LoginPayload, RegisterPayload } from '../types/auth.t
 import { useSession } from './use-session';
 
 /**
- * Where someone lands after signing in.
+ * Where someone lands after signing in or signing up: the app, always.
  *
- * The decision is the SERVER's — `has_onboarded` comes off the user object —
- * so a cleared browser or a second device cannot make someone repeat
- * onboarding, and cannot skip it either.
+ * There used to be an onboarding detour here for anybody who had not finished
+ * it. That flow is retired — a new account goes straight in — so the answer
+ * no longer depends on the session at all. Deciding is the default tab, and
+ * landing anywhere else would contradict what the navigation says the product
+ * is for.
  */
-function landingRouteFor(session: AuthSession): string {
-  // Deciding is the default tab, so landing anywhere else after signing in
-  // contradicts what the navigation says the product is for.
-  return session.user.has_onboarded ? ROUTES.ENTRY : ROUTES.ONBOARDING;
+function landingRouteFor(): string {
+  return ROUTES.ENTRY;
 }
 
 /**
@@ -37,6 +38,14 @@ function landingRouteFor(session: AuthSession): string {
 export function useRegister(options: { onDone?: () => void } = {}) {
   const { signIn } = useSession();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  /**
+   * The carry-over has just written stock, and the kitchen may already have
+   * been fetched (empty) the moment the session went live. Without this the
+   * decide flow and the Kitchen page keep showing that empty answer.
+   */
+  const refreshKitchen = (): Promise<void> => queryClient.invalidateQueries({ queryKey: STOCK_KEY });
 
   return useMutation<AuthSession, ApiError, RegisterPayload>({
     mutationFn: authApi.register,
@@ -48,7 +57,12 @@ export function useRegister(options: { onDone?: () => void } = {}) {
         // Best effort, and deliberately not awaited: the account exists, so
         // making them watch a spinner for two writes that cannot fail visibly
         // would be worse than closing the sheet now.
-        if (draft !== null) void carryOverDraft(draft);
+        //
+        // `clearDraft: false` — they are still IN the flow. Clearing here
+        // wiped the answers out from under the step they were on.
+        if (hasAnswers(draft)) {
+          void carryOverDraft(draft, { clearDraft: false }).then(refreshKitchen);
+        }
         options.onDone();
         return;
       }
@@ -90,19 +104,27 @@ export function useRegister(options: { onDone?: () => void } = {}) {
         had_decide_draft: draft !== null && draft.verdict !== null,
       });
 
-      if (draft !== null && draft.verdict !== null) {
-        void carryOverDraft(draft).then((result) => {
+      /**
+       * ANY answers, not only a finished verdict.
+       *
+       * This used to require a verdict, so somebody who signed up from the
+       * rate-limit screen — kitchen ticked, no verdict yet — had nothing
+       * carried at all. The draft is only cleared when they are landing on a
+       * meal; without one they go back to the flow, which still needs it.
+       */
+      if (hasAnswers(draft)) {
+        const landingOnMeal = draft.verdict !== null && draft.verdict.verdict.meal_id !== '';
+        void carryOverDraft(draft, { clearDraft: landingOnMeal }).then(async (result) => {
+          await refreshKitchen();
           void navigate({
-            to: result.mealId !== null ? ROUTES.MEAL(result.mealId) : landingRouteFor(session),
+            to: landingOnMeal && result.mealId !== null ? ROUTES.MEAL(result.mealId) : landingRouteFor(),
           });
         });
         return;
       }
 
-      // A brand-new account has never onboarded, so this is always onboarding —
-      // but it is read off the response rather than assumed, so the rule stays
-      // true if registration ever pre-completes it.
-      void navigate({ to: landingRouteFor(session) });
+      // Nothing to carry: straight into the app.
+      void navigate({ to: landingRouteFor() });
     },
     onError: (error) => {
       // `email_exists` is a login problem wearing a signup costume: they have
@@ -151,16 +173,14 @@ export function useLogin(options: { onDone?: () => void } = {}) {
         return;
       }
 
-      // Back to whatever they were trying to reach — but ONLY once onboarding
-      // is done. Somebody who has never set up a kitchen cannot use the page
-      // they were sent to anyway, and the guard would only bounce them here
-      // again.
-      if (next !== null && session.user.has_onboarded) {
+      // Back to whatever they were trying to reach. No onboarding check any
+      // more: nothing gates the app on it.
+      if (next !== null) {
         void navigate({ to: next as never });
         return;
       }
 
-      void navigate({ to: landingRouteFor(session) });
+      void navigate({ to: landingRouteFor() });
     },
     onError: (error) => {
       // Separates forgotten passwords from locked accounts from suspended

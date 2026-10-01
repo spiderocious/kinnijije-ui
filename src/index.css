@@ -407,6 +407,131 @@
   }
 }
 
+/* ── Ask KinniJije ──────────────────────────────────────────────────────
+   The motion that makes a conversation feel alive rather than assembled.
+   Every one animates transform and opacity only, so nothing here can cause
+   a layout pass on a mid-range phone. */
+
+/* A bubble growing out of its own anchored corner, rather than floating in
+   from nowhere. The corner is set per side by the component. */
+@keyframes kj-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dock tiles arriving. Staggered per tile by an inline delay — the staircase
+   is the whole effect, and it is what separates this from a fade. */
+@keyframes kj-tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* The three dots, offset in phase so they read as a wave rather than a blink. */
+@keyframes kj-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+}
+
+/* The ring around a live microphone. Pulses out, never in: an inward pulse
+   reads as loading, an outward one reads as listening. */
+@keyframes kj-mic-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* The grape border on a verdict summary, drawing itself clockwise. The
+   provenance mark earns a moment. */
+@keyframes kj-draw {
+  from {
+    stroke-dashoffset: var(--kj-draw-length, 400);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Words of a transcript landing as the stream delivers them. */
+@keyframes kj-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kj-bubble-in {
+  animation: kj-bubble-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.kj-tile-in {
+  animation: kj-tile-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.kj-word-in {
+  animation: kj-word-in 180ms ease-out both;
+}
+.kj-dot {
+  animation: kj-dot 1.2s ease-in-out infinite;
+}
+.kj-mic-ring {
+  animation: kj-mic-ring 1.4s ease-out infinite;
+}
+
+/* The thinking curtain. Sweeps in from the right, leaves to the left — so it
+   reads as something passing across the conversation rather than the
+   conversation being thrown away and rebuilt. */
+@keyframes kj-curtain-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes kj-curtain-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.kj-curtain-in {
+  animation: kj-curtain-in 420ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.kj-curtain-out {
+  animation: kj-curtain-out 380ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

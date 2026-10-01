@@ -34,6 +34,23 @@ export const EP = {
   },
 
   /**
+   * Ask KinniJije. Public, like decide.
+   *
+   * The session id in the path IS the credential — there is no token, because
+   * the whole point is that a stranger can hold a conversation.
+   */
+  ASK: {
+    SESSIONS: `${V1}/ask/sessions`,
+    SESSION: (id: string) => `${V1}/ask/sessions/${id}`,
+    UPLOAD_URL: (id: string) => `${V1}/ask/sessions/${id}/upload-url`,
+    TURNS: (id: string) => `${V1}/ask/sessions/${id}/turns`,
+    FOLLOW_UP: (id: string) => `${V1}/ask/sessions/${id}/follow-up`,
+    TURN: (id: string, turnId: string) => `${V1}/ask/sessions/${id}/turns/${turnId}`,
+    TURN_STREAM: (id: string, turnId: string) =>
+      `${V1}/ask/sessions/${id}/turns/${turnId}/stream`,
+  },
+
+  /**
    * Public, like decide. Only OFFERS can ever make the server call Chowdeck;
    * PLACES is our own table and CLICKS records a tap.
    */
@@ -64,6 +81,8 @@ export const EP = {
   STOCK: {
     LIST: `${V1}/stock`,
     ADD: `${V1}/stock`,
+    /** Names only, idempotent — a guest's kitchen carried onto a new account. */
+    SEED: `${V1}/stock/seed`,
     DASHBOARD: `${V1}/stock/dashboard`,
     SUGGEST: `${V1}/stock/suggest`,
     HISTORY: `${V1}/stock/history`,
@@ -131,6 +150,7 @@ export const EP = {
     OVERVIEW: `${V1}/admin/overview`,
     /** Visibility into the anonymous decide flow. */
     AI_STATS: `${V1}/admin/ai/stats`,
+    ASK_OVERVIEW: `${V1}/admin/ask/overview`,
     DECIDE_OVERVIEW: `${V1}/admin/decide/overview`,
     DECIDE_LOGS: `${V1}/admin/decide/logs`,
     DECIDE_LOG: (logId: string) => `${V1}/admin/decide/logs/${logId}`,
@@ -140,6 +160,8 @@ export const EP = {
     RECIPES_DELETE: `${V1}/admin/recipes/delete`,
     RECIPES_STATUS: `${V1}/admin/recipes/status`,
     RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
+    /** Catalogue ingredients, units and cuisines for the recipe form. */
+    RECIPE_FORM_OPTIONS: `${V1}/admin/recipes/form-options`,
     RECIPE_STATUS: (mealId: string) => `${V1}/admin/recipes/${mealId}/status`,
 
     /** Recipe imagery. Literals before the :imageId routes, as on the server. */

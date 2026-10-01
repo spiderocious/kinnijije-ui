@@ -42,6 +42,8 @@ const CONSOLE_NAV: readonly NavSpec[] = [
     label: 'The model',
     items: [
       { id: 'decide', label: 'Decide flow', icon: 'chartBarBig', scope: 'decide:read' },
+      // Same flow by another door, so it shares the decide scope.
+      { id: 'ask', label: 'Ask KinniJije', icon: 'speechBubble', scope: 'decide:read' },
       { id: 'ai', label: 'AI audit', icon: 'robotForAi', scope: 'ai:read' },
       { id: 'jobs', label: 'Jobs', icon: 'cycle', scope: 'jobs:read' },
       { id: 'emails', label: 'Email log', icon: 'envelope', scope: 'emails:read' },
@@ -66,6 +68,7 @@ const CONSOLE_NAV: readonly NavSpec[] = [
 const DESTINATIONS: Record<string, string> = {
   dashboard: ROUTES.ADMIN_DASHBOARD,
   decide: ROUTES.ADMIN_DECIDE,
+  ask: ROUTES.ADMIN_ASK,
   recipes: ROUTES.ADMIN_RECIPES,
   users: ROUTES.ADMIN_USERS,
   ai: ROUTES.ADMIN_AI,

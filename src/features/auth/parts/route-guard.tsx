@@ -13,9 +13,8 @@ interface RouteGuardProps {
   /** Where an unauthenticated visitor is sent. */
   readonly redirectTo?: string;
   /**
-   * Whether this route is part of onboarding itself. Onboarding routes must
-   * NOT bounce an un-onboarded user back to onboarding — that is an infinite
-   * redirect.
+   * Whether this route is the retired onboarding flow. Such a route renders
+   * nothing and forwards a signed-in visitor to the app.
    */
   readonly isOnboardingRoute?: boolean;
 }
@@ -23,10 +22,15 @@ interface RouteGuardProps {
 /**
  * Gates a route on the session.
  *
- * Three outcomes, in order:
- *   not signed in            → login
- *   signed in, not onboarded → onboarding (unless this IS onboarding)
- *   signed in and onboarded  → render
+ * Two outcomes:
+ *   not signed in → login
+ *   signed in     → render
+ *
+ * ONBOARDING IS NO LONGER A GATE. A new account goes straight into the app,
+ * so "has not onboarded" sends nobody anywhere — including older accounts
+ * that never finished it, which must not be marched back through a flow that
+ * has been retired. The onboarding route itself now forwards to the app, so a
+ * bookmarked or emailed link to it still lands somewhere real.
  *
  * Nothing renders while the session is still loading. Rendering the signed-out
  * view first and correcting a tick later shows a login flash to someone who is
@@ -37,7 +41,7 @@ export function RouteGuard({
   redirectTo = ROUTES.LOGIN,
   isOnboardingRoute = false,
 }: RouteGuardProps) {
-  const { isSignedIn, hasOnboarded, isLoading } = useSession();
+  const { isSignedIn, isLoading } = useSession();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
@@ -64,28 +68,14 @@ export function RouteGuard({
       return;
     }
 
-    if (!hasOnboarded && !isOnboardingRoute) {
-      void navigate({ to: ROUTES.ONBOARDING, replace: true });
-      return;
-    }
-
-    // Someone who has finished onboarding should not be able to walk back
-    // into it from history — send them on to the app's default tab.
-    if (hasOnboarded && isOnboardingRoute) {
+    // Onboarding is retired: anybody arriving at it — from history, a
+    // bookmark or an old email — goes on to the app's default tab.
+    if (isOnboardingRoute) {
       void navigate({ to: ROUTES.ENTRY, replace: true });
     }
-  }, [
-    isLoading,
-    isSignedIn,
-    hasOnboarded,
-    isOnboardingRoute,
-    navigate,
-    redirectTo,
-    pathname,
-    searchStr,
-  ]);
+  }, [isLoading, isSignedIn, isOnboardingRoute, navigate, redirectTo, pathname, searchStr]);
 
-  const allowed = isSignedIn && (isOnboardingRoute ? !hasOnboarded : hasOnboarded);
+  const allowed = isSignedIn && !isOnboardingRoute;
 
   return <Show when={!isLoading && allowed}>{children}</Show>;
 }
@@ -95,13 +85,13 @@ export function RouteGuard({
  * business on the sign-in page, so they are moved along.
  */
 export function GuestOnly({ children }: { readonly children: ReactNode }) {
-  const { isSignedIn, hasOnboarded, isLoading } = useSession();
+  const { isSignedIn, isLoading } = useSession();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoading || !isSignedIn) return;
-    void navigate({ to: hasOnboarded ? ROUTES.ENTRY : ROUTES.ONBOARDING, replace: true });
-  }, [isLoading, isSignedIn, hasOnboarded, navigate]);
+    void navigate({ to: ROUTES.ENTRY, replace: true });
+  }, [isLoading, isSignedIn, navigate]);
 
   return <Show when={!isLoading && !isSignedIn}>{children}</Show>;
 }

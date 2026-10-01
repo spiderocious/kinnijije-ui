@@ -52,6 +52,13 @@ export const adminUsersRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-users-route')),
 });
 
+/** Ask KinniJije's own console page. */
+export const adminAskRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_ASK,
+  component: lazyRouteComponent(() => import('./screen/admin-ask-route')),
+});
+
 export const adminDecideRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ADMIN_DECIDE,
@@ -148,6 +155,13 @@ export const adminRecipeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/recipes/$mealId',
   component: lazyRouteComponent(() => import('./screen/admin-recipe-detail-route')),
+});
+
+// One segment longer than the detail route, so the two cannot be confused.
+export const adminRecipeEditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/recipes/$mealId/edit',
+  component: lazyRouteComponent(() => import('./screen/admin-recipe-edit-route')),
 });
 
 export const adminUserRoute = createRoute({

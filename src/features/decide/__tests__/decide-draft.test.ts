@@ -30,7 +30,7 @@ class MemoryStorage {
 const storage = new MemoryStorage();
 (globalThis as unknown as { window: unknown }).window = { sessionStorage: storage };
 
-const { decideDraft, draftToPayload, emptyDraft, isDecidable, rejectMeal, MAX_KITCHEN_ITEMS } =
+const { decideDraft, draftToPayload, emptyDraft, isDecidable, rejectMeal } =
   await import('../services/decide-draft');
 
 beforeEach(() => {
@@ -83,10 +83,12 @@ describe('decideDraft', () => {
     assert.doesNotThrow(() => { decideDraft.clear(); });
   });
 
-  it('caps the kitchen list', () => {
-    const many = Array.from({ length: 60 }, (_, i) => `item-${String(i)}`);
+  it('keeps the whole kitchen list, however long', () => {
+    // It used to be cut to 40, silently. A big kitchen is the best input there is.
+    const many = Array.from({ length: 250 }, (_, i) => `item-${String(i)}`);
     const draft = decideDraft.patch({ kitchenItems: many });
-    assert.equal(draft.kitchenItems.length, MAX_KITCHEN_ITEMS);
+    assert.equal(draft.kitchenItems.length, 250);
+    assert.equal(draft.kitchenItems[249], 'item-249');
   });
 
   it('keeps the most recent refusals when capped', () => {

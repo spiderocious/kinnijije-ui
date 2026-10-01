@@ -89,6 +89,45 @@ export const EVENTS = {
   MARKET_BOUGHT_CLEARED: 'market_bought_cleared',
 
   // ── Chat ───────────────────────────────────────────────────────────────
+  // ── Ask KinniJije ──────────────────────────────────────────────────
+  // Every one carries `surface: 'ask' | 'tap'`, which is the single property
+  // that makes "which flow are people using" answerable.
+  ASK_ENTRY_CLICKED: 'ask_entry_clicked',
+  ASK_SESSION_STARTED: 'ask_session_started',
+  ASK_STEP_ANSWERED: 'ask_step_answered',
+  ASK_STEP_REVISITED: 'ask_step_revisited',
+  ASK_STEP_SKIPPED: 'ask_step_skipped',
+  ASK_ABANDONED: 'ask_abandoned',
+  ASK_SESSION_COMPLETED: 'ask_session_completed',
+  ASK_PANEL_EXPANDED: 'ask_panel_expanded',
+  ASK_PANEL_SEARCH: 'ask_panel_search',
+  ASK_TEXT_SENT: 'ask_text_sent',
+  ASK_MESSAGE_FAILED: 'ask_message_failed',
+  ASK_MIC_CLICKED: 'ask_mic_clicked',
+  ASK_MIC_PERMISSION: 'ask_mic_permission',
+  ASK_RECORDING_STARTED: 'ask_recording_started',
+  ASK_RECORDING_STOPPED: 'ask_recording_stopped',
+  ASK_RECORDING_DELETED: 'ask_recording_deleted',
+  ASK_VOICE_SENT: 'ask_voice_sent',
+  ASK_UPLOAD_COMPLETED: 'ask_upload_completed',
+  ASK_TRANSCRIBED: 'ask_transcribed',
+  ASK_TRANSCRIBE_FAILED: 'ask_transcribe_failed',
+  ASK_PARSE_COMPLETED: 'ask_parse_completed',
+  ASK_PARSE_REJECTED: 'ask_parse_rejected',
+  ASK_PARSE_CORRECTED: 'ask_parse_corrected',
+  ASK_PARSE_ACCEPTED: 'ask_parse_accepted',
+  ASK_NOTES_EXTRACTED: 'ask_notes_extracted',
+  ASK_NOTE_DISMISSED: 'ask_note_dismissed',
+  ASK_TURN_QUEUED: 'ask_turn_queued',
+  ASK_STREAM_OPENED: 'ask_stream_opened',
+  ASK_STREAM_DROPPED: 'ask_stream_dropped',
+  ASK_TURN_SETTLED: 'ask_turn_settled',
+  ASK_SUMMARY_SHOWN: 'ask_summary_shown',
+  ASK_SUGGESTIONS_OPENED: 'ask_suggestions_opened',
+  ASK_BOOKMARK_CLICKED: 'ask_bookmark_clicked',
+  ASK_BOOKMARK_BLOCKED: 'ask_bookmark_blocked',
+  ASK_BOOKMARK_SAVED: 'ask_bookmark_saved',
+
   CHAT_MESSAGE_SENT: 'chat_message_sent',
   CHAT_REPLY_RECEIVED: 'chat_reply_received',
   CHAT_SUGGESTION_OPENED: 'chat_suggestion_opened',
@@ -119,6 +158,7 @@ export const EVENTS = {
    * excluding from every report that uses it.
    */
   ADMIN_RECIPE_CREATED: 'admin_recipe_created',
+  ADMIN_RECIPE_UPDATED: 'admin_recipe_updated',
   ADMIN_RECIPE_STATUS_CHANGED: 'admin_recipe_status_changed',
   ADMIN_RECIPE_DELETED: 'admin_recipe_deleted',
   ADMIN_IMAGE_GENERATED: 'admin_image_generated',

@@ -48,6 +48,15 @@ export default function AdminRecipeDetailScreen() {
 
           <Show when={data !== undefined}>
             <Button
+              size="sm"
+              onClick={() => {
+                void navigate({ to: ROUTES.ADMIN_RECIPE_EDIT(mealId) });
+              }}
+            >
+              Edit
+            </Button>
+
+            <Button
               variant="secondary"
               size="sm"
               loading={setStatus.isPending}

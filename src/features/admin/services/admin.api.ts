@@ -79,6 +79,33 @@ export interface AdminOverview {
 }
 
 // ── Recipes ──────────────────────────────────────────────────────────
+/** Ask KinniJije, as the console sees it. */
+export interface AskOverview {
+  sessions: {
+    total: number;
+    completed: number;
+    today: number;
+    this_week: number;
+    previous_week: number;
+    trend: number | null;
+    daily: DailyCount[];
+  };
+  input: { tap: number; text: number; voice: number };
+  turns: { total: number; failed: number; parsed: number; median_confidence: number | null };
+  voice: {
+    attempted: number;
+    transcribed: number;
+    failed: number;
+    median_ms: number | null;
+    p95_ms: number | null;
+  };
+  notes: {
+    sessions_with_notes: number;
+    total_notes: number;
+    top: { note: string; count: number }[];
+  };
+}
+
 export interface AdminRecipeRow {
   id: string;
   name: string;
@@ -126,6 +153,16 @@ export interface RecipeInput {
   description?: string;
   ingredients: { name: string; quantity?: number | null; unit?: string | null; optional?: boolean }[];
   steps: { index: number; heading: string; description: string; est_minutes: number }[];
+}
+
+/** What the recipe form offers, so choices are real rather than free text. */
+export interface RecipeFormOptions {
+  /** The whole ingredient catalogue. A name outside it will not match. */
+  ingredients: { id: string; name: string; aliases: string[]; default_unit: string }[];
+  units: { id: string; label: string; abbr: string }[];
+  /** Cuisine tags recipes already use. */
+  cuisines: string[];
+  difficulties: string[];
 }
 
 export interface BulkResult {
@@ -401,12 +438,23 @@ export const adminApi = {
 
   overview: (): Promise<AdminOverview> => staffClient.get<AdminOverview>(EP.ADMIN.OVERVIEW),
 
+  /** Ask KinniJije. Server-computed, so an ad blocker cannot hide a regression. */
+  askOverview: (): Promise<AskOverview> => staffClient.get<AskOverview>(EP.ADMIN.ASK_OVERVIEW),
+
   recipes: (params: Record<string, string | number | undefined>): Promise<Paged<AdminRecipeRow>> =>
     staffClient.get<Paged<AdminRecipeRow>>(`${EP.ADMIN.RECIPES}${qs(params)}`),
   recipe: (mealId: string): Promise<AdminRecipeDetail> =>
     staffClient.get<AdminRecipeDetail>(EP.ADMIN.RECIPE(mealId)),
   createRecipe: (input: RecipeInput): Promise<{ id: string; matched: number; unmatched: string[] }> =>
     staffClient.post(EP.ADMIN.RECIPES, input),
+  recipeFormOptions: (): Promise<RecipeFormOptions> =>
+    staffClient.get<RecipeFormOptions>(EP.ADMIN.RECIPE_FORM_OPTIONS),
+  /** A full replace of the recipe's content. The slug and images are kept. */
+  updateRecipe: (
+    mealId: string,
+    input: RecipeInput,
+  ): Promise<{ id: string; matched: number; unmatched: string[] }> =>
+    staffClient.put(EP.ADMIN.RECIPE(mealId), input),
   bulkRecipes: (recipes: RecipeInput[]): Promise<BulkResult> =>
     staffClient.post<BulkResult>(EP.ADMIN.RECIPES_BULK, { recipes }),
   setRecipeStatus: (mealId: string, status: 'draft' | 'published'): Promise<void> =>

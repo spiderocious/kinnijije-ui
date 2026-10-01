@@ -1,5 +1,6 @@
 import { ENV } from '@shared/config/env';
 
+import { guardRequest } from './request-guard';
 import { sessionStore } from './session-store';
 
 interface RequestOptions {
@@ -133,6 +134,15 @@ async function send(path: string, init: RequestInit, options: RequestOptions): P
 }
 
 async function request<T>(path: string, init: RequestInit, options: RequestOptions): Promise<T> {
+  /**
+   * Before anything leaves the browser.
+   *
+   * A runaway effect can fire thousands of requests in seconds and saturate a
+   * phone's connection. This throws instead, loudly, naming the endpoint — see
+   * `request-guard.ts`.
+   */
+  guardRequest(path);
+
   let response = await send(path, init, options);
 
   // An expired access token is an ordinary event, not an error the caller

@@ -15,6 +15,11 @@ export interface FeatureFlags {
   chowdeck_offers: boolean;
   /** Whether the server calls Chowdeck. The app never reads it; listed so the shape matches. */
   chowdeck_fetch: boolean;
+  /** Ask KinniJije, the conversational flow. Four layers, each switchable. */
+  ask_chat: boolean;
+  ask_voice: boolean;
+  ask_free_text: boolean;
+  ask_streaming: boolean;
 }
 
 /**
@@ -43,6 +48,17 @@ const ALL_ON: FeatureFlags = {
   // Off for the same reason: an unproven experiment that can cost completions
   // must not switch itself on because a read failed.
   decide_invite: false,
+  /**
+   * Ask FAILS OPEN, unlike the invite above it.
+   *
+   * These are ordinary product features rather than things that act on a
+   * person without asking, so a flaky flag read should leave them working.
+   * Hiding a feature because a request was slow is the worse error here.
+   */
+  ask_chat: true,
+  ask_voice: true,
+  ask_free_text: true,
+  ask_streaming: true,
   // Off until the server says so: another company's name on our screen, and
   // an "I'll order" button that leads nowhere if the flag was really off.
   chowdeck_offers: false,

@@ -31,6 +31,11 @@ export function useOverview() {
   return useQuery({ queryKey: [...ADMIN_KEY, 'overview'], queryFn: adminApi.overview });
 }
 
+/** Ask KinniJije's own numbers. */
+export function useAskOverview() {
+  return useQuery({ queryKey: [...ADMIN_KEY, 'ask'], queryFn: adminApi.askOverview });
+}
+
 // ── Recipes ──────────────────────────────────────────────────────────
 export function useAdminRecipes(params: Record<string, string | number | undefined>) {
   return useQuery({
@@ -44,6 +49,40 @@ export function useAdminRecipe(mealId: string | null) {
     queryKey: [...ADMIN_KEY, 'recipe', mealId],
     queryFn: () => adminApi.recipe(mealId ?? ''),
     enabled: mealId !== null,
+  });
+}
+
+/**
+ * The catalogue, units and cuisines the recipe form offers.
+ *
+ * Held for the session: it only changes when the catalogue itself is edited,
+ * and refetching 400 ingredient names every time the form opens is waste.
+ */
+export function useRecipeFormOptions() {
+  return useQuery({
+    queryKey: [...ADMIN_KEY, 'recipe-form-options'],
+    queryFn: adminApi.recipeFormOptions,
+    staleTime: 30 * 60 * 1000,
+  });
+}
+
+export function useUpdateRecipe() {
+  const queryClient = useQueryClient();
+  return useMutation<
+    { id: string; matched: number; unmatched: string[] },
+    ApiError,
+    { mealId: string; input: RecipeInput }
+  >({
+    mutationFn: ({ mealId, input }) => adminApi.updateRecipe(mealId, input),
+    onSuccess: async (result) => {
+      analytics.track(EVENTS.ADMIN_RECIPE_UPDATED, {
+        meal_id: result.id,
+        matched: result.matched,
+        unmatched_count: result.unmatched.length,
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
+    },
   });
 }
 

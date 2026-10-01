@@ -100,7 +100,7 @@ export function ChowdeckOffers({
             ordering
               ? 'flex flex-col gap-2.5'
               : // Bleeds to the card edge so the row reads as scrollable.
-                '-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-1'
+                '-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 ml-4'
           }
         >
           {open.map((offer, i) => (
@@ -156,11 +156,17 @@ function Frame({
   const updated = ago(fetchedAt ?? null);
 
   return (
-    <section className={ordering ? 'mt-3' : 'mt-4 border-t-hair border-line pt-4'}>
-      <div className="mb-2.5 flex items-baseline justify-between gap-2">
-        <h3 className="font-display text-[16px] font-extrabold leading-tight text-ink">
-          {ordering ? 'Order it on Chowdeck' : 'Not cooking tonight?'}
-          {!ordering && <span className="block text-[12.5px] font-bold text-ink-3">Buy it on Chowdeck</span>}
+    <section className={ordering ? 'mt-3' : 'mt-3 border-t-hair border-line pt-2.5'}>
+      <div className={ordering ? 'mb-2.5' : 'mb-1.5'}>
+        {/* One line in cook mode. A two-line heading over a strip of small
+            cards made the label bigger than the thing it labels. */}
+        <h3
+          className={[
+            'font-display font-extrabold leading-tight text-ink',
+            ordering ? 'text-[16px]' : 'text-[12.5px] text-ink-3',
+          ].join(' ')}
+        >
+          {ordering ? 'Order it on Chowdeck' : 'Or buy it on Chowdeck'}
         </h3>
       </div>
 
@@ -168,8 +174,8 @@ function Frame({
 
       {/* Where the numbers came from, and how old they are. A cached price
           must never pass itself off as live. */}
-      <p className="mt-2 text-[11px] text-ink-4">
-        Prices and times from Chowdeck{updated !== null && ` · updated ${updated}`}. You finish the order on their site.
+      <p className={ordering ? 'mt-2 text-[11px] text-ink-4' : 'mt-1.5 text-[10px] text-ink-4'}>
+        {updated !== null && ` · updated ${updated}`}
       </p>
     </section>
   );
@@ -190,16 +196,27 @@ function OfferCard({
   const image = product.image_url ?? vendor.cover_url;
   const eta = deliveryWindow(vendor.delivery_minutes);
 
+  /**
+   * The `row` layout is COOK mode, where this is a footnote.
+   *
+   * Somebody who asked what to cook is being shown what they could buy
+   * instead — useful, but secondary to the recipe above it. At 228px wide with
+   * a 108px image it was competing with the verdict rather than sitting under
+   * it, so it is now a compact strip: a thumbnail, a name, a price.
+   *
+   * `lead` and `list` are ORDER mode, where offers are the whole point, and
+   * they keep their size.
+   */
   const shell =
     layout === 'row'
-      ? 'w-[228px] shrink-0 snap-start flex-col'
+      ? 'w-[150px] shrink-0 snap-start flex-col'
       : layout === 'lead'
         ? 'w-full flex-col'
         : 'w-full flex-row items-stretch';
 
   const imageBox =
     layout === 'row'
-      ? 'h-[108px] w-full'
+      ? 'h-[66px] w-full'
       : layout === 'lead'
         ? 'h-[150px] w-full'
         : 'w-[92px] shrink-0 self-stretch';
@@ -231,15 +248,32 @@ function OfferCard({
           </div>
         )}
         {layout !== 'list' && (
-          <span className="absolute bottom-2 left-2 rounded-pill border-2 border-ink bg-white px-2 py-0.5 font-display text-[13px] font-extrabold text-ink shadow-drop-sm tnum">
+          <span
+            className={[
+              'absolute rounded-pill border-2 border-ink bg-white font-display font-extrabold text-ink shadow-drop-sm tnum',
+              layout === 'row'
+                ? 'bottom-1 left-1 px-1.5 py-0 text-[10.5px]'
+                : 'bottom-2 left-2 px-2 py-0.5 text-[13px]',
+            ].join(' ')}
+          >
             {naira(product.price_naira)}
           </span>
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-3">
+      <div
+        className={[
+          'flex min-w-0 flex-1 flex-col',
+          layout === 'row' ? 'gap-1 p-2.5' : 'gap-1.5 p-3',
+        ].join(' ')}
+      >
         <div className="flex min-w-0 items-start justify-between gap-2">
-          <b className="line-clamp-2 font-display text-[14.5px] font-extrabold leading-tight text-ink">
+          <b
+            className={[
+              'font-display font-extrabold leading-tight text-ink',
+              layout === 'row' ? 'line-clamp-1 text-[12px]' : 'line-clamp-2 text-[14.5px]',
+            ].join(' ')}
+          >
             {product.name}
           </b>
           {layout === 'list' && (
@@ -249,52 +283,77 @@ function OfferCard({
           )}
         </div>
 
-        {product.description !== null && (
+        {/* No description in the compact strip: at 150px it is one truncated
+            clause that tells nobody anything. */}
+        {product.description !== null && layout !== 'row' && (
           <p className="line-clamp-1 text-[12px] text-ink-3">{product.description}</p>
         )}
 
-        <div className="flex min-w-0 items-center gap-1.5">
-          {vendor.logo_url !== null ? (
-            <img
-              src={vendor.logo_url}
-              alt=""
-              loading="lazy"
-              className="h-5 w-5 shrink-0 rounded-round border-hair border-line-2 object-cover"
-            />
-          ) : (
-            <Store size={14} strokeWidth={2.4} className="shrink-0 text-ink-4" />
-          )}
-          <span className="truncate text-[12.5px] font-bold text-ink-2">{vendor.name}</span>
-        </div>
+        {/*
+          COMPACT: who sells it, and how soon. Nothing else.
 
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11.5px] font-bold text-ink-3 tnum">
-          {vendor.rating !== null ? (
-            <span className="inline-flex items-center gap-0.5 text-ink-2">
-              <Star size={12} strokeWidth={2.4} className="fill-current text-caution-onsoft" />
-              {vendor.rating.toFixed(1)}
-              <span className="font-semibold text-ink-4">· {vendor.rating_count}</span>
-            </span>
-          ) : (
-            <span className="text-ink-4">New</span>
-          )}
-          {eta !== null && (
-            <span className="inline-flex items-center gap-0.5">
-              <Clock size={12} strokeWidth={2.4} />
-              {eta}
-            </span>
-          )}
-          {vendor.delivery_fee_naira !== null && (
-            <span className="inline-flex items-center gap-0.5">
-              <Bike size={12} strokeWidth={2.4} />
-              {naira(vendor.delivery_fee_naira)}
-            </span>
-          )}
-        </div>
+          The card previously carried the vendor logo, the vendor name, a
+          rating, a review count, an ETA, a delivery fee and a "Buy on
+          Chowdeck" link — seven things in 150px, which is a list rather than a
+          card. The two that change a decision are WHO and WHEN; the rest is
+          available one tap away on Chowdeck itself, where there is room for it.
+        */}
+        {layout === 'row' ? (
+          <>
+            <span className="truncate text-[10.5px] font-bold text-ink-2">{vendor.name}</span>
+            {eta !== null && (
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-ink-4 tnum">
+                <Clock size={10} strokeWidth={2.6} />
+                {eta}
+              </span>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex min-w-0 items-center gap-1.5">
+              {vendor.logo_url !== null ? (
+                <img
+                  src={vendor.logo_url}
+                  alt=""
+                  loading="lazy"
+                  className="h-5 w-5 shrink-0 rounded-round border-hair border-line-2 object-cover"
+                />
+              ) : (
+                <Store size={14} strokeWidth={2.4} className="shrink-0 text-ink-4" />
+              )}
+              <span className="truncate text-[12.5px] font-bold text-ink-2">{vendor.name}</span>
+            </div>
 
-        <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[12px] font-extrabold text-sky-on group-hover:underline">
-          Buy on Chowdeck
-          <ArrowUpRight size={13} strokeWidth={2.8} />
-        </span>
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11.5px] font-bold text-ink-3 tnum">
+              {vendor.rating !== null ? (
+                <span className="inline-flex items-center gap-0.5 text-ink-2">
+                  <Star size={12} strokeWidth={2.4} className="fill-current text-caution-onsoft" />
+                  {vendor.rating.toFixed(1)}
+                  <span className="font-semibold text-ink-4">· {vendor.rating_count}</span>
+                </span>
+              ) : (
+                <span className="text-ink-4">New</span>
+              )}
+              {eta !== null && (
+                <span className="inline-flex items-center gap-0.5">
+                  <Clock size={12} strokeWidth={2.4} />
+                  {eta}
+                </span>
+              )}
+              {vendor.delivery_fee_naira !== null && (
+                <span className="inline-flex items-center gap-0.5">
+                  <Bike size={12} strokeWidth={2.4} />
+                  {naira(vendor.delivery_fee_naira)}
+                </span>
+              )}
+            </div>
+
+            <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[12px] font-extrabold text-sky-on group-hover:underline">
+              Buy on Chowdeck
+              <ArrowUpRight size={13} strokeWidth={2.8} />
+            </span>
+          </>
+        )}
       </div>
     </a>
   );
@@ -302,13 +361,13 @@ function OfferCard({
 
 function Skeleton({ ordering }: { ordering: boolean }) {
   return (
-    <div className={ordering ? 'flex flex-col gap-2.5' : 'flex gap-2.5 overflow-hidden'} aria-hidden="true">
+    <div className={ordering ? 'flex flex-col gap-2.5' : 'flex gap-2 overflow-hidden'} aria-hidden="true">
       {Array.from({ length: ordering ? 3 : 2 }, (_, i) => (
         <div
           key={i}
           className={[
             'animate-pulse rounded-blade border-2 border-line-2 bg-skeleton',
-            ordering ? (i === 0 ? 'h-[250px] w-full' : 'h-[96px] w-full') : 'h-[230px] w-[228px] shrink-0',
+            ordering ? (i === 0 ? 'h-[250px] w-full' : 'h-[96px] w-full') : 'h-[132px] w-[150px] shrink-0',
           ].join(' ')}
         />
       ))}

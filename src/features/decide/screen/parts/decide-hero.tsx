@@ -1,4 +1,4 @@
-import { ArrowRight, Clock } from 'lucide-react';
+import { ArrowRight, Clock, Sparkles } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 import { ROUTES } from '@shared/constants/routes';
@@ -36,6 +36,14 @@ interface DecideHeroProps {
    * has no history — an icon that opens an empty sheet is worse than none.
    */
   readonly onHistory?: (() => void) | undefined;
+  /**
+   * Opens Ask KinniJije.
+   *
+   * Optional and additive: absent, this hero renders exactly as it did before
+   * the chat flow existed. That is the whole isolation rule in one prop — the
+   * tap flow gains an exit to the conversation and loses nothing.
+   */
+  readonly onAsk?: (() => void) | undefined;
 }
 
 const { hero } = DECIDE_COPY;
@@ -46,6 +54,7 @@ export function DecideHero({
   signedIn = false,
   kitchenCount = 0,
   onHistory,
+  onAsk,
 }: DecideHeroProps) {
   const copy = signedIn ? hero.member : hero;
   const sub = signedIn
@@ -141,6 +150,20 @@ export function DecideHero({
           {copy.cta}
           <ArrowRight size={19} strokeWidth={2.6} className="ml-2" />
         </Button>
+
+        {/* Secondary on purpose. Tapping is the fast path and stays the
+            headline; the conversation is the door for people who would rather
+            talk than tap. Grape, because a machine is doing the listening. */}
+        {onAsk !== undefined && (
+          <button
+            type="button"
+            onClick={onAsk}
+            className="flex w-full items-center justify-center gap-2 rounded-blade-xs border-2 border-grape-onsoft bg-white py-3 text-[14px] font-extrabold text-grape-onsoft shadow-[2px_3px_0_var(--grape-onsoft)] transition-transform duration-fast active:scale-[.98]"
+          >
+            <Sparkles size={16} strokeWidth={2.6} />
+            {DECIDE_COPY.askEntry.cta}
+          </button>
+        )}
 
         {!signedIn && (
         <p className="text-[12.5px] text-ink-3">

@@ -9,6 +9,10 @@ export const ROUTES = {
   HERO: '/hero',
   /** The decide-first flow: land, four taps, a meal. No account needed. */
   DECIDE: '/decide',
+  /** Ask KinniJije: the conversational way into the same flow. */
+  ASK: '/ask',
+  /** One conversation, so a reload keeps it and the URL is quotable. */
+  ASK_SESSION: (sessionId: string) => `/ask/${sessionId}`,
   /**
    * The old marketing landing — pricing, FAQ, trust.
    *
@@ -60,10 +64,12 @@ export const ROUTES = {
   ADMIN_RECIPES: '/admin/recipes',
   ADMIN_RECIPE: (mealId: string) => `/admin/recipes/${mealId}`,
   ADMIN_RECIPE_NEW: '/admin/recipes/new',
+  ADMIN_RECIPE_EDIT: (mealId: string) => `/admin/recipes/${mealId}/edit`,
   ADMIN_USERS: '/admin/users',
   ADMIN_USER: (userId: string) => `/admin/users/${userId}`,
   /** Visibility into the anonymous decide flow. */
   ADMIN_DECIDE: '/admin/decide',
+  ADMIN_ASK: '/admin/ask',
   ADMIN_DECIDE_LOG: (logId: string) => `/admin/decide/${logId}`,
   ADMIN_AI: '/admin/ai',
   ADMIN_AI_LOG: (logId: string) => `/admin/ai/${logId}`,

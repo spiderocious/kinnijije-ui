@@ -11,8 +11,6 @@ import type { DecideDraft, DecideVerdict, Mood, TimeBudget, Weight } from '../ty
 
 const KEY = 'kj.decide_draft';
 
-/** Client-side cap, re-validated at 40 by the server's Zod schema. */
-export const MAX_KITCHEN_ITEMS = 40;
 /** Matches the server. A refusal list longer than this is not a real session. */
 const MAX_REJECTED = 20;
 
@@ -90,9 +88,11 @@ export const decideDraft = {
   patch(changes: Partial<DecideDraft>): DecideDraft {
     const next: DecideDraft = { ...decideDraft.ensure(), ...changes, v: 1 };
 
-    if (next.kitchenItems.length > MAX_KITCHEN_ITEMS) {
-      next.kitchenItems = next.kitchenItems.slice(0, MAX_KITCHEN_ITEMS);
-    }
+    // The kitchen list is deliberately NOT trimmed. It used to be cut to 40,
+    // silently — somebody ticking their forty-first ingredient saw it accepted
+    // and then gone, and a well-stocked kitchen is exactly the one that gets
+    // the best answer. The picker only offers the catalogue, so the list
+    // cannot outgrow it.
     if (next.rejected.length > MAX_REJECTED) {
       // Keep the most recent refusals: an old one matters less than what they
       // just said no to.

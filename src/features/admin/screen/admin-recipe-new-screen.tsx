@@ -6,10 +6,11 @@ import { Repeat, Show } from 'meemaw';
 import { ROUTES } from '@shared/constants/routes';
 import { InfoCard } from '@ui/admin';
 import { Callout } from '@ui/feedback';
-import { Button } from '@ui/primitives';
+import { Button, Segmented } from '@ui/primitives';
 
-import { useBulkRecipes } from '../hooks/use-admin';
+import { useBulkRecipes, useCreateRecipe } from '../hooks/use-admin';
 import { ConsoleShell } from '../parts/console-shell';
+import { RecipeForm } from '../recipes/recipe-form';
 import type { RecipeInput } from '../services/admin.api';
 
 /** A worked example, so nobody has to guess the shape. */
@@ -56,15 +57,13 @@ const EXAMPLE = JSON.stringify(
 );
 
 /**
- * Adding recipes.
+ * The paste box: one recipe, or an array of them.
  *
- * One paste box rather than a form: a recipe has nested ingredients and steps,
- * and every hand-built form for that shape ends up slower to use than typing
- * the JSON. It takes ONE or MANY — an array is the only accepted top level, so
- * the same box does both.
+ * Kept beside the form for importing a batch written elsewhere. An array is
+ * the only accepted top level, so the same box does one and forty; a single
+ * object is wrapped rather than refused.
  */
-export default function AdminRecipeNewScreen() {
-  const navigate = useNavigate();
+function JsonImport() {
   const [text, setText] = useState(EXAMPLE);
   const [parseError, setParseError] = useState<string | null>(null);
 
@@ -95,6 +94,137 @@ export default function AdminRecipeNewScreen() {
   const result = bulk.data;
 
   return (
+    <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+      <InfoCard title="Paste one recipe, or an array of them">
+        <textarea
+          value={text}
+          onChange={(event) => {
+            setText(event.target.value);
+          }}
+          spellCheck={false}
+          rows={26}
+          className="w-full rounded-blade-sm border border-line bg-paper-2 p-3 font-mono text-xs text-ink focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_var(--sky-glow)]"
+        />
+
+        <div className="mt-3 flex items-center gap-2">
+          <Button loading={bulk.isPending} onClick={submit}>
+            Import
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setText(EXAMPLE);
+              setParseError(null);
+            }}
+          >
+            Reset to the example
+          </Button>
+        </div>
+
+        <Show when={parseError !== null}>
+          <Callout tone="critical" title="Could not read that" body={parseError ?? ''} className="mt-3" />
+        </Show>
+
+        <Show when={bulk.error !== null}>
+          <Callout
+            tone="critical"
+            title="The server refused it"
+            body={bulk.error?.message}
+            className="mt-3"
+          />
+        </Show>
+      </InfoCard>
+
+      <div className="flex flex-col gap-4">
+        <InfoCard title="What is required">
+          <ul className="flex flex-col gap-1.5 text-sm text-ink-2">
+            <li>
+              <code className="font-mono text-xs">name</code>, and a line saying what makes it
+              good
+            </li>
+            <li>
+              <code className="font-mono text-xs">difficulty</code> — easy, medium or involved
+            </li>
+            <li>
+              <code className="font-mono text-xs">cook_time_minutes</code> and{' '}
+              <code className="font-mono text-xs">serves</code>
+            </li>
+            <li>at least one ingredient and one step</li>
+          </ul>
+          <p className="mt-3 text-xs text-ink-3">
+            Ingredient names are matched against the catalogue on save. Anything we cannot place
+            is kept, but is invisible to suggestions — the result below says which.
+          </p>
+        </InfoCard>
+
+        <Show when={result !== undefined}>
+          <InfoCard
+            title="Result"
+            tone={(result?.failed ?? 0) > 0 ? 'caution' : 'default'}
+          >
+            <p className="text-sm">
+              <span className="font-extrabold text-success-onsoft">
+                {result?.created ?? 0} saved
+              </span>
+              <Show when={(result?.failed ?? 0) > 0}>
+                <span className="text-critical-onsoft">
+                  {' '}
+                  · {result?.failed} refused
+                </span>
+              </Show>
+            </p>
+
+            <ul className="mt-3 flex flex-col gap-2">
+              <Repeat each={result?.results ?? []}>
+                {(row: {
+                  index: number;
+                  name: string;
+                  ok: boolean;
+                  id?: string;
+                  error?: string;
+                  unmatched?: string[];
+                }) => (
+                  <li key={row.index} className="border-b border-line/60 pb-2 text-sm last:border-0">
+                    <p className={row.ok ? 'text-ink' : 'text-critical-onsoft'}>
+                      {row.ok ? '✓' : '✗'} {row.name}
+                    </p>
+                    <Show when={row.error !== undefined}>
+                      <p className="text-xs text-critical-onsoft">{row.error}</p>
+                    </Show>
+                    <Show when={(row.unmatched?.length ?? 0) > 0}>
+                      <p className="text-xs text-caution-onsoft">
+                        unmatched: {row.unmatched?.join(', ')}
+                      </p>
+                    </Show>
+                  </li>
+                )}
+              </Repeat>
+            </ul>
+          </InfoCard>
+        </Show>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Adding recipes, two ways.
+ *
+ *   Form        one recipe, with real choices: units from the catalogue,
+ *               ingredients that say whether they will match, steps you can
+ *               reorder. The default, and what most people want.
+ *   Paste JSON  one or MANY at once, for a batch written elsewhere.
+ *
+ * Both stay mounted-on-demand rather than toggled with CSS, but the form's
+ * state lives in the form: switching tabs and back starts it fresh, which is
+ * the honest behaviour for two different ways of doing one job.
+ */
+export default function AdminRecipeNewScreen() {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<'form' | 'json'>('form');
+  const create = useCreateRecipe();
+
+  return (
     <ConsoleShell
       active="recipes"
       title="Add recipes"
@@ -110,116 +240,42 @@ export default function AdminRecipeNewScreen() {
         </Button>
       }
     >
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-        <InfoCard title="Paste one recipe, or an array of them">
-          <textarea
-            value={text}
-            onChange={(event) => {
-              setText(event.target.value);
-            }}
-            spellCheck={false}
-            rows={26}
-            className="w-full rounded-blade-sm border border-line bg-paper-2 p-3 font-mono text-xs text-ink focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_var(--sky-glow)]"
-          />
-
-          <div className="mt-3 flex items-center gap-2">
-            <Button loading={bulk.isPending} onClick={submit}>
-              Import
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setText(EXAMPLE);
-                setParseError(null);
-              }}
-            >
-              Reset to the example
-            </Button>
-          </div>
-
-          <Show when={parseError !== null}>
-            <Callout tone="critical" title="Could not read that" body={parseError ?? ''} className="mt-3" />
-          </Show>
-
-          <Show when={bulk.error !== null}>
-            <Callout
-              tone="critical"
-              title="The server refused it"
-              body={bulk.error?.message}
-              className="mt-3"
-            />
-          </Show>
-        </InfoCard>
-
-        <div className="flex flex-col gap-4">
-          <InfoCard title="What is required">
-            <ul className="flex flex-col gap-1.5 text-sm text-ink-2">
-              <li>
-                <code className="font-mono text-xs">name</code>, and a line saying what makes it
-                good
-              </li>
-              <li>
-                <code className="font-mono text-xs">difficulty</code> — easy, medium or involved
-              </li>
-              <li>
-                <code className="font-mono text-xs">cook_time_minutes</code> and{' '}
-                <code className="font-mono text-xs">serves</code>
-              </li>
-              <li>at least one ingredient and one step</li>
-            </ul>
-            <p className="mt-3 text-xs text-ink-3">
-              Ingredient names are matched against the catalogue on save. Anything we cannot place
-              is kept, but is invisible to suggestions — the result below says which.
-            </p>
-          </InfoCard>
-
-          <Show when={result !== undefined}>
-            <InfoCard
-              title="Result"
-              tone={(result?.failed ?? 0) > 0 ? 'caution' : 'default'}
-            >
-              <p className="text-sm">
-                <span className="font-extrabold text-success-onsoft">
-                  {result?.created ?? 0} saved
-                </span>
-                <Show when={(result?.failed ?? 0) > 0}>
-                  <span className="text-critical-onsoft">
-                    {' '}
-                    · {result?.failed} refused
-                  </span>
-                </Show>
-              </p>
-
-              <ul className="mt-3 flex flex-col gap-2">
-                <Repeat each={result?.results ?? []}>
-                  {(row: {
-                    index: number;
-                    name: string;
-                    ok: boolean;
-                    id?: string;
-                    error?: string;
-                    unmatched?: string[];
-                  }) => (
-                    <li key={row.index} className="border-b border-line/60 pb-2 text-sm last:border-0">
-                      <p className={row.ok ? 'text-ink' : 'text-critical-onsoft'}>
-                        {row.ok ? '✓' : '✗'} {row.name}
-                      </p>
-                      <Show when={row.error !== undefined}>
-                        <p className="text-xs text-critical-onsoft">{row.error}</p>
-                      </Show>
-                      <Show when={(row.unmatched?.length ?? 0) > 0}>
-                        <p className="text-xs text-caution-onsoft">
-                          unmatched: {row.unmatched?.join(', ')}
-                        </p>
-                      </Show>
-                    </li>
-                  )}
-                </Repeat>
-              </ul>
-            </InfoCard>
-          </Show>
-        </div>
+      <div className="mb-4">
+        <Segmented
+          value={mode}
+          label="How to add"
+          onValueChange={(value) => {
+            setMode(value === 'json' ? 'json' : 'form');
+          }}
+        >
+          <Segmented.Item value="form">Form</Segmented.Item>
+          <Segmented.Item value="json">Paste JSON</Segmented.Item>
+        </Segmented>
       </div>
+
+      <Show when={mode === 'form'}>
+        <RecipeForm
+          submitLabel="Create recipe"
+          pending={create.isPending}
+          error={create.error}
+          onSubmit={(input) => {
+            create.mutate(input, {
+              // Straight to the recipe: that is where its images are added
+              // and where any unmatched ingredient is called out.
+              onSuccess: (result) => {
+                void navigate({ to: ROUTES.ADMIN_RECIPE(result.id) });
+              },
+            });
+          }}
+          onCancel={() => {
+            void navigate({ to: ROUTES.ADMIN_RECIPES });
+          }}
+        />
+      </Show>
+
+      <Show when={mode === 'json'}>
+        <JsonImport />
+      </Show>
     </ConsoleShell>
   );
 }

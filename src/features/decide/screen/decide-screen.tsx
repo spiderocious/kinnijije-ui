@@ -383,6 +383,12 @@ function DecideFlow() {
           signedIn={isSignedIn}
           kitchenCount={myKitchen.items.length}
           {...(isSignedIn && { onHistory: () => { setHistoryOpen(true); } })}
+          {...(features.ask_chat && {
+            onAsk: () => {
+              analytics.track(EVENTS.ASK_ENTRY_CLICKED, { surface: 'tap', from_stage: 'hero' });
+              void navigate({ to: ROUTES.ASK });
+            },
+          })}
           onStart={() => {
           // Somebody whose kitchen we already know is never asked for it: the
           // clearest possible signal that the app does not remember them.

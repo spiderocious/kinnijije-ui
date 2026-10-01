@@ -37,10 +37,18 @@ const CUISINE_HINTS: Readonly<Record<Weight, string[]>> = {
 };
 
 export interface CarryOverResult {
-  /** True when onboarding was filled in and completed. */
+  /** True when the answers reached the account. */
   carried: boolean;
   /** The meal to land on, when the guest was holding one. */
   mealId: string | null;
+}
+
+/** Whether a draft holds anything worth carrying. A verdict is NOT required. */
+export function hasAnswers(draft: DecideDraft | null): draft is DecideDraft {
+  return (
+    draft !== null &&
+    (draft.kitchenItems.length > 0 || draft.mood !== null || draft.weight !== null || draft.verdict !== null)
+  );
 }
 
 /**
@@ -48,14 +56,36 @@ export interface CarryOverResult {
  *
  * BEST EFFORT on purpose. The account already exists by the time this runs, so
  * a failure here must never look like a failed signup — the draft is kept
- * rather than cleared, and the next boot can retry it.
+ * rather than cleared.
+ *
+ * THE KITCHEN GOES INTO STOCK. It used to go only to onboarding's
+ * `kitchen_items`, a list no screen reads — the Kitchen page and the decide
+ * pre-fill both read stock — so a new member's kitchen looked empty and they
+ * were asked for it all over again. `/stock/seed` is idempotent, so running
+ * this twice cannot double anything.
+ *
+ * @param options.clearDraft whether to drop the browser draft afterwards.
+ *   TRUE when the person is being taken somewhere else (their answers now live
+ *   on the account). FALSE when they signed up INSIDE the flow and are still
+ *   answering: clearing it there wiped their mood, weight and kitchen out from
+ *   under the step they were standing on, so the next tap rebuilt an empty
+ *   draft and bounced them back to the kitchen step with nothing ticked.
  */
-export async function carryOverDraft(draft: DecideDraft | null): Promise<CarryOverResult> {
+export async function carryOverDraft(
+  draft: DecideDraft | null,
+  options: { clearDraft: boolean } = { clearDraft: true },
+): Promise<CarryOverResult> {
   if (draft === null) return { carried: false, mealId: null };
 
   const mealId = draft.verdict?.verdict.meal_id ?? null;
 
   try {
+    // First, and on its own: this is the part the person can SEE. If the
+    // preferences below fail, their kitchen is still there.
+    if (draft.kitchenItems.length > 0) {
+      await apiClient.post(EP.STOCK.SEED, { names: draft.kitchenItems });
+    }
+
     const payload: Record<string, unknown> = {
       difficulty: difficultyFor(draft.minutes),
     };
@@ -74,9 +104,9 @@ export async function carryOverDraft(draft: DecideDraft | null): Promise<CarryOv
       // success, not a failure to retry.
     }
 
-    // Only clear once the answers are safely on the account. Losing them is
-    // worse than a duplicate write.
-    decideDraft.clear();
+    // Only once the answers are safely on the account — and only when the
+    // person is leaving the flow. See `clearDraft` above.
+    if (options.clearDraft) decideDraft.clear();
     return { carried: true, mealId };
   } catch {
     // Kept for a retry. The account is real either way.
