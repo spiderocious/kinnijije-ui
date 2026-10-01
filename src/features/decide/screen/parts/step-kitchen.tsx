@@ -79,8 +79,21 @@ export function StepKitchen({
     const q = deferredQuery.trim().toLowerCase();
     if (q.length === 0) return null;
 
+    /**
+     * One tile per ingredient.
+     *
+     * "Popular" repeats items that also live in their own group, so a flat
+     * scan returned rice and salt TWICE — two identical tiles, with nothing to
+     * choose between them. De-duplicated by catalogue id before scoring.
+     */
+    const seen = new Set<string>();
     return groups
       .flatMap((group) => group.items)
+      .filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      })
       .map((item) => ({ item, score: scoreOf(item, q) }))
       .filter((hit) => hit.score > 0)
       .sort((a, b) => b.score - a.score || a.item.label.localeCompare(b.item.label))

@@ -55,11 +55,26 @@ export function KitchenPanel({
     const term = query.trim().toLowerCase();
     if (term.length === 0) return null;
 
+    /**
+     * De-duplicated by catalogue id.
+     *
+     * "Popular" deliberately repeats items that also live in their own group,
+     * so browsing Grains still finds rice. Searching walks every group, which
+     * meant a popular item came back TWICE — two identical Salt tiles, with no
+     * way to tell them apart or reason about which to tap.
+     *
+     * The first hit wins, and Popular is first, so the familiar one is kept.
+     */
+    const seen = new Set<string>();
     const hits: { id: string; label: string; icon: string }[] = [];
     for (const group of groups) {
       for (const item of group.items) {
+        if (seen.has(item.id)) continue;
         const haystack = [item.label, ...(item.aliases ?? [])].join(' ').toLowerCase();
-        if (haystack.includes(term)) hits.push(item);
+        if (haystack.includes(term)) {
+          seen.add(item.id);
+          hits.push(item);
+        }
       }
     }
     return hits;
