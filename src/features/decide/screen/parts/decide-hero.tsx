@@ -153,12 +153,14 @@ export function DecideHero({
 
         {/* Secondary on purpose. Tapping is the fast path and stays the
             headline; the conversation is the door for people who would rather
-            talk than tap. Grape, because a machine is doing the listening. */}
+            talk than tap. Brand sky, not grape: this is the front door, and it
+            should look like ours. The darker sky shade is used for the stroke,
+            the text and the drop edge so the label stays readable on white. */}
         {onAsk !== undefined && (
           <button
             type="button"
             onClick={onAsk}
-            className="flex w-full items-center justify-center gap-2 rounded-blade-xs border-2 border-grape-onsoft bg-white py-3 text-[14px] font-extrabold text-grape-onsoft shadow-[2px_3px_0_var(--grape-onsoft)] transition-transform duration-fast active:scale-[.98]"
+            className="flex w-full items-center justify-center gap-2 rounded-blade-xs border-2 border-sky-press bg-white py-3 text-[14px] font-extrabold text-sky-press shadow-[2px_3px_0_var(--sky-press)] transition-transform duration-fast active:scale-[.98]"
           >
             <Sparkles size={16} strokeWidth={2.6} />
             {DECIDE_COPY.askEntry.cta}
