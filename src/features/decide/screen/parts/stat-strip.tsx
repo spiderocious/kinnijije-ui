@@ -33,13 +33,13 @@ const STATS: readonly StatDef[] = [
     tint: 'bg-dish-fill',
     ink: 'text-dish-line',
   },
-  {
-    key: 'cooked',
-    label: 'actually cooked',
-    icon: 'chefHat',
-    tint: 'bg-greens-fill',
-    ink: 'text-greens-line',
-  },
+  // {
+  //   key: 'cooked',
+  //   label: 'actually cooked',
+  //   icon: 'chefHat',
+  //   tint: 'bg-greens-fill',
+  //   ink: 'text-greens-line',
+  // },
   {
     key: 'today',
     label: 'sorted today',
