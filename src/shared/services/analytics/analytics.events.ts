@@ -93,6 +93,15 @@ export const EVENTS = {
   // Every one carries `surface: 'ask' | 'tap'`, which is the single property
   // that makes "which flow are people using" answerable.
   ASK_ENTRY_CLICKED: 'ask_entry_clicked',
+  /**
+   * Somebody chose the week over deciding one meal now.
+   *
+   * Worth its own event rather than folding into a generic nav click: it is
+   * the one signal for whether planning is a thing people want, and it
+   * carries `signed_in` because a guest planning a week is a stronger signal
+   * than a member doing it.
+   */
+  TIMETABLE_ENTRY_CLICKED: 'timetable_entry_clicked',
   ASK_SESSION_STARTED: 'ask_session_started',
   ASK_STEP_ANSWERED: 'ask_step_answered',
   ASK_STEP_REVISITED: 'ask_step_revisited',
@@ -159,6 +168,18 @@ export const EVENTS = {
    */
   ADMIN_RECIPE_CREATED: 'admin_recipe_created',
   ADMIN_RECIPE_UPDATED: 'admin_recipe_updated',
+  /**
+   * Raising a request is NOT the same event as the change landing.
+   *
+   * `admin_recipe_updated` means a recipe changed. A proposal changes nothing
+   * yet — it may be rejected, withdrawn or conflict. Reusing the update event
+   * would inflate every count of "recipes edited" by the requests that never
+   * applied, and make median-time-to-approval unanswerable.
+   */
+  ADMIN_WORKFLOW_PROPOSED: 'admin_workflow_proposed',
+  ADMIN_WORKFLOW_APPROVED: 'admin_workflow_approved',
+  ADMIN_WORKFLOW_REJECTED: 'admin_workflow_rejected',
+  ADMIN_WORKFLOW_WITHDRAWN: 'admin_workflow_withdrawn',
   ADMIN_RECIPE_STATUS_CHANGED: 'admin_recipe_status_changed',
   ADMIN_RECIPE_DELETED: 'admin_recipe_deleted',
   ADMIN_IMAGE_GENERATED: 'admin_image_generated',

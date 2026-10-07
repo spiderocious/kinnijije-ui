@@ -8,7 +8,7 @@ import { InfoCard } from '@ui/admin';
 import { Callout } from '@ui/feedback';
 import { Button, Segmented } from '@ui/primitives';
 
-import { useBulkRecipes, useCreateRecipe } from '../hooks/use-admin';
+import { useBulkRecipes, useProposeRecipeCreate } from '../hooks/use-admin';
 import { ConsoleShell } from '../parts/console-shell';
 import { RecipeForm } from '../recipes/recipe-form';
 import type { RecipeInput } from '../services/admin.api';
@@ -222,7 +222,14 @@ function JsonImport() {
 export default function AdminRecipeNewScreen() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<'form' | 'json'>('form');
-  const create = useCreateRecipe();
+  /**
+   * The single-recipe form proposes; the JSON paste below still writes
+   * directly. That split is deliberate: the paste is a bulk import, which is
+   * an operator action on data from outside the product, not a staff member
+   * editing the catalogue. Queueing a hundred recipes individually would make
+   * the queue useless.
+   */
+  const propose = useProposeRecipeCreate();
 
   return (
     <ConsoleShell
@@ -255,15 +262,18 @@ export default function AdminRecipeNewScreen() {
 
       <Show when={mode === 'form'}>
         <RecipeForm
-          submitLabel="Create recipe"
-          pending={create.isPending}
-          error={create.error}
+          submitLabel="Submit for approval"
+          pending={propose.isPending}
+          error={propose.error}
           onSubmit={(input) => {
-            create.mutate(input, {
-              // Straight to the recipe: that is where its images are added
-              // and where any unmatched ingredient is called out.
-              onSuccess: (result) => {
-                void navigate({ to: ROUTES.ADMIN_RECIPE(result.id) });
+            propose.mutate(input, {
+              /**
+               * To the request, not to a recipe — there is no recipe yet. It
+               * is created when the request is approved, which is also when
+               * images can be added and unmatched ingredients get called out.
+               */
+              onSuccess: (workflow) => {
+                void navigate({ to: ROUTES.ADMIN_WORKFLOW(workflow.id) });
               },
             });
           }}

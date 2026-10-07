@@ -60,8 +60,19 @@ export interface DecideMeal {
   tags: string[];
 }
 
-/** Where the words came from. Drives the grape provenance mark. */
-export type DecideProvenance = 'ai_framed' | 'deterministic';
+/**
+ * How the verdict came about. Mirrors the backend type.
+ *
+ *   ai_framed     — the ranker chose, a model wrote the words
+ *   deterministic — the ranker chose, the words were templated
+ *   rule          — a curated matching rule chose the dish
+ *
+ * `rule` describes the CHOICE, not the writing: under a rule the model still
+ * writes the sentence. So this cannot be the only input to the grape AI mark —
+ * see `wroteTheWords` below, which is what that mark should key off.
+ */
+export type DecideProvenance = 'ai_framed' | 'deterministic' | 'rule';
+
 
 export interface DecideVerdict {
   verdict: DecideMeal;
@@ -73,6 +84,18 @@ export interface DecideVerdict {
   pool: DecideMeal[];
   framing: string | null;
   provenance: DecideProvenance;
+  /**
+   * Did a model write the sentence on screen? Drives the grape AI mark.
+   *
+   * Separate from `provenance` because under a curated rule the two differ:
+   * the RULE chose the dish while the MODEL may still have written about it.
+   * Keying the mark on `provenance === 'ai_framed'` would drop the attribution
+   * from every rule-served verdict whose words were in fact the model's.
+   *
+   * Optional so an older cached response still parses; absent reads as false,
+   * which under-claims rather than over-claims authorship.
+   */
+  ai_wrote_why?: boolean;
   notes?: { summary?: string; warnings?: string[] };
 }
 

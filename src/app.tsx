@@ -1,5 +1,6 @@
 import { RouterProvider } from '@tanstack/react-router';
 
+import { InstallPromptCard } from '@shared/ui-shell/install-prompt-card';
 import { BannerHost, ModalHost, ToastHost } from '@ui/drawer';
 
 import { AppProvider } from './app.provider';
@@ -15,6 +16,10 @@ export function App() {
       <ToastHost />
       <BannerHost />
       <ModalHost />
+
+      {/* The install offer. Renders nothing unless the browser has actually
+          made the app installable, so it costs nothing where it cannot work. */}
+      <InstallPromptCard />
     </AppProvider>
   );
 }

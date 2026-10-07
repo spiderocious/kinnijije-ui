@@ -45,7 +45,30 @@ export interface TableProps<T> {
   readonly loading?: boolean;
   readonly caption?: string;
   readonly className?: string;
+  /**
+   * Pin the first column while the rest scrolls sideways.
+   *
+   * ON BY DEFAULT, because a console table on a phone is otherwise unreadable:
+   * the columns do not fit, so it scrolls — and once it scrolls, the column
+   * that says WHICH ROW you are looking at slides away and every value becomes
+   * an orphan. Pinning the first column keeps the label in view.
+   *
+   * Pass `false` for a table whose first column is a checkbox or an avatar,
+   * where pinning buys nothing and costs width.
+   */
+  readonly pinFirstColumn?: boolean;
 }
+
+/**
+ * The pinned cell's classes.
+ *
+ * Needs an OPAQUE BACKGROUND of its own: a sticky cell with a transparent
+ * background lets the scrolling columns slide visibly underneath it, which
+ * looks like a rendering fault rather than a pinned column. The background has
+ * to match whatever is behind the row, which is why the hover and header cases
+ * are passed in rather than hardcoded here.
+ */
+const PINNED = 'sticky left-0 z-base';
 
 export function Table<T>({
   columns,
@@ -58,17 +81,22 @@ export function Table<T>({
   loading = false,
   caption,
   className,
+  pinFirstColumn = true,
 }: TableProps<T>) {
+  /** Only worth pinning when something can actually scroll past it. */
+  const pinned = pinFirstColumn && columns.length > 1;
+
   return (
-    <div className={cn('overflow-x-auto', className)}>
+    <div className={cn('overflow-x-auto overscroll-x-contain', className)}>
       <table className="w-full border-collapse text-left">
         {caption !== undefined && <caption className="sr-only">{caption}</caption>}
 
         <thead>
           <tr>
             <Repeat each={[...columns] as TableColumn<T>[]}>
-              {(column: TableColumn<T>) => {
+              {(column: TableColumn<T>, index: number) => {
                 const sorted = sort?.key === column.key;
+                const isPinned = pinned && index === 0;
                 return (
                   <th
                     key={column.key}
@@ -81,6 +109,13 @@ export function Table<T>({
                       'border-b-bold border-ink pb-2 pr-3 text-xs font-extrabold uppercase tracking-overline text-ink-3',
                       column.numeric === true && 'pr-0 text-right',
                       stickyHeader && 'sticky top-0 z-sticky bg-paper',
+                      /*
+                       * The corner cell is pinned in BOTH directions when the
+                       * header is sticky, so it needs to outrank the header
+                       * row it sits inside as well as the cells it covers.
+                       */
+                      isPinned && 'sticky left-0 bg-paper pr-4',
+                      isPinned && stickyHeader && 'z-sticky',
                     )}
                   >
                     {column.sortable === true && onSortChange !== undefined ? (
@@ -126,22 +161,37 @@ export function Table<T>({
                 key={rowKey(row)}
                 onClick={onRowClick === undefined ? undefined : () => onRowClick(row)}
                 className={cn(
-                  'border-b border-line',
+                  'group border-b border-line',
                   onRowClick !== undefined && 'cursor-pointer transition-colors hover:bg-sky-soft',
                 )}
               >
                 <Repeat each={[...columns] as TableColumn<T>[]}>
-                  {(column: TableColumn<T>) => (
-                    <td
-                      key={column.key}
-                      className={cn(
-                        'py-row-y pr-3 align-middle text-ctrl',
-                        column.numeric === true && 'pr-0 text-right font-mono tnum',
-                      )}
-                    >
-                      {column.render(row)}
-                    </td>
-                  )}
+                  {(column: TableColumn<T>, index: number) => {
+                    const isPinned = pinned && index === 0;
+                    return (
+                      <td
+                        key={column.key}
+                        className={cn(
+                          'py-row-y pr-3 align-middle text-ctrl',
+                          column.numeric === true && 'pr-0 text-right font-mono tnum',
+                          /*
+                           * The pinned cell carries its OWN background, or the
+                           * scrolling columns slide visibly underneath it.
+                           * `group-hover` keeps it matching the row it belongs
+                           * to — without it, hovering a row leaves the pinned
+                           * cell the old colour and the row looks split in two.
+                           */
+                          isPinned && PINNED,
+                          isPinned && 'bg-paper pr-4',
+                          isPinned &&
+                            onRowClick !== undefined &&
+                            'transition-colors group-hover:bg-sky-soft',
+                        )}
+                      >
+                        {column.render(row)}
+                      </td>
+                    );
+                  }}
                 </Repeat>
               </tr>
             )}

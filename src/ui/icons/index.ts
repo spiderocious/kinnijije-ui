@@ -53,6 +53,8 @@ export {
   GripVertical,
   Info,
   Loader2,
+  /** The console's drawer toggle on mobile. Pure chrome, no kitchen reading. */
+  Menu,
   Minus,
   MoreHorizontal,
   MoreVertical,

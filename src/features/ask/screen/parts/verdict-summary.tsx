@@ -202,7 +202,12 @@ export function VerdictSummary({
           sentence — claimed falsely it would be worth nothing. */}
       <p className="m-0 flex items-center gap-1.5 font-mono text-[10.5px] font-semibold text-grape-onsoft">
         <Info size={11} strokeWidth={2.6} />
-        {verdict.provenance === 'ai_framed' ? copy.framed : copy.deterministic}
+        {/* `ai_wrote_why`, not the provenance: a curated verdict can still
+            carry the model's sentence, and claiming otherwise understates
+            authorship as badly as overstating it. */}
+        {(verdict.ai_wrote_why ?? verdict.provenance === 'ai_framed')
+          ? copy.framed
+          : copy.deterministic}
         {alternates.length > 0 && <span className="text-ink-4">· {copy.more(alternates.length)}</span>}
       </p>
 

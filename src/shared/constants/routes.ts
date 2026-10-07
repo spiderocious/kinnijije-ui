@@ -50,6 +50,30 @@ export const ROUTES = {
   COOK: (mealId: string) => `/cook/${mealId}`,
   CHAT: '/chat',
   WEEK: '/week',
+  /**
+   * The timetable: what is planned, and whether the kitchen covers it.
+   *
+   * Separate from WEEK, which is the weekly reading. Two different questions,
+   * and the backend keeps them on separate prefixes for the same reason.
+   */
+  TIMETABLE: '/timetable',
+  /**
+   * The timetable's stages, as real paths.
+   *
+   * SUB-ROUTES RATHER THAN A `stage` STATE, because the flow is five full
+   * screens deep and the hardware back button has to work — on Android and in
+   * the installed PWA, back is the only way out of a screen, and a flow that
+   * held its stage in `useState` exited the whole feature on the first press.
+   *
+   * `/timetable` itself is the entry: it looks at whether a plan exists and
+   * redirects to the kitchen screen or the plan, so a bookmark or a shared
+   * link always lands somewhere that makes sense.
+   */
+  TIMETABLE_KITCHEN: '/timetable/kitchen',
+  TIMETABLE_CONFIGURE: '/timetable/configure',
+  TIMETABLE_PLAN: '/timetable/plan',
+  TIMETABLE_DAYS: '/timetable/days',
+  TIMETABLE_NEEDS: '/timetable/needs',
   FAVOURITES: '/favourites',
   SETTINGS: '/settings',
 
@@ -76,6 +100,27 @@ export const ROUTES = {
   ADMIN_SETTINGS: '/admin/settings',
   /** Colleagues, their permissions and outstanding invitations. */
   ADMIN_STAFF: '/admin/staff',
+  /** One colleague: what they can actually do, and what they have been doing. */
+  ADMIN_STAFF_MEMBER: (staffId: string) => `/admin/staff/${staffId}`,
+  /** Timetable usage and individual plans. Read-only observability. */
+  ADMIN_TIMETABLES: '/admin/timetables',
+  /** Dishes the composing planner invented, waiting to be made real. */
+  ADMIN_SUGGESTIONS: '/admin/suggestions',
+  ADMIN_TIMETABLE: (planId: string) => `/admin/timetables/${planId}`,
+  /** Curated matching rules: "when somebody has this, serve that". */
+  ADMIN_MATCHING: '/admin/matching',
+  ADMIN_MATCHING_NEW: '/admin/matching/new',
+  /** Type in a kitchen, see which rule fires. Makes precedence visible. */
+  ADMIN_MATCHING_TEST: '/admin/matching/test',
+  /** Which mood, weight and time combinations have a rule, and which do not. */
+  ADMIN_MATCHING_COVERAGE: '/admin/matching/coverage',
+  ADMIN_MATCHING_RULE: (ruleId: string) => `/admin/matching/${ruleId}`,
+  /** Changes waiting on somebody, and every change already decided. */
+  ADMIN_WORKFLOWS: '/admin/workflows',
+  /** One request: the diff, who raised it, and the approve or reject buttons. */
+  ADMIN_WORKFLOW: (workflowId: string) => `/admin/workflows/${workflowId}`,
+  /** What happened since you last looked. The queue answers what is outstanding. */
+  ADMIN_NOTIFICATIONS: '/admin/notifications',
   /** What staff have been doing. */
   ADMIN_AUDIT: '/admin/audit',
   /** Operations an operator runs instead of a shell command. */

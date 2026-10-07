@@ -17,6 +17,8 @@ export * from './file-upload/file-upload';
 export * from './input/input';
 export * from './multiselect/multiselect';
 export * from './number-input/number-input';
+export * from './number-panel/number-panel';
+export * from './number-panel/number-panel-service';
 export * from './otp-input/otp-input';
 export * from './password-input/password-input';
 export * from './radio/radio';

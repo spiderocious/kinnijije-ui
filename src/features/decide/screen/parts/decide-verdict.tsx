@@ -73,7 +73,11 @@ export function DecideVerdictScreen({
   const total = have.length + missing.length;
   // Grape is AI provenance only. A locally-promoted meal keeps its OWN
   // templated line, so the mark must come off with it.
-  const aiFramed = verdict.provenance === 'ai_framed';
+  //
+  // Reads `ai_wrote_why` rather than the provenance: under a curated rule the
+  // RULE chose the dish but the MODEL may still have written the sentence, and
+  // testing provenance alone would drop the attribution from those verdicts.
+  const aiFramed = verdict.ai_wrote_why ?? verdict.provenance === 'ai_framed';
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-[520px] flex-col bg-paper">

@@ -44,6 +44,15 @@ interface DecideHeroProps {
    * tap flow gains an exit to the conversation and loses nothing.
    */
   readonly onAsk?: (() => void) | undefined;
+  /**
+   * Opens the timetable.
+   *
+   * Optional and additive, exactly like `onAsk` — absent, this hero renders
+   * as it did before the timetable existed. Offered to guests as well as
+   * members: the plan screen is honest when empty, and gating the feature
+   * behind a sign-up means nobody discovers it.
+   */
+  readonly onPlanWeek?: (() => void) | undefined;
 }
 
 const { hero } = DECIDE_COPY;
@@ -55,6 +64,7 @@ export function DecideHero({
   kitchenCount = 0,
   onHistory,
   onAsk,
+  onPlanWeek,
 }: DecideHeroProps) {
   const copy = signedIn ? hero.member : hero;
   const sub = signedIn
@@ -164,6 +174,24 @@ export function DecideHero({
           >
             <Sparkles size={16} strokeWidth={2.6} />
             {DECIDE_COPY.askEntry.cta}
+          </button>
+        )}
+
+        {/* The timetable, as a text action rather than a third button.
+            Deciding one meal now is the headline; planning a week is the
+            slower thing somebody chooses deliberately, and three buttons of
+            similar weight would bury the fast path.
+
+            Shown to GUESTS TOO: the plan screen reads fine with nothing in
+            it, and hiding the feature until somebody signs up means they
+            never learn it exists. */}
+        {onPlanWeek !== undefined && (
+          <button
+            type="button"
+            onClick={onPlanWeek}
+            className="text-[12.5px] font-extrabold text-sky-on underline decoration-sky decoration-2 underline-offset-2 hover:decoration-sky-deep"
+          >
+            {DECIDE_COPY.timetableEntry.cta}
           </button>
         )}
 

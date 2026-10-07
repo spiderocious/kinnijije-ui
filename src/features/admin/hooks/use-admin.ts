@@ -10,6 +10,7 @@ import {
   type MailProvider,
   type RecipeInput,
 } from '../services/admin.api';
+import type { WorkflowRow } from '../services/workflows.api';
 
 const ADMIN_KEY = ['admin'] as const;
 
@@ -100,6 +101,67 @@ export function useCreateRecipe() {
 
       await queryClient.invalidateQueries({ queryKey: ADMIN_KEY });
     },
+  });
+}
+
+/**
+ * Recipe changes through approval.
+ *
+ * These REPLACE `useUpdateRecipe` and `useCreateRecipe` in the editor. The old
+ * hooks are kept because the bulk importer still writes directly, but a staff
+ * member editing one recipe now raises a request instead.
+ *
+ * They invalidate the workflow keys as well as the admin ones: a new request
+ * belongs in the queue and in the approvers' bells immediately, and a lock
+ * chip has to appear on the row the moment the request exists.
+ */
+function useRecipeProposal<TInput>(propose: (input: TInput) => Promise<WorkflowRow>) {
+  const queryClient = useQueryClient();
+
+  return useMutation<WorkflowRow, ApiError, TInput>({
+    mutationFn: propose,
+    onSuccess: async (workflow) => {
+      // Proposed, not updated. See the event definition for why these are
+      // deliberately separate.
+      analytics.track(EVENTS.ADMIN_WORKFLOW_PROPOSED, {
+        workflow_id: workflow.id,
+        kind: workflow.kind,
+      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ADMIN_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'workflows'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'notifications'] }),
+      ]);
+    },
+  });
+}
+
+export function useProposeRecipeUpdate() {
+  return useRecipeProposal<{ mealId: string; input: RecipeInput }>(({ mealId, input }) =>
+    adminApi.proposeRecipeUpdate(mealId, input),
+  );
+}
+
+export function useProposeRecipeCreate() {
+  return useRecipeProposal<RecipeInput>((input) => adminApi.proposeRecipeCreate(input));
+}
+
+export function useProposeRecipeUnpublish() {
+  return useRecipeProposal<string>((mealId) => adminApi.proposeRecipeUnpublish(mealId));
+}
+
+/**
+ * The lock chips for a page of recipes.
+ *
+ * Asked for the ids actually on screen rather than for everything pending, so
+ * the answer stays small however long the queue gets. `enabled` keeps it from
+ * firing with an empty list while the list itself is still loading.
+ */
+export function useRecipeLocks(ids: readonly string[]) {
+  return useQuery<{ locks: Record<string, string> }, ApiError>({
+    queryKey: ['admin', 'workflows', 'recipe-locks', [...ids].sort()],
+    queryFn: () => adminApi.recipeLocks([...ids]),
+    enabled: ids.length > 0,
   });
 }
 

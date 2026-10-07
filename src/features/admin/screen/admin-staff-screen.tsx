@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
+import { useNavigate } from '@tanstack/react-router';
 import { Show } from 'meemaw';
 
 import { usePermissions } from '@shared/hooks/use-permissions';
+import { ROUTES } from '@shared/constants/routes';
 import { formatDate } from '@shared/utils/format-date';
 import { Input, Select } from '@ui/inputs';
 import { Button } from '@ui/primitives';
@@ -27,6 +29,7 @@ import type { StaffRow } from '../services/staff.api';
  * Users.
  */
 export default function AdminStaffScreen() {
+  const navigate = useNavigate();
   const { data: staff = [], isLoading } = useStaff();
   const { data: groups = [] } = usePermissionGroups();
   const { can } = usePermissions();
@@ -47,11 +50,19 @@ export default function AdminStaffScreen() {
     {
       key: 'email',
       header: 'Person',
+      // The way into the detail page. The name is the link rather than the
+      // whole row, so the Access and Revoke buttons stay clickable.
       render: (row) => (
-        <span className="flex flex-col">
+        <button
+          type="button"
+          className="flex flex-col text-left hover:underline"
+          onClick={() => {
+            void navigate({ to: ROUTES.ADMIN_STAFF_MEMBER(row.id) });
+          }}
+        >
           <span className="font-extrabold text-ink">{row.name}</span>
           <span className="text-xs text-ink-3">{row.email}</span>
-        </span>
+        </button>
       ),
     },
     { key: 'tier', header: 'Tier', render: (row) => <Tag size="sm">{row.tier}</Tag> },

@@ -194,6 +194,84 @@ export const adminStaffRoute = createRoute({
   component: lazyRouteComponent(() => import('./screen/admin-staff-route')),
 });
 
+// After the literal above, as everywhere else in this file.
+export const adminStaffMemberRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/staff/$staffId',
+  component: lazyRouteComponent(() => import('./screen/admin-staff-detail-route')),
+});
+
+export const adminTimetablesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_TIMETABLES,
+  component: lazyRouteComponent(() => import('./screen/admin-timetables-route')),
+});
+
+/** The review queue for dishes the composing planner invented. */
+export const adminSuggestionsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_SUGGESTIONS,
+  component: lazyRouteComponent(() => import('./screen/admin-suggestions-route')),
+});
+
+// Parameterised, so it follows the literal above.
+export const adminTimetableRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/timetables/$planId',
+  component: lazyRouteComponent(() => import('./screen/admin-timetable-detail-route')),
+});
+
+export const adminMatchingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_MATCHING,
+  component: lazyRouteComponent(() => import('./screen/admin-matching-route')),
+});
+
+// Both literals before the parameterised route below, or "new" and "test"
+// would be read as rule ids.
+export const adminMatchingNewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_MATCHING_NEW,
+  component: lazyRouteComponent(() => import('./screen/admin-matching-new-route')),
+});
+
+export const adminMatchingTestRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_MATCHING_TEST,
+  component: lazyRouteComponent(() => import('./screen/admin-matching-test-route')),
+});
+
+export const adminMatchingCoverageRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_MATCHING_COVERAGE,
+  component: lazyRouteComponent(() => import('./screen/admin-matching-coverage-route')),
+});
+
+export const adminMatchingRuleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/matching/$ruleId',
+  component: lazyRouteComponent(() => import('./screen/admin-matching-rule-route')),
+});
+
+export const adminWorkflowsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_WORKFLOWS,
+  component: lazyRouteComponent(() => import('./screen/admin-workflows-route')),
+});
+
+// After the literal above, as everywhere else in this file.
+export const adminWorkflowRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/workflows/$workflowId',
+  component: lazyRouteComponent(() => import('./screen/admin-workflow-detail-route')),
+});
+
+export const adminNotificationsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ROUTES.ADMIN_NOTIFICATIONS,
+  component: lazyRouteComponent(() => import('./screen/admin-notifications-route')),
+});
+
 export const adminAuditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: ROUTES.ADMIN_AUDIT,

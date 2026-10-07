@@ -34,19 +34,19 @@ const STATS: readonly StatDef[] = [
     ink: 'text-dish-line',
   },
   {
-    key: 'today',
-    label: 'sorted today',
-    icon: 'alarmClock',
-    tint: 'bg-sky-soft',
-    ink: 'text-sky-deep',
-  },
-  {
     key: 'cooked',
     label: 'actually cooked',
     icon: 'chefHat',
     tint: 'bg-greens-fill',
     ink: 'text-greens-line',
   },
+  {
+    key: 'today',
+    label: 'sorted today',
+    icon: 'alarmClock',
+    tint: 'bg-sky-soft',
+    ink: 'text-sky-deep',
+  }
 ];
 
 export function StatStrip() {

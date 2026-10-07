@@ -119,6 +119,7 @@ export const EP = {
   ADMIN: {
     STAFF: `${V1}/admin/staff`,
     STAFF_GROUPS: `${V1}/admin/staff/groups`,
+    STAFF_DETAIL: (staffId: string) => `${V1}/admin/staff/${staffId}`,
     STAFF_INVITES: `${V1}/admin/staff/invites`,
     STAFF_INVITE: (userId: string) => `${V1}/admin/staff/${userId}/invite`,
     STAFF_PERMISSIONS: (userId: string) => `${V1}/admin/staff/${userId}/permissions`,
@@ -151,6 +152,14 @@ export const EP = {
     /** Visibility into the anonymous decide flow. */
     AI_STATS: `${V1}/admin/ai/stats`,
     ASK_OVERVIEW: `${V1}/admin/ask/overview`,
+    /**
+     * The conversations themselves — what people actually said.
+     *
+     * `overview` above is registered first on the server, so it is matched
+     * before the parameterised detail route can swallow it.
+     */
+    ASK_SESSIONS: `${V1}/admin/ask`,
+    ASK_SESSION: (sessionId: string) => `${V1}/admin/ask/${sessionId}`,
     DECIDE_OVERVIEW: `${V1}/admin/decide/overview`,
     DECIDE_LOGS: `${V1}/admin/decide/logs`,
     DECIDE_LOG: (logId: string) => `${V1}/admin/decide/logs/${logId}`,
@@ -159,6 +168,16 @@ export const EP = {
     RECIPES_BULK: `${V1}/admin/recipes/bulk`,
     RECIPES_DELETE: `${V1}/admin/recipes/delete`,
     RECIPES_STATUS: `${V1}/admin/recipes/status`,
+    /**
+     * Recipe changes go through approval. These raise the request; the
+     * matching direct-write routes above are now only used by the apply
+     * handler and the bulk importer.
+     */
+    RECIPE_PROPOSE_CREATE: `${V1}/admin/recipes/propose`,
+    RECIPE_LOCKS: `${V1}/admin/recipes/locks`,
+    RECIPE_PROPOSE_UPDATE: (mealId: string) => `${V1}/admin/recipes/${mealId}/propose`,
+    RECIPE_PROPOSE_UNPUBLISH: (mealId: string) =>
+      `${V1}/admin/recipes/${mealId}/propose-unpublish`,
     RECIPE: (mealId: string) => `${V1}/admin/recipes/${mealId}`,
     /** Catalogue ingredients, units and cuisines for the recipe form. */
     RECIPE_FORM_OPTIONS: `${V1}/admin/recipes/form-options`,
@@ -247,6 +266,87 @@ export const EP = {
   WEEK: {
     SUMMARY: `${V1}/week`,
     REFRESH_READING: `${V1}/week/reading`,
+  },
+
+  /**
+   * The timetable. Mounted under `/timetable`, not `/week` — `/week` already
+   * belongs to the weekly reading above, and two routers on one prefix is how
+   * one silently shadows the other.
+   */
+  TIMETABLE: {
+    SUMMARY: `${V1}/timetable`,
+    PLAN: `${V1}/timetable/plan`,
+    /** Their stock, for the confirm screen. Empty for a guest. */
+    KITCHEN: `${V1}/timetable/kitchen`,
+    GENERATE: `${V1}/timetable/generate`,
+    /** Refills one day, leaving the rest of the week alone. */
+    REGENERATE_DAY: `${V1}/timetable/regenerate-day`,
+    SWAP: `${V1}/timetable/swap`,
+    REMINDER: `${V1}/timetable/reminder`,
+    /** Attaches a guest's anonymous plans to their new account. */
+    CLAIM: `${V1}/timetable/claim`,
+  },
+
+  /**
+   * The approval engine. There is no generic propose endpoint on purpose —
+   * each feature proposes through its own route, because a payload's shape is
+   * the kind's business. See admin.routes.ts on the backend.
+   */
+  WORKFLOWS: {
+    LIST: `${V1}/admin/workflows`,
+    DETAIL: (workflowId: string) => `${V1}/admin/workflows/${workflowId}`,
+    APPROVE: (workflowId: string) => `${V1}/admin/workflows/${workflowId}/approve`,
+    REJECT: (workflowId: string) => `${V1}/admin/workflows/${workflowId}/reject`,
+    WITHDRAW: (workflowId: string) => `${V1}/admin/workflows/${workflowId}/withdraw`,
+  },
+
+  /**
+   * The matching studio. Rules are drafted freely and published through the
+   * approval engine — see MATCHING.PUBLISH, which raises a workflow rather
+   * than putting a rule live directly.
+   */
+  /** Timetable observability. Read-only: the console never edits a plan. */
+  ADMIN_TIMETABLES: {
+    LIST: `${V1}/admin/timetables`,
+    USAGE: `${V1}/admin/timetables/usage`,
+    QUALITY: `${V1}/admin/timetables/quality`,
+    /** Which planner builds a week. GET to read, PUT to switch. */
+    STRATEGY: `${V1}/admin/timetables/strategy`,
+    /** How the strategies compare on real plans. */
+    COMPARE: `${V1}/admin/timetables/compare`,
+    DETAIL: (planId: string) => `${V1}/admin/timetables/${planId}`,
+  },
+
+  /**
+   * Dishes the composing planner proposed that we do not have.
+   *
+   * Promoting one creates a DRAFT recipe, which is why these sit behind the
+   * recipe scopes rather than the timetable ones.
+   */
+  ADMIN_SUGGESTIONS: {
+    LIST: `${V1}/admin/suggestions`,
+    PROMOTE: (suggestionId: string) => `${V1}/admin/suggestions/${suggestionId}/promote`,
+    REJECT: (suggestionId: string) => `${V1}/admin/suggestions/${suggestionId}/reject`,
+  },
+
+  MATCHING: {
+    RULES: `${V1}/admin/matching/rules`,
+    RULE: (ruleId: string) => `${V1}/admin/matching/rules/${ruleId}`,
+    PUBLISH: (ruleId: string) => `${V1}/admin/matching/rules/${ruleId}/publish`,
+    RETIRE: (ruleId: string) => `${V1}/admin/matching/rules/${ruleId}/retire`,
+    ENABLED: (ruleId: string) => `${V1}/admin/matching/rules/${ruleId}/enabled`,
+    TEST: `${V1}/admin/matching/test`,
+    /** Measurement: replay against real traffic, coverage gaps, rule share. */
+    REPLAY: (ruleId: string) => `${V1}/admin/matching/rules/${ruleId}/replay`,
+    COVERAGE: `${V1}/admin/matching/coverage`,
+    SHARE: `${V1}/admin/matching/share`,
+  },
+
+  NOTIFICATIONS: {
+    LIST: `${V1}/admin/notifications`,
+    UNREAD_COUNT: `${V1}/admin/notifications/unread-count`,
+    READ_ALL: `${V1}/admin/notifications/read-all`,
+    READ: (notificationId: string) => `${V1}/admin/notifications/${notificationId}/read`,
   },
 
   USERS: {

@@ -469,7 +469,7 @@ export function VerdictStories({
               <StoryCard
                 meal={m}
                 isWinner={i === 0}
-                aiFramed={verdict.provenance === 'ai_framed'}
+                aiFramed={verdict.ai_wrote_why ?? verdict.provenance === 'ai_framed'}
                 fastest={m.cook_time_minutes === fastestTime}
                 isLast={i === meals.length - 1}
                 onCook={() => { onCook(m.meal_id); }}

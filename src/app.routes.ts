@@ -10,6 +10,18 @@ import {
   adminAskRoute,
   adminDecideRoute,
   adminStaffRoute,
+  adminStaffMemberRoute,
+  adminSuggestionsRoute,
+  adminTimetablesRoute,
+  adminTimetableRoute,
+  adminMatchingRoute,
+  adminMatchingNewRoute,
+  adminMatchingTestRoute,
+  adminMatchingCoverageRoute,
+  adminMatchingRuleRoute,
+  adminWorkflowsRoute,
+  adminWorkflowRoute,
+  adminNotificationsRoute,
   adminAiRoute,
   adminChowdeckCacheEntryRoute,
   adminChowdeckCacheRoute,
@@ -54,7 +66,15 @@ import { previewRoute } from '@features/preview/preview.routes';
 import { sceneIndexRoute, sceneRoute } from '@features/scenes/scenes.routes';
 import { settingsRoute } from '@features/settings/settings.routes';
 import { addStockRoute, stockItemRoute, stockRoute } from '@features/stock/stock.routes';
-import { weekRoute } from '@features/week/week.routes';
+import {
+  timetableConfigureRoute,
+  timetableDaysRoute,
+  timetableKitchenRoute,
+  timetableNeedsRoute,
+  timetablePlanRoute,
+  timetableRoute,
+  weekRoute,
+} from '@features/week/week.routes';
 
 import { rootRoute } from './app.root-route';
 
@@ -94,6 +114,14 @@ export const routeTree = rootRoute.addChildren([
   favouritesRoute,
   chatRoute,
   weekRoute,
+  // The timetable's stages. All literal paths, so order among them does not
+  // matter; they sit together so the flow reads in one place.
+  timetableRoute,
+  timetableKitchenRoute,
+  timetableConfigureRoute,
+  timetablePlanRoute,
+  timetableDaysRoute,
+  timetableNeedsRoute,
   settingsRoute,
 
   // Parameterised last.
@@ -116,6 +144,21 @@ export const routeTree = rootRoute.addChildren([
   adminJobsRoute,
   adminSettingsRoute,
   adminStaffRoute,
+  // Parameterised, so it follows the literal above.
+  adminStaffMemberRoute,
+  adminTimetablesRoute,
+  // Parameterised, after the literal above.
+  adminTimetableRoute,
+  adminSuggestionsRoute,
+  adminMatchingRoute,
+  // Every literal precedes the parameterised rule route.
+  adminMatchingNewRoute,
+  adminMatchingTestRoute,
+  adminMatchingCoverageRoute,
+  adminMatchingRuleRoute,
+  adminWorkflowsRoute,
+  adminWorkflowRoute,
+  adminNotificationsRoute,
   adminAuditRoute,
   adminCampaignsRoute,
   adminCampaignComposeRoute,

@@ -1,5 +1,6 @@
 import { EP } from '@shared/constants/endpoints';
 import { staffClient } from './staff-client';
+import type { WorkflowRow } from './workflows.api';
 
 // ── Setup ────────────────────────────────────────────────────────────
 export interface SetupState {
@@ -471,6 +472,23 @@ export const adminApi = {
   /** Several at once. `missing` are ids somebody else already deleted. */
   deleteRecipes: (ids: string[]): Promise<{ deleted: number; missing: string[] }> =>
     staffClient.post(EP.ADMIN.RECIPES_DELETE, { ids }),
+
+  /**
+   * Recipe changes through approval.
+   *
+   * These return a workflow, not a recipe: nothing has changed yet. The
+   * editor's success copy has to say so, or somebody will close the tab
+   * believing their edit is live.
+   */
+  proposeRecipeUpdate: (mealId: string, input: RecipeInput): Promise<WorkflowRow> =>
+    staffClient.post<WorkflowRow>(EP.ADMIN.RECIPE_PROPOSE_UPDATE(mealId), input),
+  proposeRecipeCreate: (input: RecipeInput): Promise<WorkflowRow> =>
+    staffClient.post<WorkflowRow>(EP.ADMIN.RECIPE_PROPOSE_CREATE, input),
+  proposeRecipeUnpublish: (mealId: string): Promise<WorkflowRow> =>
+    staffClient.post<WorkflowRow>(EP.ADMIN.RECIPE_PROPOSE_UNPUBLISH(mealId), {}),
+  /** Which of these recipes already have a request in flight, as id -> workflow id. */
+  recipeLocks: (ids: string[]): Promise<{ locks: Record<string, string> }> =>
+    staffClient.post<{ locks: Record<string, string> }>(EP.ADMIN.RECIPE_LOCKS, { ids }),
 
   users: (params: Record<string, string | number | undefined>): Promise<Paged<AdminUserRow>> =>
     staffClient.get<Paged<AdminUserRow>>(`${EP.ADMIN.USERS}${qs(params)}`),

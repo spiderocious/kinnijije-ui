@@ -23,6 +23,10 @@ export const RESOURCES = [
   'settings',
   'scripts',
   'audit',
+  'workflows',
+  'matching',
+  /** Meal timetables, for observability. Read-only in practice. */
+  'timetables',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -30,7 +34,19 @@ export type Resource = (typeof RESOURCES)[number];
 export const ACTIONS = ['read', 'write', 'delete'] as const;
 export type Action = (typeof ACTIONS)[number];
 
-export type Scope = `${Resource}:${Action}`;
+/**
+ * Approving is a STANDALONE scope, not a fourth action.
+ *
+ * Adding `approve` to ACTIONS would generate it for all fifteen resources, of
+ * which exactly one means anything. Mirrors the backend constant of the same
+ * name — and like the backend, it is deliberately NOT implied by
+ * `workflows:write` or `workflows:delete`: raising a request and signing one
+ * off are different powers, and collapsing them hands the second pair of eyes
+ * to whoever already holds the first.
+ */
+export const WORKFLOW_APPROVE = 'workflows:approve';
+
+export type Scope = `${Resource}:${Action}` | typeof WORKFLOW_APPROVE;
 
 /**
  * Whether a held set satisfies a required scope.
@@ -41,6 +57,16 @@ export type Scope = `${Resource}:${Action}`;
  */
 export function satisfies(held: readonly string[], needed: Scope): boolean {
   if (held.includes(needed)) return true;
+
+  /**
+   * Approving is never implied — it must be held outright.
+   *
+   * Guarded explicitly, and matching the backend line for line, so nobody
+   * "tidies" it into being covered by `workflows:delete`. That would hand the
+   * second pair of eyes to whoever already holds the first, which is the one
+   * thing the approval scope exists to prevent.
+   */
+  if (needed === WORKFLOW_APPROVE) return false;
 
   const separator = needed.indexOf(':');
   const resource = needed.slice(0, separator);

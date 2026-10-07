@@ -131,8 +131,12 @@ export default function AdminDecideDetailScreen() {
                   <p className="mb-3 text-sm text-ink-2">{data?.why}</p>
 
                   <div className="flex flex-wrap gap-1.5">
-                    <Tag size="sm" tone={data?.provenance === 'ai_framed' ? 'info' : 'neutral'}>
-                      {data?.provenance === 'ai_framed' ? 'AI wrote the why' : 'templated'}
+                    <Tag size="sm" tone={data?.provenance === 'deterministic' ? 'neutral' : 'info'}>
+                      {data?.provenance === 'ai_framed'
+                        ? 'AI wrote the why'
+                        : data?.provenance === 'rule'
+                          ? 'a curated rule chose this'
+                          : 'templated'}
                     </Tag>
                     <Tag size="sm">
                       score {data?.verdict_score?.toFixed(2) ?? '—'}

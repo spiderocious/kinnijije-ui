@@ -1,14 +1,41 @@
 {
+  "id": "/",
   "name": "KinniJije",
   "short_name": "KinniJije",
   "description": "Cook what you already have.",
-  "start_url": "/kitchen",
+  "lang": "en-NG",
+  "dir": "ltr",
+  "start_url": "/kitchen?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
   "background_color": "#F7FAFC",
   "theme_color": "#38B6F0",
+  "categories": ["food", "lifestyle", "utilities"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Decide what to cook",
+      "short_name": "Decide",
+      "description": "Answer a few questions and get one dish to cook now.",
+      "url": "/decide?source=pwa-shortcut"
+    },
+    {
+      "name": "My kitchen",
+      "short_name": "Kitchen",
+      "description": "What you have, and what is running low.",
+      "url": "/kitchen?source=pwa-shortcut"
+    },
+    {
+      "name": "This week",
+      "short_name": "Week",
+      "description": "What is planned and whether your kitchen covers it.",
+      "url": "/timetable?source=pwa-shortcut"
+    }
   ]
 }

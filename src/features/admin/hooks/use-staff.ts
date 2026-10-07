@@ -3,12 +3,27 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EVENTS, analytics } from '@shared/services/analytics';
 import type { ApiError } from '@shared/services/api-client';
 
-import { staffApi, type AuditRow, type GroupRow, type InvitePayload, type StaffRow } from '../services/staff.api';
+import {
+  staffApi,
+  type AuditRow,
+  type GroupRow,
+  type InvitePayload,
+  type StaffDetail,
+  type StaffRow,
+} from '../services/staff.api';
 
 const STAFF_KEY = ['admin', 'staff'] as const;
 
 export function useStaff() {
   return useQuery<StaffRow[], ApiError>({ queryKey: STAFF_KEY, queryFn: staffApi.list });
+}
+
+export function useStaffMember(staffId: string) {
+  return useQuery<StaffDetail, ApiError>({
+    queryKey: ['admin', 'staff', staffId],
+    queryFn: () => staffApi.detail(staffId),
+    enabled: staffId !== '',
+  });
 }
 
 export function usePermissionGroups() {
@@ -61,6 +76,10 @@ export function useSetStaffPermissions() {
         group_count: variables.group_keys.length,
         scope_count: variables.scopes.length,
       });
+      // The list AND the detail page. `STAFF_KEY` is a prefix of
+      // `['admin','staff',<id>]`, so this one invalidation covers both —
+      // without it the detail page keeps rendering the permissions the person
+      // had before the edit, which is the one screen that must never lie.
       await queryClient.invalidateQueries({ queryKey: STAFF_KEY });
     },
   });

@@ -9,7 +9,12 @@ import { Checkbox, Input } from '@ui/inputs';
 import { Button } from '@ui/primitives';
 import { Tag } from '@ui/status';
 
-import { useAdminRecipes, useDeleteRecipes, useSetRecipesStatus } from '../hooks/use-admin';
+import {
+  useAdminRecipes,
+  useDeleteRecipes,
+  useRecipeLocks,
+  useSetRecipesStatus,
+} from '../hooks/use-admin';
 import { ConsoleShell } from '../parts/console-shell';
 import { DataTable, type Column } from '../parts/data-table';
 import type { AdminRecipeRow } from '../services/admin.api';
@@ -107,6 +112,16 @@ export default function AdminRecipesScreen() {
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const [confirming, setConfirming] = useState(false);
   const rows = data?.items ?? [];
+
+  /**
+   * Which rows on screen have a request in flight.
+   *
+   * Asked for the visible ids only, so the answer stays small however long the
+   * queue gets — and re-asked when the page changes, since a lock on a recipe
+   * nobody is looking at is not worth a round trip.
+   */
+  const { data: lockData } = useRecipeLocks(rows.map((row) => row.id));
+  const locks = lockData?.locks ?? {};
   const selectedRows = rows.filter((row) => selected.has(row.id));
   const publishedSelected = selectedRows.filter((row) => row.status === 'published').length;
   const draftSelected = selectedRows.length - publishedSelected;
@@ -176,6 +191,35 @@ export default function AdminRecipesScreen() {
       ),
     },
     ...COLUMNS,
+    /**
+     * The lock chip.
+     *
+     * Cheap, and it prevents the commonest annoyance in an approval system:
+     * starting a second edit of something that already has a request in the
+     * queue, which is guaranteed to be refused as a conflict once either is
+     * approved. Rendered as a column rather than an overlay on the name so it
+     * stays readable when several rows are locked.
+     */
+    {
+      key: 'lock',
+      header: 'Waiting',
+      render: (row) => {
+        const workflowId = locks[row.id];
+        if (workflowId === undefined) return null;
+
+        return (
+          <button
+            type="button"
+            className="rounded-blade-xs border border-caution-border bg-caution-soft px-2 py-0.5 text-xs font-extrabold text-caution-on hover:border-ink"
+            onClick={() => {
+              void navigate({ to: ROUTES.ADMIN_WORKFLOW(workflowId) });
+            }}
+          >
+            In review
+          </button>
+        );
+      },
+    },
   ];
 
   return (

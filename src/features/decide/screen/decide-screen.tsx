@@ -389,6 +389,15 @@ function DecideFlow() {
               void navigate({ to: ROUTES.ASK });
             },
           })}
+          /**
+           * The timetable. Not behind a flag and not behind sign-in: the plan
+           * screen is honest when empty, and a guest who never sees the link
+           * never learns the feature exists.
+           */
+          onPlanWeek={() => {
+            analytics.track(EVENTS.TIMETABLE_ENTRY_CLICKED, { signed_in: isSignedIn });
+            void navigate({ to: ROUTES.TIMETABLE });
+          }}
           onStart={() => {
           // Somebody whose kitchen we already know is never asked for it: the
           // clearest possible signal that the app does not remember them.

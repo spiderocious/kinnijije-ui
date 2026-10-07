@@ -133,6 +133,21 @@ export const DECIDE_COPY = {
     cta: 'Ask KinniJije AI',
   },
 
+  /**
+   * The timetable, as a quiet text action under the two buttons.
+   *
+   * A link rather than a third button on purpose: deciding one meal now is
+   * what the product does, and a week plan is the slower, more deliberate
+   * thing somebody chooses on their own. Three buttons of similar weight
+   * would make the fast path harder to find.
+   *
+   * The label says what you get, not what the feature is called — "Plan" is a
+   * noun somebody has to interpret, "Plan your week" is an instruction.
+   */
+  timetableEntry: {
+    cta: 'Plan your week instead',
+  },
+
   /** The saved decisions, behind the history icon. Signed in only. */
   history: {
     open: 'Past decisions',

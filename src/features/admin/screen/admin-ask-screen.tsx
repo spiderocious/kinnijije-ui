@@ -1,10 +1,19 @@
+import { useState } from 'react';
+
 import { Repeat, Show } from 'meemaw';
 
+import { formatDate } from '@shared/utils/format-date';
 import { InfoCard } from '@ui/admin';
 import { Callout } from '@ui/feedback';
+import { Button } from '@ui/primitives';
+import { Tag } from '@ui/status';
 
 import { useAskOverview } from '../hooks/use-admin';
+import { useAskSessions } from '../hooks/use-admin-ask-sessions';
+import { AskSessionModal } from '../parts/ask-session-modal';
 import { ConsoleShell } from '../parts/console-shell';
+import { DataTable, type Column } from '../parts/data-table';
+import type { AskSessionRow } from '../services/ask-sessions.api';
 import {
   Chip,
   HeroKpi,
@@ -192,6 +201,125 @@ export default function AdminAskScreen() {
           </div>
         )}
       </Show>
+
+      {/*
+       * ── The conversations themselves ────────────────────────────
+       *
+       * Everything above answers "is it working". This answers the other
+       * question, which nothing could: WHAT DID PEOPLE ACTUALLY SAY. Ask is
+       * the one place people talk to the product in their own words, and
+       * that was the richest signal in the product with nowhere to read it.
+       */}
+      <div className="mt-6">
+        <Section title="Conversations">
+          <AskSessionsTable />
+        </Section>
+      </div>
     </ConsoleShell>
+  );
+}
+
+/** The list, with a modal for reading one. */
+function AskSessionsTable() {
+  const [openSession, setOpenSession] = useState<string | null>(null);
+  const [completedOnly, setCompletedOnly] = useState(false);
+
+  const { data, isLoading } = useAskSessions({ completedOnly, limit: 100 });
+
+  const columns: Column<AskSessionRow>[] = [
+    {
+      key: 'when',
+      header: 'When',
+      render: (row) => (
+        <span className="whitespace-nowrap text-xs text-ink-3">{formatDate(row.createdAt)}</span>
+      ),
+    },
+    {
+      /**
+       * THE COLUMN WORTH HAVING. Constraints people mentioned that no tile
+       * could express — "no pepper", "cooking for my mother". Scanning this
+       * is how you find what the four questions are missing.
+       */
+      key: 'notes',
+      header: 'What they mentioned',
+      render: (row) =>
+        row.notes.length === 0 ? (
+          <span className="text-xs text-ink-4">—</span>
+        ) : (
+          <div className="flex flex-wrap gap-1">
+            {row.notes.map((note) => (
+              <span
+                key={note}
+                className="rounded-pill border border-caution-border bg-caution-soft px-2 py-0.5 text-xs text-caution-onsoft"
+              >
+                {note}
+              </span>
+            ))}
+          </div>
+        ),
+    },
+    {
+      key: 'verdict',
+      header: 'Ended with',
+      render: (row) =>
+        row.verdictMealName === null ? (
+          <span className="text-xs text-ink-4">{row.completed ? 'unknown' : 'abandoned'}</span>
+        ) : (
+          <span className="text-ink">{row.verdictMealName}</span>
+        ),
+    },
+    { key: 'turns', header: 'Turns', numeric: true, render: (row) => row.turns },
+    {
+      key: 'followUps',
+      header: 'Follow-ups',
+      numeric: true,
+      render: (row) =>
+        row.followUps === 0 ? <span className="text-ink-4">—</span> : row.followUps,
+    },
+    {
+      key: 'who',
+      header: 'Who',
+      render: (row) => (
+        <Tag size="sm" tone={row.isGuest ? 'neutral' : 'info'}>
+          {row.isGuest ? 'guest' : 'signed in'}
+        </Tag>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <div className="mb-3">
+        <Button
+          size="sm"
+          variant={completedOnly ? 'primary' : 'secondary'}
+          onClick={() => {
+            setCompletedOnly((current) => !current);
+          }}
+        >
+          {completedOnly ? 'Showing completed' : 'Completed only'}
+        </Button>
+      </div>
+
+      <DataTable
+        rows={data?.sessions ?? []}
+        columns={columns}
+        isLoading={isLoading}
+        rowKey={(row) => row.id}
+        empty="Nobody has used Ask yet."
+        onRowClick={(row) => {
+          setOpenSession(row.id);
+        }}
+      />
+
+      <Show when={openSession !== null}>
+        <AskSessionModal
+          sessionId={openSession ?? ''}
+          onClose={() => {
+            setOpenSession(null);
+          }}
+        />
+      </Show>
+    </>
   );
 }
