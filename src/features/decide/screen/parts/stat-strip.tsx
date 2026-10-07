@@ -78,7 +78,7 @@ export function StatStrip() {
   if (data === undefined) return null;
 
   return (
-    <dl className="grid w-full max-w-[440px] grid-cols-3 gap-2">
+    <dl className="grid w-full max-w-[440px] grid-cols-2 gap-2">
       {STATS.map((stat) => {
         const value = values[stat.key];
         if (value === undefined) return null;
