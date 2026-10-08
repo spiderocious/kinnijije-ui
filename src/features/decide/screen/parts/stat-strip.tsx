@@ -1,15 +1,20 @@
 import { KoboyoIcon, type KoboyoIconName } from '@ui/icons';
 
 import { useDecideStats } from '../../hooks/use-decide-stats';
-import { TICK_SALTS, useLiveStat } from '../../hooks/use-live-stat';
-import { CountUp } from './count-up';
 
 /**
  * What the product has actually done.
  *
- * Three counters, each from a real server-side count, each creeping upward
- * from the snapshot's own timestamp so a reload lands where it left off rather
- * than jumping backwards.
+ * EXACTLY WHAT THE SERVER SAID, and nothing else. These used to creep upward
+ * between fetches — a drift derived from the snapshot's timestamp, with the
+ * display animating one number at a time to keep up. It was removed because
+ * the number on screen was no longer the number anybody had counted: it was a
+ * real figure plus an invented amount, and no reader could tell which part was
+ * which.
+ *
+ * Nothing persisted the drifted value, so there is nothing to clear. It was
+ * recomputed from `as_of` on every render, which is why it appeared to survive
+ * a reload — removing the derivation removes it outright.
  *
  * Rendered as cards rather than bare numbers: three unlabelled figures in a row
  * read as a spec sheet, and a bordered tile with its own mark reads as a fact
@@ -52,26 +57,17 @@ const STATS: readonly StatDef[] = [
 export function StatStrip() {
   const { data } = useDecideStats();
 
-  const decided = useLiveStat(data?.meals_decided, data?.as_of, TICK_SALTS.decided);
-  const todayRaw = useLiveStat(data?.decided_today, data?.as_of, TICK_SALTS.today);
-  const cookedRaw = useLiveStat(data?.meals_cooked, data?.as_of, TICK_SALTS.cooked);
-
-  /**
-   * The counters drift independently, which can produce an IMPOSSIBLE reading.
-   *
-   * Today's decisions are a subset of all decisions, and meals cooked are a
-   * subset too — but each number creeps at its own rate, so on a young install
-   * where the two totals start equal, "sorted today" overtakes "meals decided"
-   * within seconds. A visibly impossible pair is worse than a static one: it
-   * tells somebody the numbers are decorative.
-   *
-   * Clamped here rather than by syncing the rates, because the relationship
-   * has to hold for any rates and any starting values.
+  /*
+   * Straight from the response. No clamping either: the counters used to
+   * drift at independent rates, which could put "sorted today" above "meals
+   * decided" — an impossible pair that had to be corrected in the UI. Server
+   * counts cannot contradict each other, so there is nothing left to correct.
    */
-  const today = todayRaw === undefined ? undefined : Math.min(todayRaw, decided ?? todayRaw);
-  const cooked = cookedRaw === undefined ? undefined : Math.min(cookedRaw, decided ?? cookedRaw);
-
-  const values: Record<StatDef['key'], number | undefined> = { decided, today, cooked };
+  const values: Record<StatDef['key'], number | undefined> = {
+    decided: data?.meals_decided,
+    today: data?.decided_today,
+    cooked: data?.meals_cooked,
+  };
 
   // Decoration. If the counters cannot load, the page is fine without them —
   // and a row of skeletons above the CTA would be worse than nothing.
@@ -99,7 +95,7 @@ export function StatStrip() {
             </span>
 
             <dd className="m-0 font-display text-[21px] font-extrabold leading-none text-ink tnum sm:text-[24px]">
-              <CountUp value={value} />
+              {value.toLocaleString()}
             </dd>
 
             <dt className="text-center text-[10px] font-bold uppercase leading-tight tracking-label text-ink-3">
